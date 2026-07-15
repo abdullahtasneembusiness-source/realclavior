@@ -41,5 +41,10 @@ end;
 $$;
 
 -- Only signed-in users may call this, and only for their own email (enforced above).
+-- Must revoke from PUBLIC explicitly, not just `anon` — Postgres grants EXECUTE to
+-- the implicit PUBLIC pseudo-role by default on new functions, and `anon` inherits
+-- PUBLIC's privileges, so revoking from anon alone leaves it callable unauthenticated
+-- (caught by the Supabase security advisor after the first version of this migration).
+revoke execute on function public.accept_pending_invites() from public;
 revoke execute on function public.accept_pending_invites() from anon;
 grant execute on function public.accept_pending_invites() to authenticated;
