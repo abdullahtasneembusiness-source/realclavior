@@ -44,15 +44,17 @@ export async function GET(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (user) {
-    const { data: memberships } = await supabase
+    const { data: membership } = await supabase
       .from("memberships")
-      .select("id")
+      .select("workspace_id")
       .eq("user_id", user.id)
       .eq("status", "active")
-      .limit(1);
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .maybeSingle();
 
-    if (memberships && memberships.length > 0) {
-      return NextResponse.redirect(`${origin}/app`);
+    if (membership) {
+      return NextResponse.redirect(`${origin}/w/${membership.workspace_id}`);
     }
   }
 

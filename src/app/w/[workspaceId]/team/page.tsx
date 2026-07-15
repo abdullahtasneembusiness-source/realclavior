@@ -1,9 +1,7 @@
-import { redirect } from "next/navigation";
-
 import { Badge } from "@/components/ui/badge";
 import { MemberAvatar } from "@/components/member-avatar";
 import { createClient } from "@/lib/supabase/server";
-import { requireActiveContext } from "@/lib/workspace";
+import { requireAdmin, requireWorkspaceContext } from "@/lib/workspace";
 import type { Membership } from "@/types/db";
 import { InviteDialog } from "./invite-dialog";
 import { MemberActions } from "./member-actions";
@@ -12,14 +10,15 @@ function roleLabel(role: Membership["role"]) {
   return role.charAt(0).toUpperCase() + role.slice(1);
 }
 
-export default async function TeamPage() {
-  const ctx = await requireActiveContext();
-  const isAdmin =
-    ctx.membership.role === "founder" || ctx.membership.role === "manager";
+export default async function TeamPage({
+  params,
+}: {
+  params: { workspaceId: string };
+}) {
+  const ctx = await requireWorkspaceContext(params.workspaceId);
+  requireAdmin(ctx);
 
-  if (!isAdmin) {
-    redirect("/app");
-  }
+  const callerIsFounder = ctx.membership.role === "founder";
 
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -42,7 +41,7 @@ export default async function TeamPage() {
             Everyone who runs work inside {ctx.workspace.name}.
           </p>
         </div>
-        <InviteDialog />
+        <InviteDialog workspaceId={ctx.workspace.id} />
       </div>
 
       {error ? (
@@ -85,9 +84,15 @@ export default async function TeamPage() {
                 <div className="flex items-center gap-3">
                   <Badge variant="outline">{roleLabel(m.role)}</Badge>
                   <MemberActions
+                    workspaceId={ctx.workspace.id}
                     membershipId={m.id}
                     pending={false}
+                    currentRole={m.role}
                     canArchive={m.role !== "founder" && !isSelf}
+                    canChangeRole={
+                      !isSelf && (m.role !== "founder" || callerIsFounder)
+                    }
+                    callerIsFounder={callerIsFounder}
                   />
                 </div>
               </div>
@@ -124,7 +129,15 @@ export default async function TeamPage() {
                 </div>
                 <div className="flex items-center gap-3">
                   <Badge variant="outline">{roleLabel(m.role)}</Badge>
-                  <MemberActions membershipId={m.id} pending canArchive />
+                  <MemberActions
+                    workspaceId={ctx.workspace.id}
+                    membershipId={m.id}
+                    pending
+                    currentRole={m.role}
+                    canArchive
+                    canChangeRole={false}
+                    callerIsFounder={callerIsFounder}
+                  />
                 </div>
               </div>
             ))}

@@ -1,0 +1,71 @@
+import { ADMIN_NAV, OPERATOR_NAV } from "./nav-config";
+import { SidebarContent } from "./sidebar-content";
+import { MobileHeader } from "./mobile-header";
+import { OperatorMobileHeader } from "./operator-mobile-header";
+import { BottomTabBar } from "./bottom-tab-bar";
+import { cn } from "@/lib/utils";
+import type { ActiveContext } from "@/lib/workspace";
+
+export function AppShell({
+  ctx,
+  children,
+}: {
+  ctx: ActiveContext;
+  children: React.ReactNode;
+}) {
+  const isAdmin =
+    ctx.membership.role === "founder" || ctx.membership.role === "manager";
+  const navItems = isAdmin ? ADMIN_NAV : OPERATOR_NAV;
+  const displayName =
+    ctx.fullName || ctx.membership.title || ctx.email || "You";
+
+  return (
+    <div className="flex min-h-screen">
+      <aside className="sticky top-0 hidden h-screen w-60 shrink-0 border-r border-border lg:flex lg:flex-col">
+        <SidebarContent
+          workspaceId={ctx.workspace.id}
+          workspace={ctx.workspace}
+          allWorkspaces={ctx.allWorkspaces}
+          navItems={navItems}
+          displayName={displayName}
+          email={ctx.email}
+          color={ctx.membership.color}
+        />
+      </aside>
+
+      <div className="flex min-w-0 flex-1 flex-col">
+        {isAdmin ? (
+          <MobileHeader
+            workspaceId={ctx.workspace.id}
+            workspace={ctx.workspace}
+            allWorkspaces={ctx.allWorkspaces}
+            navItems={navItems}
+            displayName={displayName}
+            email={ctx.email}
+            color={ctx.membership.color}
+          />
+        ) : (
+          <OperatorMobileHeader
+            workspaceId={ctx.workspace.id}
+            workspaceName={ctx.workspace.name}
+            displayName={displayName}
+            color={ctx.membership.color}
+          />
+        )}
+
+        <main
+          className={cn(
+            "flex-1 px-4 py-6 sm:px-6 lg:px-10 lg:py-8",
+            !isAdmin && "pb-24 lg:pb-8",
+          )}
+        >
+          <div className="mx-auto w-full max-w-5xl">{children}</div>
+        </main>
+
+        {!isAdmin ? (
+          <BottomTabBar workspaceId={ctx.workspace.id} navItems={navItems} />
+        ) : null}
+      </div>
+    </div>
+  );
+}

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import { Loader2, UserPlus } from "lucide-react";
+import { Info, Loader2, UserPlus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -36,9 +36,10 @@ function SubmitButton() {
   );
 }
 
-export function InviteDialog() {
+export function InviteDialog({ workspaceId }: { workspaceId: string }) {
   const [open, setOpen] = useState(false);
-  const [state, formAction] = useFormState(inviteMember, initialState);
+  const boundInvite = inviteMember.bind(null, workspaceId);
+  const [state, formAction] = useFormState(boundInvite, initialState);
   const formRef = useRef<HTMLFormElement>(null);
   // Track the last success we acted on so the effect doesn't re-close on re-render.
   const lastSuccess = useRef<string | undefined>(undefined);
@@ -110,7 +111,8 @@ export function InviteDialog() {
             </p>
           ) : null}
           {state.emailWarning ? (
-            <p className="border-clovior-amber/25 bg-clovior-amber/10 rounded-md border px-3 py-2 text-xs text-clovior-amber">
+            <p className="flex items-start gap-1.5 rounded-md border border-border bg-muted px-3 py-2 text-xs text-muted-foreground">
+              <Info className="mt-0.5 size-3.5 shrink-0" />
               {state.emailWarning}
             </p>
           ) : null}

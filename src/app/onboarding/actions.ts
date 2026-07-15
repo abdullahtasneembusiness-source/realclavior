@@ -68,5 +68,5 @@ export async function createWorkspace(
     };
   }
 
-  redirect("/app");
+  redirect(`/w/${workspace.id}`);
 }
