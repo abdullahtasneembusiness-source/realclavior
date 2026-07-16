@@ -21,8 +21,13 @@ export function testEmail(label: string): string {
  * Signs a Playwright page in as `email` without needing a real inbox — generates a
  * magic link via the Auth Admin API (only reachable because this runs against a
  * local/test Supabase instance with real network access, unlike the sandbox this was
- * developed in) and drives the browser through the exact same /auth/callback route a
- * real clicked email link would hit.
+ * developed in) and drives the browser through the real /auth/callback route.
+ *
+ * We hit the callback with token_hash + type rather than navigating the raw GoTrue
+ * action_link: the action_link uses the PKCE code flow, which needs a code-verifier
+ * cookie that only exists if signInWithOtp ran in this same browser first. The
+ * token_hash / verifyOtp path (which the callback now supports) needs no verifier,
+ * so it works from a fresh browser context — exactly what these tests use.
  */
 export async function signInAs(page: Page, email: string): Promise<void> {
   const admin = adminClient();
@@ -32,9 +37,13 @@ export async function signInAs(page: Page, email: string): Promise<void> {
   });
   if (error) throw new Error(`generateLink(${email}): ${error.message}`);
 
-  const url = new URL(data.properties.action_link);
-  url.searchParams.set("redirect_to", `${SITE_URL}/auth/callback`);
-  await page.goto(url.toString());
+  const callback = new URL(`${SITE_URL}/auth/callback`);
+  callback.searchParams.set("token_hash", data.properties.hashed_token);
+  callback.searchParams.set("type", "magiclink");
+  await page.goto(callback.toString());
+  // Land on the post-auth destination (onboarding, a workspace, or the error page)
+  // before the test proceeds.
+  await page.waitForURL((url) => !url.pathname.startsWith("/auth/callback"));
 }
 
 /** A signed-in access token for `email`, without a browser — for direct REST/RLS checks. */
