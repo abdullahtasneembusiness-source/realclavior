@@ -1,16 +1,12 @@
 import { test, expect } from "@playwright/test";
-import { signInAs, testEmail } from "./helpers";
+import { signInAs, testEmail, createWorkspace } from "./helpers";
 
 async function createWorkspaceAs(
   page: import("@playwright/test").Page,
   email: string,
 ) {
   await signInAs(page, email);
-  await page.getByLabel("Business name").fill("Team Test Co");
-  await page.getByRole("button", { name: "Create workspace" }).click();
-  await expect(page).toHaveURL(/\/w\/[0-9a-f-]+$/);
-  const workspaceId = page.url().split("/w/")[1];
-  return workspaceId;
+  return createWorkspace(page, "Team Test Co");
 }
 
 test("founder invites an operator, pending row appears immediately", async ({

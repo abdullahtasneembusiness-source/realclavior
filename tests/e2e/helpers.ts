@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import type { EmailOtpType } from "@supabase/supabase-js";
-import type { Page } from "@playwright/test";
+import { expect, type Page } from "@playwright/test";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -96,6 +96,34 @@ export async function signInAs(page: Page, email: string): Promise<void> {
       `signInAs(${email}): session did not persist — landed on /login`,
     );
   }
+}
+
+/**
+ * Fills the onboarding form and creates a workspace, returning its id. If the flow
+ * does NOT land on /w/[id] within the timeout, throws with the landed pathname and any
+ * visible form-error text — so a failure names its real cause instead of dying at a
+ * generic `toHaveURL` mismatch.
+ */
+export async function createWorkspace(
+  page: Page,
+  name: string,
+): Promise<string> {
+  await page.getByLabel("Business name").fill(name);
+  await page.getByRole("button", { name: "Create workspace" }).click();
+
+  try {
+    await expect(page).toHaveURL(/\/w\/[0-9a-f-]+$/, { timeout: 15000 });
+  } catch {
+    const alert = await page
+      .getByRole("alert")
+      .textContent()
+      .catch(() => null);
+    throw new Error(
+      `createWorkspace("${name}") did not reach /w/[id]. Landed on ${new URL(page.url()).pathname}. Form error: ${alert ?? "(none shown)"}`,
+    );
+  }
+
+  return page.url().split("/w/")[1];
 }
 
 /** A signed-in access token for `email`, without a browser — for direct REST/RLS checks. */

@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { signInAs, testEmail } from "./helpers";
+import { signInAs, testEmail, createWorkspace } from "./helpers";
 
 test.describe("unauthenticated access", () => {
   for (const path of [
@@ -33,10 +33,7 @@ test("creating a workspace lands on Command View with the full admin sidebar", a
   await signInAs(page, email);
   await expect(page).toHaveURL(/\/onboarding$/);
 
-  await page.getByLabel("Business name").fill("Acme Creator Co");
-  await page.getByRole("button", { name: "Create workspace" }).click();
-
-  await expect(page).toHaveURL(/\/w\/[0-9a-f-]+$/);
+  await createWorkspace(page, "Acme Creator Co");
   await expect(
     page.getByRole("heading", { name: "Welcome to Acme Creator Co" }),
   ).toBeVisible();
@@ -60,9 +57,7 @@ test("returning to / after already having a workspace redirects straight into it
 }) => {
   const email = testEmail("founder");
   await signInAs(page, email);
-  await page.getByLabel("Business name").fill("Repeat Visit Co");
-  await page.getByRole("button", { name: "Create workspace" }).click();
-  await expect(page).toHaveURL(/\/w\/[0-9a-f-]+$/);
+  await createWorkspace(page, "Repeat Visit Co");
   const workspaceUrl = page.url();
 
   await page.goto("/app");

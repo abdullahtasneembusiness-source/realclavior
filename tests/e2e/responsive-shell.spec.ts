@@ -1,14 +1,12 @@
 import { test, expect } from "@playwright/test";
-import { signInAs, testEmail } from "./helpers";
+import { signInAs, testEmail, createWorkspace } from "./helpers";
 
 test.describe("desktop viewport", () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 
   test("admin sees the sidebar, not the mobile header", async ({ page }) => {
     await signInAs(page, testEmail("founder"));
-    await page.getByLabel("Business name").fill("Desktop Co");
-    await page.getByRole("button", { name: "Create workspace" }).click();
-    await expect(page).toHaveURL(/\/w\/[0-9a-f-]+$/);
+    await createWorkspace(page, "Desktop Co");
 
     await expect(page.getByTestId("desktop-sidebar")).toBeVisible();
     await expect(page.getByTestId("mobile-header")).toBeHidden();
@@ -28,9 +26,7 @@ test.describe("mobile viewport", () => {
     page,
   }) => {
     await signInAs(page, testEmail("founder"));
-    await page.getByLabel("Business name").fill("Mobile Admin Co");
-    await page.getByRole("button", { name: "Create workspace" }).click();
-    await expect(page).toHaveURL(/\/w\/[0-9a-f-]+$/);
+    await createWorkspace(page, "Mobile Admin Co");
     const workspaceUrl = page.url();
 
     await expect(page.getByTestId("desktop-sidebar")).toBeHidden();
@@ -59,10 +55,7 @@ test.describe("mobile viewport", () => {
     });
     const desktopPage = await desktopContext.newPage();
     await signInAs(desktopPage, founderEmail);
-    await desktopPage.getByLabel("Business name").fill("Mobile Operator Co");
-    await desktopPage.getByRole("button", { name: "Create workspace" }).click();
-    await expect(desktopPage).toHaveURL(/\/w\/[0-9a-f-]+$/);
-    const workspaceId = desktopPage.url().split("/w/")[1];
+    const workspaceId = await createWorkspace(desktopPage, "Mobile Operator Co");
 
     await desktopPage.goto(`/w/${workspaceId}/team`);
     await desktopPage
