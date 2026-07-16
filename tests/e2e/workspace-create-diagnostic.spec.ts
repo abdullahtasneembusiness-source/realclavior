@@ -1,79 +1,48 @@
 import { test, expect } from "@playwright/test";
-import { testEmail, getAccessToken } from "./helpers";
+import { testEmail, getAccessToken, restGet } from "./helpers";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-async function restInsert(
-  table: string,
-  row: unknown,
-  accessToken: string,
-): Promise<{ status: number; body: unknown }> {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
-    method: "POST",
-    headers: {
-      apikey: ANON_KEY,
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-      Prefer: "return=representation",
-    },
-    body: JSON.stringify(row),
-  });
-  const text = await res.text();
-  let body: unknown;
-  try {
-    body = JSON.parse(text);
-  } catch {
-    body = text;
-  }
-  return { status: res.status, body };
-}
-
 /**
- * Reproduces exactly what the createWorkspace server action does, but through the raw
- * PostgREST path with a real authenticated user token — no browser, no cookies. If
- * this fails, the bug is in RLS / the DB; if it passes while the browser flow fails,
- * the bug is in the app's session/redirect layer. Either way the exact PostgREST
- * error (code + message + details + hint) is printed, so the true cause is named.
+ * Exercises the exact backend path the onboarding action now uses — the
+ * create_workspace SECURITY DEFINER RPC — over real HTTP with a real authenticated
+ * user token (no browser, no cookies). This is the regression guard for workspace
+ * creation: if the RPC or its grants ever break, this fails fast with the precise
+ * PostgREST error, independent of any browser flakiness.
  */
-test("REST repro: a signed-in user can insert their own workspace + founder membership", async () => {
+test("REST: a signed-in user can create a workspace + founder membership via RPC", async () => {
   const email = testEmail("diag");
   const token = await getAccessToken(email);
   const sub = JSON.parse(
     Buffer.from(token.split(".")[1], "base64").toString("utf8"),
   ).sub as string;
 
-  const ws = await restInsert(
-    "workspaces",
-    { name: "Diag Co", owner_id: sub },
-    token,
-  );
-  // eslint-disable-next-line no-console
-  console.log("WORKSPACE INSERT →", ws.status, JSON.stringify(ws.body));
-  expect(
-    ws.status,
-    `workspace insert failed: ${JSON.stringify(ws.body)}`,
-  ).toBe(201);
-
-  const workspaceId = (ws.body as Array<{ id: string }>)[0]?.id;
-  expect(workspaceId, "no workspace id returned").toBeTruthy();
-
-  const mem = await restInsert(
-    "memberships",
-    {
-      workspace_id: workspaceId,
-      user_id: sub,
-      role: "founder",
-      title: "Founder",
-      color: "#7C6AF7",
-      status: "active",
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/create_workspace`, {
+    method: "POST",
+    headers: {
+      apikey: ANON_KEY,
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
+    body: JSON.stringify({ p_name: "Diag Co", p_color: "#7C6AF7" }),
+  });
+  const text = await res.text();
+  // eslint-disable-next-line no-console
+  console.log("RPC create_workspace →", res.status, text);
+  expect(res.status, `create_workspace failed: ${text}`).toBe(200);
+
+  const workspaceId = JSON.parse(text) as string;
+  expect(workspaceId, "no workspace id returned").toMatch(/^[0-9a-f-]{36}$/);
+
+  // The founder membership must exist and be readable by the creator (memberships_select
+  // allows user_id = auth.uid()).
+  const memberships = await restGet(
+    `memberships?workspace_id=eq.${workspaceId}&select=role,status,user_id`,
     token,
   );
-  // eslint-disable-next-line no-console
-  console.log("MEMBERSHIP INSERT →", mem.status, JSON.stringify(mem.body));
-  expect(
-    mem.status,
-    `membership insert failed: ${JSON.stringify(mem.body)}`,
-  ).toBe(201);
+  expect(memberships.status).toBe(200);
+  expect(memberships.body).toEqual([
+    { role: "founder", status: "active", user_id: sub },
+  ]);
 });

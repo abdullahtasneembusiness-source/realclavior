@@ -38,35 +38,20 @@ export async function createWorkspace(
     redirect("/login");
   }
 
-  const { data: workspace, error: workspaceError } = await supabase
-    .from("workspaces")
-    .insert({ name: parsed.data, owner_id: user.id })
-    .select("id")
-    .single();
+  // Create the workspace and the founder membership in one atomic, RLS-safe call
+  // (see the create_workspace SECURITY DEFINER function). This can't leave a
+  // workspace stranded without its founder row, and it doesn't depend on the
+  // membership-bootstrap RLS path.
+  const { data: workspaceId, error } = await supabase.rpc("create_workspace", {
+    p_name: parsed.data,
+    p_color: pickMemberColor(user.email ?? user.id),
+  });
 
-  if (workspaceError || !workspace) {
+  if (error || !workspaceId) {
     return {
       error: "We couldn't create your workspace. Please try again in a moment.",
     };
   }
 
-  const { error: membershipError } = await supabase.from("memberships").insert({
-    workspace_id: workspace.id,
-    user_id: user.id,
-    role: "founder",
-    title: "Founder",
-    color: pickMemberColor(user.email ?? user.id),
-    status: "active",
-  });
-
-  if (membershipError) {
-    // The workspace exists but has no founder row — surface it rather than
-    // stranding the user in a half-created state.
-    return {
-      error:
-        "Your workspace was created but we couldn't finish setting you up. Please refresh.",
-    };
-  }
-
-  redirect(`/w/${workspace.id}`);
+  redirect(`/w/${workspaceId}`);
 }
