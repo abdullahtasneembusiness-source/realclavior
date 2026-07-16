@@ -41,7 +41,16 @@ test("REST: a signed-in user can create a workspace + founder membership via RPC
     `memberships?workspace_id=eq.${workspaceId}&select=role,status,user_id`,
     token,
   );
-  expect(memberships.status).toBe(200);
+  // eslint-disable-next-line no-console
+  console.log(
+    "MEMBERSHIPS READ →",
+    memberships.status,
+    JSON.stringify(memberships.body),
+  );
+  expect(
+    memberships.status,
+    `membership read failed: ${JSON.stringify(memberships.body)}`,
+  ).toBe(200);
   expect(memberships.body).toEqual([
     { role: "founder", status: "active", user_id: sub },
   ]);
