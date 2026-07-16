@@ -56,7 +56,10 @@ test("hand off a playbook, operator runs and submits it, founder approves", asyn
 
   // Hand it off to the operator (who does NOT own the playbook — the RLS path that
   // matters most).
-  await page.getByLabel("Who runs it").selectOption({ label: "Runner" });
+  // exact: the meta form above also has an "Owner (who runs it)" select.
+  await page
+    .getByLabel("Who runs it", { exact: true })
+    .selectOption({ label: "Runner" });
   await page.getByTestId("hand-off-submit").click();
   await expect(page.getByTestId("hand-off-success")).toBeVisible();
 
