@@ -37,11 +37,7 @@ export interface MembershipWithWorkspace extends Membership {
 
 export type PlaybookStatus = "active" | "paused" | "archived";
 export type PlaybookSchedule =
-  | "none"
-  | "daily"
-  | "weekly"
-  | "monthly"
-  | "custom_rrule";
+  "none" | "daily" | "weekly" | "monthly" | "custom_rrule";
 
 export interface Playbook {
   id: string;
@@ -74,4 +70,49 @@ export interface PlaybookSummary extends Playbook {
   stepCount: number;
   ownerName: string | null;
   ownerColor: string | null;
+}
+
+export type RunStatus =
+  | "queued"
+  | "in_progress"
+  | "submitted"
+  | "approved"
+  | "changes_requested"
+  | "done";
+
+export interface Run {
+  id: string;
+  playbook_id: string;
+  membership_id: string;
+  title: string | null;
+  due_at: string | null;
+  status: RunStatus;
+  started_at: string | null;
+  submitted_at: string | null;
+  completed_at: string | null;
+  created_at: string;
+}
+
+export interface RunStep {
+  id: string;
+  run_id: string;
+  playbook_step_id: string;
+  position: number;
+  title: string;
+  detail: string | null;
+  link_url: string | null;
+  requires_proof: boolean;
+  done: boolean;
+  done_at: string | null;
+  proof_url: string | null;
+  note: string | null;
+}
+
+/** A run plus derived display data for the operator's list. */
+export interface RunSummary extends Run {
+  playbookName: string;
+  totalSteps: number;
+  doneSteps: number;
+  assigneeName: string | null;
+  assigneeColor: string | null;
 }

@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { ArrowRight, LayoutDashboard, ListChecks, Users } from "lucide-react";
+import { ArrowRight, LayoutDashboard, Users } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ComingSoon } from "@/components/shell/coming-soon";
 import { requireWorkspaceContext } from "@/lib/workspace";
+import { MyRuns } from "./runs/my-runs";
 
 export default async function WorkspaceHome({
   params,
@@ -23,14 +24,12 @@ export default async function WorkspaceHome({
             My Playbooks
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Your assigned work will show up here, ready to run.
+            Everything handed to you, ready to run.
           </p>
         </div>
-        <ComingSoon
-          icon={ListChecks}
-          title="Nothing handed to you yet"
-          description="Once your team hands you a playbook, it'll appear here as a checklist — ready to run, mobile-friendly, fast even on a weak connection."
-          phase="Coming in the next build"
+        <MyRuns
+          workspaceId={ctx.workspace.id}
+          membershipId={ctx.membership.id}
         />
       </div>
     );

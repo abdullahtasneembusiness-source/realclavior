@@ -8,6 +8,7 @@ import type { Membership, Playbook, PlaybookStep } from "@/types/db";
 import { PlaybookMetaForm } from "./playbook-meta-form";
 import { StepsEditor } from "./steps-editor";
 import { PlaybookStatusMenu } from "./playbook-status-menu";
+import { HandOff } from "./hand-off";
 
 export interface OwnerOption {
   id: string;
@@ -101,6 +102,14 @@ export default async function PlaybookEditorPage({
         workspaceId={ctx.workspace.id}
         playbookId={playbook.id}
         steps={steps}
+      />
+
+      <HandOff
+        workspaceId={ctx.workspace.id}
+        playbookId={playbook.id}
+        owners={owners}
+        defaultOwnerId={playbook.owner_membership_id}
+        hasSteps={steps.length > 0}
       />
     </div>
   );
