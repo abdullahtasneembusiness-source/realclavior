@@ -1,4 +1,4 @@
-import { test, expect, devices } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 import { signInAs, testEmail } from "./helpers";
 
 test.describe("desktop viewport", () => {
@@ -17,7 +17,12 @@ test.describe("desktop viewport", () => {
 });
 
 test.describe("mobile viewport", () => {
-  test.use({ ...devices["iPhone 13"] });
+  // A plain viewport override, not a devices["iPhone 13"] preset: that preset sets a
+  // worker-level defaultBrowserType (webkit), which Playwright rejects inside a
+  // describe-scoped test.use(), and we only install/run chromium in CI anyway. Our
+  // shell's responsive behavior is a pure CSS width breakpoint (Tailwind `lg:`), so
+  // viewport width alone is what matters here.
+  test.use({ viewport: { width: 390, height: 844 } });
 
   test("admin gets a hamburger drawer that opens, navigates, and closes", async ({
     page,
