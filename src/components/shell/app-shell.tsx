@@ -1,3 +1,5 @@
+"use client";
+
 import { ADMIN_NAV, OPERATOR_NAV } from "./nav-config";
 import { SidebarContent } from "./sidebar-content";
 import { MobileHeader } from "./mobile-header";
@@ -6,6 +8,16 @@ import { BottomTabBar } from "./bottom-tab-bar";
 import { cn } from "@/lib/utils";
 import type { ActiveContext } from "@/lib/workspace";
 
+/**
+ * The shell is a Client Component on purpose. Its nav config (nav-config.ts) carries
+ * non-serializable values — an `href(id)` builder and Lucide `icon` components — and
+ * those get handed down to the interactive nav (MobileHeader / NavLink / BottomTabBar).
+ * A Server Component may not pass functions across the server→client boundary, so if
+ * the shell rendered on the server every workspace route would 500. Keeping the shell
+ * itself on the client means nav-config only ever moves client→client; the server
+ * layout still passes the serializable `ctx` and the server-rendered `children` in the
+ * normal supported way.
+ */
 export function AppShell({
   ctx,
   children,
