@@ -302,16 +302,50 @@ export async function approveRun(
   return { success: "Approved." };
 }
 
-/** Admin sends a submitted run back for changes. */
+const requestChangesSchema = z.object({
+  comment: z
+    .string()
+    .trim()
+    .min(2, "Tell them what needs to change.")
+    .max(2000, "That's a bit long — keep it tight."),
+  saveToMemory: z.boolean(),
+});
+
+/**
+ * Admin sends a submitted run back with a correction — and, by default, saves that
+ * correction to Feedback Memory as a standing note on the playbook (run_id null) so it
+ * resurfaces before every future run. Unchecked, the note is tied to just this run
+ * (run_id set), so the operator still sees it on the run they're fixing without it
+ * becoming permanent. This is the core interaction of the whole product.
+ */
 export async function requestChangesRun(
   workspaceId: string,
   runId: string,
+  _prev: RunState,
+  formData: FormData,
 ): Promise<RunState> {
   const parsedWs = idSchema.safeParse(workspaceId);
   const parsedRun = idSchema.safeParse(runId);
   if (!parsedWs.success || !parsedRun.success) return { error: "Invalid run." };
 
+  const parsed = requestChangesSchema.safeParse({
+    comment: formData.get("comment"),
+    saveToMemory: formData.get("saveToMemory") === "on",
+  });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid input." };
+  }
+  const { comment, saveToMemory } = parsed.data;
+
   const supabase = await createClient();
+
+  const { data: run } = await supabase
+    .from("runs")
+    .select("playbook_id")
+    .eq("id", parsedRun.data)
+    .maybeSingle();
+  if (!run) return { error: "That run no longer exists." };
+
   const { error } = await supabase
     .from("runs")
     .update({ status: "changes_requested" })
@@ -321,6 +355,43 @@ export async function requestChangesRun(
   if (error)
     return { error: mapWriteError(error.code, "Couldn't update the run.") };
 
+  // Resolve the reviewer's membership so the note has an author (NOT NULL column).
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { data: me } = user
+    ? await supabase
+        .from("memberships")
+        .select("id")
+        .eq("workspace_id", parsedWs.data)
+        .eq("user_id", user.id)
+        .eq("status", "active")
+        .maybeSingle()
+    : { data: null };
+  if (!me) {
+    return { error: "Your session expired. Please sign in again." };
+  }
+
+  const { error: noteError } = await supabase.from("feedback_notes").insert({
+    playbook_id: run.playbook_id,
+    // Standing note (all future runs) vs. tied to just this run.
+    run_id: saveToMemory ? null : parsedRun.data,
+    author_membership_id: me.id,
+    body: comment,
+    resolved: false,
+  });
+  if (noteError) {
+    return {
+      error: mapWriteError(noteError.code, "Couldn't save your feedback."),
+    };
+  }
+
+  await logActivity(supabase, {
+    workspaceId,
+    verb: "added_note",
+    targetType: "playbook",
+    targetId: run.playbook_id,
+  });
   await logActivity(supabase, {
     workspaceId,
     verb: "requested_changes",
@@ -329,5 +400,9 @@ export async function requestChangesRun(
   });
   revalidatePath(`/w/${workspaceId}/runs/${runId}`);
   revalidatePath(`/w/${workspaceId}`);
-  return { success: "Sent back for changes." };
+  return {
+    success: saveToMemory
+      ? "Sent back — and saved to Feedback Memory."
+      : "Sent back for changes.",
+  };
 }

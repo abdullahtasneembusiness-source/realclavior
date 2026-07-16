@@ -135,3 +135,15 @@ export interface Activity {
   target_id: string;
   created_at: string;
 }
+
+export interface FeedbackNote {
+  id: string;
+  playbook_id: string;
+  /** null = a standing note shown on every run; set = tied to one run only. */
+  run_id: string | null;
+  author_membership_id: string;
+  body: string;
+  pinned: boolean;
+  resolved: boolean;
+  created_at: string;
+}

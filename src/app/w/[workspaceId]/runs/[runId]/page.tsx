@@ -5,10 +5,11 @@ import { ArrowLeft, CalendarClock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { requireWorkspaceContext, isAdminRole } from "@/lib/workspace";
 import { createClient } from "@/lib/supabase/server";
-import type { Membership, Run, RunStep } from "@/types/db";
+import type { FeedbackNote, Membership, Run, RunStep } from "@/types/db";
 import { formatDue, runStatusBadge } from "../run-format";
 import { RunChecklist } from "./run-checklist";
 import { RunActions } from "./run-actions";
+import { FeedbackPanel } from "./feedback-panel";
 
 export default async function RunPage({
   params,
@@ -34,6 +35,18 @@ export default async function RunPage({
     .eq("run_id", run.id)
     .order("position", { ascending: true });
   const steps = (stepRows ?? []) as RunStep[];
+
+  // Feedback Memory: standing notes (run_id null) plus any tied to this run, still
+  // unresolved. This is what the amber "Before you start" panel renders.
+  const { data: noteRows } = await supabase
+    .from("feedback_notes")
+    .select("*")
+    .eq("playbook_id", run.playbook_id)
+    .eq("resolved", false)
+    .or(`run_id.is.null,run_id.eq.${run.id}`)
+    .order("pinned", { ascending: false })
+    .order("created_at", { ascending: false });
+  const notes = (noteRows ?? []) as FeedbackNote[];
 
   const isAdmin = isAdminRole(ctx.membership.role);
   const isAssignee = run.membership_id === ctx.membership.id;
@@ -102,9 +115,12 @@ export default async function RunPage({
             isAssignee={isAssignee}
             canStart={canStart}
             runnable={runnable}
+            hasDistiller={!!process.env.ANTHROPIC_API_KEY}
           />
         </div>
       </div>
+
+      <FeedbackPanel notes={notes} />
 
       <RunChecklist
         workspaceId={ctx.workspace.id}

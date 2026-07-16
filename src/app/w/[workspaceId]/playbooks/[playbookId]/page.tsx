@@ -5,10 +5,12 @@ import { ArrowLeft } from "lucide-react";
 import { requireAdmin, requireWorkspaceContext } from "@/lib/workspace";
 import { createClient } from "@/lib/supabase/server";
 import type { Membership, Playbook, PlaybookStep } from "@/types/db";
+import type { FeedbackNote } from "@/types/db";
 import { PlaybookMetaForm } from "./playbook-meta-form";
 import { StepsEditor } from "./steps-editor";
 import { PlaybookStatusMenu } from "./playbook-status-menu";
 import { HandOff } from "./hand-off";
+import { FeedbackMemory } from "./feedback-memory";
 
 export interface OwnerOption {
   id: string;
@@ -40,21 +42,30 @@ export default async function PlaybookEditorPage({
     redirect(`/w/${ctx.workspace.id}/playbooks`);
   }
 
-  const [{ data: stepRows }, { data: memberRows }] = await Promise.all([
-    supabase
-      .from("playbook_steps")
-      .select("*")
-      .eq("playbook_id", playbook.id)
-      .order("position", { ascending: true }),
-    supabase
-      .from("memberships")
-      .select("id, title, color, invited_email")
-      .eq("workspace_id", ctx.workspace.id)
-      .eq("status", "active")
-      .order("created_at", { ascending: true }),
-  ]);
+  const [{ data: stepRows }, { data: memberRows }, { data: noteRows }] =
+    await Promise.all([
+      supabase
+        .from("playbook_steps")
+        .select("*")
+        .eq("playbook_id", playbook.id)
+        .order("position", { ascending: true }),
+      supabase
+        .from("memberships")
+        .select("id, title, color, invited_email")
+        .eq("workspace_id", ctx.workspace.id)
+        .eq("status", "active")
+        .order("created_at", { ascending: true }),
+      supabase
+        .from("feedback_notes")
+        .select("*")
+        .eq("playbook_id", playbook.id)
+        .eq("resolved", false)
+        .order("pinned", { ascending: false })
+        .order("created_at", { ascending: false }),
+    ]);
 
   const steps = (stepRows ?? []) as PlaybookStep[];
+  const notes = (noteRows ?? []) as FeedbackNote[];
   const members = (memberRows ?? []) as Pick<
     Membership,
     "id" | "title" | "color" | "invited_email"
@@ -102,6 +113,12 @@ export default async function PlaybookEditorPage({
         workspaceId={ctx.workspace.id}
         playbookId={playbook.id}
         steps={steps}
+      />
+
+      <FeedbackMemory
+        workspaceId={ctx.workspace.id}
+        playbookId={playbook.id}
+        notes={notes}
       />
 
       <HandOff

@@ -1,17 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Check, Loader2, Play, RotateCcw, Send } from "lucide-react";
+import { Check, Loader2, Play, Send } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  approveRun,
-  requestChangesRun,
-  startRun,
-  submitRun,
-  type RunState,
-} from "../actions";
+import { approveRun, startRun, submitRun, type RunState } from "../actions";
 import type { RunStatus } from "@/types/db";
+import { RequestChangesDialog } from "./request-changes-dialog";
 
 export function RunActions({
   workspaceId,
@@ -21,6 +16,7 @@ export function RunActions({
   isAssignee,
   canStart,
   runnable,
+  hasDistiller,
 }: {
   workspaceId: string;
   runId: string;
@@ -29,6 +25,7 @@ export function RunActions({
   isAssignee: boolean;
   canStart: boolean;
   runnable: boolean;
+  hasDistiller: boolean;
 }) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -68,14 +65,11 @@ export function RunActions({
 
         {status === "submitted" && isAdmin ? (
           <>
-            <Button
-              variant="outline"
-              disabled={isPending}
-              data-testid="run-request-changes"
-              onClick={() => run(() => requestChangesRun(workspaceId, runId))}
-            >
-              {spinner ?? <RotateCcw />} Request changes
-            </Button>
+            <RequestChangesDialog
+              workspaceId={workspaceId}
+              runId={runId}
+              hasDistiller={hasDistiller}
+            />
             <Button
               disabled={isPending}
               data-testid="run-approve"
