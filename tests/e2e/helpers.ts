@@ -41,9 +41,23 @@ export async function signInAs(page: Page, email: string): Promise<void> {
   callback.searchParams.set("token_hash", data.properties.hashed_token);
   callback.searchParams.set("type", "magiclink");
   await page.goto(callback.toString());
-  // Land on the post-auth destination (onboarding, a workspace, or the error page)
-  // before the test proceeds.
+  // Land on the post-auth destination (onboarding, a workspace, /login, or the error
+  // page) before the test proceeds.
   await page.waitForURL((url) => !url.pathname.startsWith("/auth/callback"));
+
+  // Surface the real reason if the callback didn't establish a session, instead of
+  // letting the test die later with a generic "getByLabel timed out".
+  const landed = new URL(page.url());
+  if (landed.pathname.startsWith("/auth/auth-code-error")) {
+    throw new Error(
+      `signInAs(${email}): callback failed — ${landed.searchParams.get("reason") ?? "unknown"}`,
+    );
+  }
+  if (landed.pathname === "/login") {
+    throw new Error(
+      `signInAs(${email}): session did not persist — landed on /login`,
+    );
+  }
 }
 
 /** A signed-in access token for `email`, without a browser — for direct REST/RLS checks. */
