@@ -116,3 +116,22 @@ export interface RunSummary extends Run {
   assigneeName: string | null;
   assigneeColor: string | null;
 }
+
+export type ActivityVerb =
+  | "started"
+  | "completed_step"
+  | "submitted"
+  | "approved"
+  | "requested_changes"
+  | "added_note"
+  | "launched";
+
+export interface Activity {
+  id: string;
+  workspace_id: string;
+  membership_id: string | null;
+  verb: ActivityVerb;
+  target_type: string;
+  target_id: string;
+  created_at: string;
+}

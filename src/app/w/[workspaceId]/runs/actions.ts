@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
+import { logActivity } from "@/lib/activity";
 import type { PlaybookStep } from "@/types/db";
 
 export type RunState = { error?: string; success?: string };
@@ -148,6 +149,12 @@ export async function startRun(
   if (error)
     return { error: mapWriteError(error.code, "Couldn't start the run.") };
 
+  await logActivity(supabase, {
+    workspaceId,
+    verb: "started",
+    targetType: "run",
+    targetId: parsedRun.data,
+  });
   revalidatePath(`/w/${workspaceId}/runs/${runId}`);
   revalidatePath(`/w/${workspaceId}`);
   return { success: "Started." };
@@ -254,6 +261,12 @@ export async function submitRun(
   if (error)
     return { error: mapWriteError(error.code, "Couldn't submit the run.") };
 
+  await logActivity(supabase, {
+    workspaceId,
+    verb: "submitted",
+    targetType: "run",
+    targetId: parsedRun.data,
+  });
   revalidatePath(`/w/${workspaceId}/runs/${runId}`);
   revalidatePath(`/w/${workspaceId}`);
   return { success: "Submitted for review." };
@@ -278,7 +291,14 @@ export async function approveRun(
   if (error)
     return { error: mapWriteError(error.code, "Couldn't approve the run.") };
 
+  await logActivity(supabase, {
+    workspaceId,
+    verb: "approved",
+    targetType: "run",
+    targetId: parsedRun.data,
+  });
   revalidatePath(`/w/${workspaceId}/runs/${runId}`);
+  revalidatePath(`/w/${workspaceId}`);
   return { success: "Approved." };
 }
 
@@ -301,6 +321,13 @@ export async function requestChangesRun(
   if (error)
     return { error: mapWriteError(error.code, "Couldn't update the run.") };
 
+  await logActivity(supabase, {
+    workspaceId,
+    verb: "requested_changes",
+    targetType: "run",
+    targetId: parsedRun.data,
+  });
   revalidatePath(`/w/${workspaceId}/runs/${runId}`);
+  revalidatePath(`/w/${workspaceId}`);
   return { success: "Sent back for changes." };
 }
