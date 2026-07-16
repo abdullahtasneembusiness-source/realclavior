@@ -102,8 +102,15 @@ test("founder can promote an operator to manager, and it takes effect", async ({
   await page.reload();
   const activeRow = page.getByTestId(`member-row-${operatorEmail}`);
   await activeRow.getByRole("button", { name: "Member actions" }).click();
-  await page.getByText("Change role").click();
+  // Hover the submenu trigger to open it (Radix opens sub-content on hover), then
+  // pick Manager.
+  await page.getByRole("menuitem", { name: "Change role" }).hover();
   await page.getByRole("menuitem", { name: "Manager" }).click();
+
+  // Wait for the change to actually commit + revalidate (the role badge flips to
+  // Manager) before signing in as the promoted member — otherwise the next sign-in
+  // can race ahead of the server action and still see the old role.
+  await expect(activeRow.getByText("Manager")).toBeVisible();
 
   // Sign back in as that member — they should now get the full admin shell.
   const promotedContext = await browser.newContext();
