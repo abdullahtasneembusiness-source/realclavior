@@ -139,3 +139,89 @@ test("hand a playbook to an operator: details save, list reflects it, then pause
     "Paused",
   );
 });
+
+test("a step's proof flag and link persist across a reload", async ({
+  page,
+}) => {
+  await signInAs(page, testEmail("founder"));
+  const workspaceId = await createWorkspace(page, "Proof Co");
+
+  await page.goto(`/w/${workspaceId}/playbooks`);
+  await page.getByTestId("new-playbook-trigger").click();
+  await page.getByLabel("Name").fill("Ship a release");
+  await page.getByRole("button", { name: "Create playbook" }).click();
+  await expect(page).toHaveURL(
+    new RegExp(`/w/${workspaceId}/playbooks/[0-9a-f-]+$`),
+  );
+
+  // Add a step that requires proof and carries a reference link.
+  await page.locator("#add-step-title").fill("Upload the final build");
+  await page.locator("#add-step-link").fill("https://example.com/guide");
+  await page.locator("#add-step-proof").check();
+  await page.getByTestId("add-step-submit").click();
+
+  const row = page
+    .locator(stepRows)
+    .filter({ hasText: "Upload the final build" });
+  await expect(row).toBeVisible();
+  await expect(row.getByText("Proof")).toBeVisible();
+  await expect(
+    row.getByRole("link", { name: /example\.com\/guide/ }),
+  ).toBeVisible();
+
+  // The whole point of a playbook is that it stays put — reload and re-check.
+  await page.reload();
+  const reloaded = page
+    .locator(stepRows)
+    .filter({ hasText: "Upload the final build" });
+  await expect(reloaded.getByText("Proof")).toBeVisible();
+  await expect(
+    reloaded.getByRole("link", { name: /example\.com\/guide/ }),
+  ).toBeVisible();
+});
+
+test("validation blocks bad input, and archiving removes the playbook", async ({
+  page,
+}) => {
+  await signInAs(page, testEmail("founder"));
+  const workspaceId = await createWorkspace(page, "Validation Co");
+
+  await page.goto(`/w/${workspaceId}/playbooks`);
+
+  // A too-short name is rejected server-side; the dialog stays open with the error.
+  await page.getByTestId("new-playbook-trigger").click();
+  await page.getByLabel("Name").fill("a");
+  await page.getByRole("button", { name: "Create playbook" }).click();
+  await expect(
+    page.getByText("Give your playbook a name (at least 2 characters)."),
+  ).toBeVisible();
+  await expect(page).toHaveURL(new RegExp(`/w/${workspaceId}/playbooks$`));
+
+  // Fix it and land in the editor.
+  await page.getByLabel("Name").fill("Onboarding flow");
+  await page.getByRole("button", { name: "Create playbook" }).click();
+  await expect(page).toHaveURL(
+    new RegExp(`/w/${workspaceId}/playbooks/[0-9a-f-]+$`),
+  );
+
+  // A malformed link is rejected and no step is created.
+  await page.locator("#add-step-title").fill("Send the welcome email");
+  await page.locator("#add-step-link").fill("notaurl");
+  await page.getByTestId("add-step-submit").click();
+  await expect(page.getByText(/valid URL/)).toBeVisible();
+  await expect(page.getByTestId("step-count")).toHaveText("0 steps");
+
+  // Clearing the bad link lets the same step save.
+  await page.locator("#add-step-link").fill("");
+  await page.getByTestId("add-step-submit").click();
+  await expect(page.getByTestId("step-count")).toHaveText("1 step");
+
+  // Archiving sends us back to the list, where the playbook is gone.
+  await page.getByTestId("playbook-status-trigger").click();
+  await page.getByRole("menuitem", { name: "Archive playbook" }).click();
+  await expect(page).toHaveURL(new RegExp(`/w/${workspaceId}/playbooks$`));
+  await expect(page.getByText("Onboarding flow")).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", { name: "Build your first playbook" }),
+  ).toBeVisible();
+});
