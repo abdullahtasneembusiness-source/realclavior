@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import type { EmailOtpType } from "@supabase/supabase-js";
 import type { Page } from "@playwright/test";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -18,31 +19,68 @@ export function testEmail(label: string): string {
 }
 
 /**
- * Signs a Playwright page in as `email` without needing a real inbox — generates a
- * magic link via the Auth Admin API (only reachable because this runs against a
- * local/test Supabase instance with real network access, unlike the sandbox this was
- * developed in) and drives the browser through the real /auth/callback route.
+ * Ensures a confirmed auth user exists for `email`, then generates a magic-link
+ * token for them and returns the token_hash + the verification type GoTrue actually
+ * assigned.
  *
- * We hit the callback with token_hash + type rather than navigating the raw GoTrue
- * action_link: the action_link uses the PKCE code flow, which needs a code-verifier
- * cookie that only exists if signInWithOtp ran in this same browser first. The
- * token_hash / verifyOtp path (which the callback now supports) needs no verifier,
- * so it works from a fresh browser context — exactly what these tests use.
+ * Both details matter, and getting them wrong is what made earlier CI runs fail with
+ * "Email link is invalid or has expired":
+ *  - Pre-creating a *confirmed* user means generateLink issues a plain magic-link
+ *    token, not a signup-confirmation token for an unconfirmed new user.
+ *  - Verifying with the returned `verification_type` (rather than a hardcoded
+ *    "magiclink") guarantees the type matches what GoTrue stored, so verifyOtp finds
+ *    the token.
  */
-export async function signInAs(page: Page, email: string): Promise<void> {
+async function prepareMagicVerification(
+  email: string,
+): Promise<{ tokenHash: string; type: EmailOtpType }> {
   const admin = adminClient();
+
+  // Idempotent: a second sign-in for the same email (e.g. an operator accepting an
+  // invite, then signing in again after promotion) will hit "already registered",
+  // which is fine — we just need the user to exist and be confirmed.
+  const { error: createError } = await admin.auth.admin.createUser({
+    email,
+    email_confirm: true,
+  });
+  if (
+    createError &&
+    !/already.*registered|already been registered|already exists/i.test(
+      createError.message,
+    )
+  ) {
+    throw new Error(`createUser(${email}): ${createError.message}`);
+  }
+
   const { data, error } = await admin.auth.admin.generateLink({
     type: "magiclink",
     email,
   });
   if (error) throw new Error(`generateLink(${email}): ${error.message}`);
 
+  return {
+    tokenHash: data.properties.hashed_token,
+    type: data.properties.verification_type as EmailOtpType,
+  };
+}
+
+/**
+ * Signs a Playwright page in as `email` without needing a real inbox, driving the
+ * browser through the real /auth/callback route (so accept_pending_invites and the
+ * post-auth routing all run exactly as in production).
+ *
+ * We hit the callback with token_hash + type rather than the raw GoTrue action_link:
+ * the action_link uses the PKCE code flow, which needs a code-verifier cookie that
+ * only exists if signInWithOtp ran in this same browser first. The token_hash /
+ * verifyOtp path needs no verifier, so it works from a fresh browser context.
+ */
+export async function signInAs(page: Page, email: string): Promise<void> {
+  const { tokenHash, type } = await prepareMagicVerification(email);
+
   const callback = new URL(`${SITE_URL}/auth/callback`);
-  callback.searchParams.set("token_hash", data.properties.hashed_token);
-  callback.searchParams.set("type", "magiclink");
+  callback.searchParams.set("token_hash", tokenHash);
+  callback.searchParams.set("type", type);
   await page.goto(callback.toString());
-  // Land on the post-auth destination (onboarding, a workspace, /login, or the error
-  // page) before the test proceeds.
   await page.waitForURL((url) => !url.pathname.startsWith("/auth/callback"));
 
   // Surface the real reason if the callback didn't establish a session, instead of
@@ -62,19 +100,14 @@ export async function signInAs(page: Page, email: string): Promise<void> {
 
 /** A signed-in access token for `email`, without a browser — for direct REST/RLS checks. */
 export async function getAccessToken(email: string): Promise<string> {
-  const admin = adminClient();
-  const { data, error } = await admin.auth.admin.generateLink({
-    type: "magiclink",
-    email,
-  });
-  if (error) throw new Error(`generateLink(${email}): ${error.message}`);
+  const { tokenHash, type } = await prepareMagicVerification(email);
 
   const anon = createClient(SUPABASE_URL, ANON_KEY, {
     auth: { autoRefreshToken: false, persistSession: false },
   });
   const { data: verified, error: verifyError } = await anon.auth.verifyOtp({
-    type: "magiclink",
-    token_hash: data.properties.hashed_token,
+    type,
+    token_hash: tokenHash,
   });
   if (verifyError || !verified.session) {
     throw new Error(
