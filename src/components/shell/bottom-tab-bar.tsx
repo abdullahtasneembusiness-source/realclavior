@@ -18,7 +18,10 @@ export function BottomTabBar({
   const base = `/w/${workspaceId}`;
 
   return (
-    <nav className="bg-background/95 fixed inset-x-0 bottom-0 z-20 flex h-16 items-stretch border-t border-border pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden">
+    <nav
+      data-testid="bottom-tab-bar"
+      className="bg-background/95 fixed inset-x-0 bottom-0 z-20 flex h-16 items-stretch border-t border-border pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
+    >
       {navItems.map((item) => {
         const target = item.segment ? `${base}/${item.segment}` : base;
         const active =

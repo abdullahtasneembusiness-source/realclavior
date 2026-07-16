@@ -61,6 +61,7 @@ export default async function TeamPage({
             return (
               <div
                 key={m.id}
+                data-testid={`member-row-${m.invited_email ?? "self"}`}
                 className="flex items-center justify-between gap-4 px-4 py-3"
               >
                 <div className="flex items-center gap-3">
@@ -110,6 +111,7 @@ export default async function TeamPage({
             {pending.map((m) => (
               <div
                 key={m.id}
+                data-testid={`member-row-${m.invited_email ?? "self"}`}
                 className="flex items-center justify-between gap-4 px-4 py-3"
               >
                 <div className="flex items-center gap-3">

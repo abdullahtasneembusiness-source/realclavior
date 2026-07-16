@@ -21,7 +21,10 @@ export function AppShell({
 
   return (
     <div className="flex min-h-screen">
-      <aside className="sticky top-0 hidden h-screen w-60 shrink-0 border-r border-border lg:flex lg:flex-col">
+      <aside
+        data-testid="desktop-sidebar"
+        className="sticky top-0 hidden h-screen w-60 shrink-0 border-r border-border lg:flex lg:flex-col"
+      >
         <SidebarContent
           workspaceId={ctx.workspace.id}
           workspace={ctx.workspace}

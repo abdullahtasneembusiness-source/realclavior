@@ -42,3 +42,26 @@ Not tested from this session (needs a real browser + real email or Google accoun
 No new auth/RLS surface beyond the avatar-color fix above (verified the same way as Session 1: SQL-level JWT impersonation via the Supabase MCP connector once it's reachable — pending as of this commit, connector was intermittently disconnected during this session). Verified directly in this sandbox: production build is clean (`npm run build`, strict TS, zero `any`), `next lint` clean, Prettier formatted, and middleware correctly redirects unauthenticated requests to `/login` for every new `/w/[workspaceId]/*` route including nonexistent workspace ids. Also confirmed the dynamically-selected Tailwind accent classes in `ComingSoon` actually compile into the CSS output (a common gotcha with lookup-object class patterns).
 
 Not verified from this session (same network-policy constraint as Session 1 — needs a real browser session): the actual sidebar/drawer/bottom-tab-bar rendering, the workspace switcher with 2+ workspaces, and the full invite → change-role → resend-invite click-through. Worth a manual pass once you're testing locally or the network policy is open.
+
+## Hardening pass — CI + real browser E2E tests
+
+Prompted by a direct question: are the foundations actually strong, or does this have the usual vibecoded gaps (no tests, nothing verified beyond "it compiles")? Honest answer at the time: RLS was genuinely verified via JWT impersonation, but every UI claim rested on "it builds and returns the right status code" — nobody, including me, had ever seen it render in a real browser with a real logged-in user.
+
+**The blocker and the fix.** This dev sandbox's network policy blocks direct HTTPS to `supabase.co` (confirmed repeatedly across both sessions) and, it turns out, also blocks Docker image pulls (`docker pull hello-world` → 403 from the same egress policy) — so neither "hit the real cloud project" nor "run a local Supabase stack via Docker" works *from inside this sandbox*. GitHub Actions runners are a completely different environment with unrestricted internet access. So: a CI pipeline that spins up a disposable local Supabase stack (Postgres + GoTrue + PostgREST via `supabase start`) and drives it with a real Chromium browser via Playwright works there, even though it's unrunnable here. This also fixes a foundational gap flagged separately — dev and prod had been the same database; now every test run gets a fresh, disposable one, torn down after.
+
+**What `.github/workflows/ci.yml` does:**
+- `checks` job: build + lint on every push, fast, no backend needed (nothing renders at build time that touches Supabase).
+- `e2e` job: `supabase start` (auto-applies every file in `supabase/migrations/` to a fresh local DB), exports its credentials, builds and starts the real Next.js production server, then runs the Playwright suite against it with a real Chromium instance.
+
+**What the E2E suite (`tests/e2e/`) actually proves, in a real browser, not simulated:**
+- Every protected route redirects a signed-out visitor to `/login` (`auth-and-onboarding.spec.ts`)
+- Magic-link sign-in → onboarding → workspace creation → lands on Command View with all 6 admin nav items actually rendered and clickable
+- Revisiting `/app` with an existing workspace redirects straight in (`getDefaultWorkspaceId` path)
+- An invited operator, signing in for the first time, gets auto-linked via `accept_pending_invites()` and sees the *2-item* sidebar, not the 6-item one — and typing `/team`, `/goals`, `/launches` directly bounces them home instead of erroring (`team-and-roles.spec.ts`)
+- Promoting an operator to manager takes effect on their next session — the sidebar grows the admin items
+- RLS isolation over the real HTTP path (anon key + PostgREST, not just SQL impersonation): an unrelated signed-in user reads zero rows from another workspace; a fully unauthenticated request reads zero rows (`rls-isolation.spec.ts`)
+- **The actual responsive behavior**, viewport-driven: desktop shows the sidebar and hides the mobile header; mobile shows a hamburger that opens a real drawer, lists real nav links, navigates, and closes; a mobile operator gets a bottom tab bar with no hamburger at all (`responsive-shell.spec.ts`)
+
+Added `data-testid` attributes to shell chrome (`desktop-sidebar`, `mobile-header`, `mobile-drawer`, `bottom-tab-bar`, `operator-mobile-header`, `member-row-{email}`) purely for test stability — the same nav links exist in both the desktop sidebar and mobile drawer DOM simultaneously (CSS-hidden, not removed), so text-only selectors would be ambiguous.
+
+**Honesty check on this pass itself:** I have not personally watched this CI run succeed yet — the sandbox that block direct network access is the same reason I can't run it here. The plan is to push, then use the GitHub API to watch the Actions run and iterate on any real failures until it's genuinely green, not just written and assumed correct. If the field names Supabase's `-o json` status output uses don't match what I assumed, that step will fail loudly and get fixed from real output, not guessed twice.

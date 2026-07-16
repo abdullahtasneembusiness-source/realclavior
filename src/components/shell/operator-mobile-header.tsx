@@ -28,7 +28,10 @@ export function OperatorMobileHeader({
   const router = useRouter();
 
   return (
-    <header className="bg-background/90 sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-border px-4 backdrop-blur lg:hidden">
+    <header
+      data-testid="operator-mobile-header"
+      className="bg-background/90 sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-border px-4 backdrop-blur lg:hidden"
+    >
       <span className="flex-1 truncate text-sm font-medium">
         {workspaceName}
       </span>

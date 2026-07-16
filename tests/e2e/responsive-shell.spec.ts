@@ -1,0 +1,88 @@
+import { test, expect, devices } from "@playwright/test";
+import { signInAs, testEmail } from "./helpers";
+
+test.describe("desktop viewport", () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+
+  test("admin sees the sidebar, not the mobile header", async ({ page }) => {
+    await signInAs(page, testEmail("founder"));
+    await page.getByLabel("Business name").fill("Desktop Co");
+    await page.getByRole("button", { name: "Create workspace" }).click();
+    await expect(page).toHaveURL(/\/w\/[0-9a-f-]+$/);
+
+    await expect(page.getByTestId("desktop-sidebar")).toBeVisible();
+    await expect(page.getByTestId("mobile-header")).toBeHidden();
+    await expect(page.getByTestId("bottom-tab-bar")).toHaveCount(0);
+  });
+});
+
+test.describe("mobile viewport", () => {
+  test.use({ ...devices["iPhone 13"] });
+
+  test("admin gets a hamburger drawer that opens, navigates, and closes", async ({
+    page,
+  }) => {
+    await signInAs(page, testEmail("founder"));
+    await page.getByLabel("Business name").fill("Mobile Admin Co");
+    await page.getByRole("button", { name: "Create workspace" }).click();
+    await expect(page).toHaveURL(/\/w\/[0-9a-f-]+$/);
+    const workspaceUrl = page.url();
+
+    await expect(page.getByTestId("desktop-sidebar")).toBeHidden();
+    await expect(page.getByTestId("mobile-header")).toBeVisible();
+    await expect(page.getByTestId("mobile-drawer")).not.toBeAttached();
+
+    await page.getByTestId("mobile-nav-trigger").click();
+    const drawer = page.getByTestId("mobile-drawer");
+    await expect(drawer).toBeVisible();
+    await expect(drawer.getByRole("link", { name: "Team" })).toBeVisible();
+
+    await drawer.getByRole("link", { name: "Team" }).click();
+    await expect(page).toHaveURL(new RegExp(`${workspaceUrl}/team$`));
+    await expect(drawer).not.toBeAttached();
+  });
+
+  test("operator gets a bottom tab bar and no drawer at all", async ({
+    page,
+    browser,
+  }) => {
+    const founderEmail = testEmail("founder");
+    const operatorEmail = testEmail("operator");
+
+    const desktopContext = await browser.newContext({
+      viewport: { width: 1280, height: 800 },
+    });
+    const desktopPage = await desktopContext.newPage();
+    await signInAs(desktopPage, founderEmail);
+    await desktopPage.getByLabel("Business name").fill("Mobile Operator Co");
+    await desktopPage.getByRole("button", { name: "Create workspace" }).click();
+    await expect(desktopPage).toHaveURL(/\/w\/[0-9a-f-]+$/);
+    const workspaceId = desktopPage.url().split("/w/")[1];
+
+    await desktopPage.goto(`/w/${workspaceId}/team`);
+    await desktopPage
+      .getByRole("button", { name: "Invite team member" })
+      .click();
+    await desktopPage.locator("#invite-email").fill(operatorEmail);
+    await desktopPage.locator("#invite-role").selectOption("operator");
+    await desktopPage.getByRole("button", { name: "Send invite" }).click();
+    await expect(desktopPage.getByText("Pending · 1")).toBeVisible();
+    await desktopContext.close();
+
+    await signInAs(page, operatorEmail);
+    await expect(page).toHaveURL(new RegExp(`/w/${workspaceId}$`));
+
+    await expect(page.getByTestId("bottom-tab-bar")).toBeVisible();
+    await expect(page.getByTestId("operator-mobile-header")).toBeVisible();
+    await expect(page.getByTestId("mobile-nav-trigger")).toHaveCount(0);
+
+    const tabBar = page.getByTestId("bottom-tab-bar");
+    await expect(
+      tabBar.getByRole("link", { name: "My Playbooks" }),
+    ).toBeVisible();
+    await expect(tabBar.getByRole("link", { name: "Brain" })).toBeVisible();
+
+    await tabBar.getByRole("link", { name: "Brain" }).click();
+    await expect(page).toHaveURL(new RegExp(`/w/${workspaceId}/brain$`));
+  });
+});

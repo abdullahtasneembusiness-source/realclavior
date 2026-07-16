@@ -41,14 +41,26 @@ export function MobileHeader({
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="bg-background/90 sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-border px-4 backdrop-blur lg:hidden">
+    <header
+      data-testid="mobile-header"
+      className="bg-background/90 sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-border px-4 backdrop-blur lg:hidden"
+    >
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" aria-label="Open navigation">
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Open navigation"
+            data-testid="mobile-nav-trigger"
+          >
             <Menu />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-72 p-0">
+        <SheetContent
+          side="left"
+          className="w-72 p-0"
+          data-testid="mobile-drawer"
+        >
           <SheetTitle className="sr-only">Navigation</SheetTitle>
           <SidebarContent
             workspaceId={workspaceId}
