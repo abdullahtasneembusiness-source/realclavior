@@ -34,8 +34,10 @@ test("creating a workspace lands on Command View with the full admin sidebar", a
   await expect(page).toHaveURL(/\/onboarding$/);
 
   await createWorkspace(page, "Acme Creator Co");
+  // A fresh founder lands on Command View (the admin home).
+  await expect(page.getByTestId("command-view")).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "Welcome to Acme Creator Co" }),
+    page.getByRole("heading", { name: "Command View" }),
   ).toBeVisible();
 
   const sidebar = page.getByTestId("desktop-sidebar");
