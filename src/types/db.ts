@@ -34,3 +34,44 @@ export interface Membership {
 export interface MembershipWithWorkspace extends Membership {
   workspace: Workspace;
 }
+
+export type PlaybookStatus = "active" | "paused" | "archived";
+export type PlaybookSchedule =
+  | "none"
+  | "daily"
+  | "weekly"
+  | "monthly"
+  | "custom_rrule";
+
+export interface Playbook {
+  id: string;
+  workspace_id: string;
+  name: string;
+  description: string | null;
+  owner_membership_id: string | null;
+  goal_id: string | null;
+  schedule: PlaybookSchedule;
+  schedule_rrule: string | null;
+  est_minutes: number | null;
+  status: PlaybookStatus;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PlaybookStep {
+  id: string;
+  playbook_id: string;
+  position: number;
+  title: string;
+  detail: string | null;
+  link_url: string | null;
+  requires_proof: boolean;
+  created_at: string;
+}
+
+/** A playbook plus the derived display data the list view needs. */
+export interface PlaybookSummary extends Playbook {
+  stepCount: number;
+  ownerName: string | null;
+  ownerColor: string | null;
+}

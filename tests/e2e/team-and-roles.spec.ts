@@ -64,6 +64,8 @@ test("operator sees the simplified shell and can't reach admin routes by URL", a
   // Typing an admin-only URL directly bounces them home, not to an error page.
   await operatorPage.goto(`/w/${workspaceId}/team`);
   await expect(operatorPage).toHaveURL(new RegExp(`/w/${workspaceId}$`));
+  await operatorPage.goto(`/w/${workspaceId}/playbooks`);
+  await expect(operatorPage).toHaveURL(new RegExp(`/w/${workspaceId}$`));
   await operatorPage.goto(`/w/${workspaceId}/goals`);
   await expect(operatorPage).toHaveURL(new RegExp(`/w/${workspaceId}$`));
   await operatorPage.goto(`/w/${workspaceId}/launches`);
