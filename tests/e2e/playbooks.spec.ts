@@ -130,8 +130,10 @@ test("hand a playbook to an operator: details save, list reflects it, then pause
   await expect(card).toContainText("Weekly");
   await expect(card).toContainText("Active");
 
-  // Pause it from the editor's status menu.
-  await page.getByText("Weekly newsletter").click();
+  // Pause it from the editor's status menu. Scope to the content region — the
+  // admin sidebar now lists recent playbooks by name too, so a bare getByText
+  // would match both the card and the sidebar shortcut.
+  await page.getByRole("main").getByText("Weekly newsletter").click();
   await expect(page).toHaveURL(
     new RegExp(`/w/${workspaceId}/playbooks/[0-9a-f-]+$`),
   );
@@ -226,7 +228,9 @@ test("validation blocks bad input, and archiving removes the playbook", async ({
   await page.getByTestId("playbook-status-trigger").click();
   await page.getByRole("menuitem", { name: "Archive playbook" }).click();
   await expect(page).toHaveURL(new RegExp(`/w/${workspaceId}/playbooks$`));
-  await expect(page.getByText("Onboarding flow")).toHaveCount(0);
+  await expect(page.getByRole("main").getByText("Onboarding flow")).toHaveCount(
+    0,
+  );
   await expect(
     page.getByRole("heading", { name: "Build your first playbook" }),
   ).toBeVisible();

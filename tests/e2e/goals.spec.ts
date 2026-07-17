@@ -50,9 +50,12 @@ test("create a goal, link two playbooks, set progress — Command View reflects 
   // Goal detail now shows both linked playbooks.
   await page.goto(`/w/${workspaceId}/goals`);
   await page.getByTestId("goal-grid").getByRole("link").first().click();
-  await expect(page.getByText("Connected playbooks")).toBeVisible();
-  await expect(page.getByText("Weekly newsletter")).toBeVisible();
-  await expect(page.getByText("Lead magnet funnel")).toBeVisible();
+  // Scope to the content region: the admin sidebar now lists recent playbooks
+  // by name, so a bare getByText would match both it and the goal detail.
+  const goalMain = page.getByRole("main");
+  await expect(goalMain.getByText("Connected playbooks")).toBeVisible();
+  await expect(goalMain.getByText("Weekly newsletter")).toBeVisible();
+  await expect(goalMain.getByText("Lead magnet funnel")).toBeVisible();
 
   // Move the progress slider and save.
   const slider = page.locator("#goal-progress");

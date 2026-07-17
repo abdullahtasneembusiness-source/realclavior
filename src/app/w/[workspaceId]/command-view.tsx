@@ -64,7 +64,7 @@ function StatTile({
       <CardContent className="flex flex-col gap-2 p-5">
         <span className="section-label">{label}</span>
         <span
-          className={`font-mono text-5xl font-bold leading-none tabular-nums sm:text-6xl ${valueClass}`}
+          className={`font-display text-5xl font-bold leading-none tabular-nums sm:text-6xl ${valueClass}`}
         >
           {value}
         </span>
