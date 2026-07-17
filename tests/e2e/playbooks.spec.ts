@@ -16,6 +16,7 @@ test("founder builds a playbook: create, add steps, reorder, edit, delete", asyn
 
   // Create a playbook — the dialog collects a name, then drops us into the editor.
   await page.getByTestId("new-playbook-trigger").click();
+  await page.getByTestId("new-playbook-manual").click();
   await page.getByLabel("Name").fill("Publish a YouTube video");
   await page.getByRole("button", { name: "Create playbook" }).click();
 
@@ -105,6 +106,7 @@ test("hand a playbook to an operator: details save, list reflects it, then pause
 
   await page.goto(`/w/${workspaceId}/playbooks`);
   await page.getByTestId("new-playbook-trigger").click();
+  await page.getByTestId("new-playbook-manual").click();
   await page.getByLabel("Name").fill("Weekly newsletter");
   await page.getByRole("button", { name: "Create playbook" }).click();
   await expect(page).toHaveURL(
@@ -148,6 +150,7 @@ test("a step's proof flag and link persist across a reload", async ({
 
   await page.goto(`/w/${workspaceId}/playbooks`);
   await page.getByTestId("new-playbook-trigger").click();
+  await page.getByTestId("new-playbook-manual").click();
   await page.getByLabel("Name").fill("Ship a release");
   await page.getByRole("button", { name: "Create playbook" }).click();
   await expect(page).toHaveURL(
@@ -190,6 +193,7 @@ test("validation blocks bad input, and archiving removes the playbook", async ({
 
   // A too-short name is rejected server-side; the dialog stays open with the error.
   await page.getByTestId("new-playbook-trigger").click();
+  await page.getByTestId("new-playbook-manual").click();
   await page.getByLabel("Name").fill("a");
   await page.getByRole("button", { name: "Create playbook" }).click();
   await expect(

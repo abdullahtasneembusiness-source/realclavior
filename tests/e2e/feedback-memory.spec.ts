@@ -29,6 +29,7 @@ test("a correction saved to Feedback Memory surfaces on the operator's run, then
   // Founder builds a one-step playbook and hands it off.
   await page.goto(`/w/${workspaceId}/playbooks`);
   await page.getByTestId("new-playbook-trigger").click();
+  await page.getByTestId("new-playbook-manual").click();
   await page.getByLabel("Name").fill("Edit the podcast");
   await page.getByRole("button", { name: "Create playbook" }).click();
   await expect(page).toHaveURL(

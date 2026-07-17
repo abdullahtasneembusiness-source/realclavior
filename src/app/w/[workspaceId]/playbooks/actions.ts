@@ -73,6 +73,78 @@ export async function createPlaybook(
   redirect(`/w/${workspaceId}/playbooks/${data.id}`);
 }
 
+const draftStepSchema = z.object({
+  title: z.string().trim().min(1).max(140),
+  detail: z.string().trim().max(2000),
+  requiresProof: z.boolean(),
+});
+
+const draftSchema = z.object({
+  name: nameSchema,
+  steps: z
+    .array(draftStepSchema)
+    .min(1, "A playbook needs at least one step.")
+    .max(50, "That's a lot of steps — split it into more than one playbook."),
+});
+
+export type PlaybookDraftInput = z.infer<typeof draftSchema>;
+
+/**
+ * Persists an AI-drafted (or hand-edited) playbook in one shot — this is the ONLY
+ * point a generated draft touches the database, so "nothing is saved until Save" holds
+ * literally. Creates the playbook, then its steps in order; if the steps fail, the
+ * empty playbook is removed so a half-created shell never lingers. RLS still gates the
+ * writes to workspace admins.
+ */
+export async function createPlaybookFromDraft(
+  workspaceId: string,
+  draft: PlaybookDraftInput,
+): Promise<PlaybookState> {
+  const parsedWs = workspaceIdSchema.safeParse(workspaceId);
+  if (!parsedWs.success) return { error: "Invalid workspace." };
+
+  const parsed = draftSchema.safeParse(draft);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid playbook." };
+  }
+
+  const supabase = await createClient();
+  const { data: created, error: createError } = await supabase
+    .from("playbooks")
+    .insert({ workspace_id: parsedWs.data, name: parsed.data.name })
+    .select("id")
+    .single();
+
+  if (createError || !created) {
+    return {
+      error: mapWriteError(createError?.code, "Couldn't create the playbook."),
+    };
+  }
+
+  const stepRows = parsed.data.steps.map((step, index) => ({
+    playbook_id: created.id,
+    position: index,
+    title: step.title,
+    detail: step.detail.length > 0 ? step.detail : null,
+    requires_proof: step.requiresProof,
+  }));
+
+  const { error: stepsError } = await supabase
+    .from("playbook_steps")
+    .insert(stepRows);
+
+  if (stepsError) {
+    // Don't strand an empty playbook if the steps couldn't be written.
+    await supabase.from("playbooks").delete().eq("id", created.id);
+    return {
+      error: mapWriteError(stepsError.code, "Couldn't save the steps."),
+    };
+  }
+
+  revalidatePath(`/w/${workspaceId}/playbooks`);
+  redirect(`/w/${workspaceId}/playbooks/${created.id}`);
+}
+
 const metaSchema = z.object({
   name: nameSchema,
   description: z

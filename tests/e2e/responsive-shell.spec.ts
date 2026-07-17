@@ -55,7 +55,10 @@ test.describe("mobile viewport", () => {
     });
     const desktopPage = await desktopContext.newPage();
     await signInAs(desktopPage, founderEmail);
-    const workspaceId = await createWorkspace(desktopPage, "Mobile Operator Co");
+    const workspaceId = await createWorkspace(
+      desktopPage,
+      "Mobile Operator Co",
+    );
 
     await desktopPage.goto(`/w/${workspaceId}/team`);
     await desktopPage

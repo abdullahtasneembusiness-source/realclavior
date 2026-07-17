@@ -29,6 +29,7 @@ test("Command View surfaces active runs and the Live Feed tracks activity", asyn
   // Founder builds a one-step playbook and hands it off.
   await page.goto(`/w/${workspaceId}/playbooks`);
   await page.getByTestId("new-playbook-trigger").click();
+  await page.getByTestId("new-playbook-manual").click();
   await page.getByLabel("Name").fill("Weekly report");
   await page.getByRole("button", { name: "Create playbook" }).click();
   await expect(page).toHaveURL(

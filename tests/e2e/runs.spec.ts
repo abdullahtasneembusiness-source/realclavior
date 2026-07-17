@@ -35,6 +35,7 @@ test("hand off a playbook, operator runs and submits it, founder approves", asyn
   // Founder builds a two-step playbook — the second step requires proof.
   await page.goto(`/w/${workspaceId}/playbooks`);
   await page.getByTestId("new-playbook-trigger").click();
+  await page.getByTestId("new-playbook-manual").click();
   await page.getByLabel("Name").fill("Publish blog post");
   await page.getByRole("button", { name: "Create playbook" }).click();
   await expect(page).toHaveURL(

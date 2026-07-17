@@ -147,3 +147,26 @@ export interface FeedbackNote {
   resolved: boolean;
   created_at: string;
 }
+
+/**
+ * A single AI-drafted step, before anything is persisted. Mirrors the editable
+ * fields of a real PlaybookStep (no id/position — those are assigned on save).
+ */
+export interface PlaybookDraftStep {
+  title: string;
+  detail: string;
+  requiresProof: boolean;
+}
+
+/**
+ * The result of AI playbook generation (Phase 2b), held only in client state until
+ * the founder edits it and hits "Save playbook". `confidence: "low"` means the input
+ * was too vague to draft confidently — the UI surfaces `note` rather than pretending
+ * the steps are solid.
+ */
+export interface PlaybookDraft {
+  name: string;
+  confidence: "high" | "low";
+  note: string | null;
+  steps: PlaybookDraftStep[];
+}

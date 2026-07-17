@@ -6,6 +6,8 @@ import dotenv from "dotenv";
 // (helpers.ts uses the service-role key for test setup — see tests/e2e/helpers.ts).
 dotenv.config({ path: ".env.local" });
 
+const AI_MOCK_PORT = 8899;
+
 /**
  * E2E config. Runs against a real Next.js production server (not a mock) talking to
  * a real Supabase instance — locally, that's the Supabase CLI's local stack; in CI,
@@ -27,10 +29,27 @@ export default defineConfig({
     screenshot: "only-on-failure",
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
-  webServer: {
-    command: "npm run build && npm run start",
-    url: "http://localhost:3000",
-    reuseExistingServer: !process.env.CI,
-    timeout: 180_000,
-  },
+  webServer: [
+    // Deterministic Anthropic stand-in for the AI playbook generator (Phase 2b), so
+    // the generate → edit → save flow runs in a real browser with no key or network.
+    {
+      command: `node tests/e2e/mock-anthropic.mjs ${AI_MOCK_PORT}`,
+      url: `http://127.0.0.1:${AI_MOCK_PORT}/health`,
+      reuseExistingServer: !process.env.CI,
+      timeout: 30_000,
+    },
+    {
+      command: "npm run build && npm run start",
+      url: "http://localhost:3000",
+      reuseExistingServer: !process.env.CI,
+      timeout: 180_000,
+      // Point the app's AI calls at the mock above. These override anything in
+      // .env.local (real process env wins over dotenv files in Next), so the suite is
+      // deterministic even on a machine that has a real ANTHROPIC_API_KEY set.
+      env: {
+        ANTHROPIC_API_KEY: "e2e-test-key",
+        ANTHROPIC_BASE_URL: `http://127.0.0.1:${AI_MOCK_PORT}`,
+      },
+    },
+  ],
 });
