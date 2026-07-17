@@ -142,20 +142,22 @@ export async function completeOnboarding(
   workspaceId: string,
   email: string,
 ): Promise<void> {
-  const token = await getAccessToken(email);
+  const { accessToken, userId } = await getSession(email);
   const home = `/w/${workspaceId}`;
+  const admin = adminClient();
 
-  // Both the RPC and the landing nav are idempotent, so we retry the whole pair. The
-  // nav can throw net::ERR_ABORTED when it races a Server Component redirect() during
-  // document navigation — a transient framework race, not a real failure — so we
-  // swallow that specific abort and re-check the landed URL instead.
-  let lastError: unknown = null;
-  for (let attempt = 0; attempt < 4; attempt += 1) {
+  // Step 1: mark onboarded and CONFIRM the flag is committed and visible before we
+  // navigate. The /w/{id} gate keys purely off memberships.onboarded_at, so once it's
+  // set no navigation can be bounced to /welcome. Reading it back (as the admin, keyed
+  // on this exact user) closes the RPC-write vs. page-read race that made the operator
+  // flow flaky — the RPC is idempotent, so retrying it is harmless.
+  let confirmed = false;
+  for (let attempt = 0; attempt < 5 && !confirmed; attempt += 1) {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/mark_self_onboarded`, {
       method: "POST",
       headers: {
         apikey: ANON_KEY,
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${accessToken}`,
         "content-type": "application/json",
       },
       body: JSON.stringify({ p_workspace_id: workspaceId }),
@@ -165,7 +167,24 @@ export async function completeOnboarding(
         `completeOnboarding(${email}): ${res.status} ${await res.text()}`,
       );
     }
+    const { data } = await admin
+      .from("memberships")
+      .select("onboarded_at")
+      .eq("workspace_id", workspaceId)
+      .eq("user_id", userId)
+      .maybeSingle();
+    confirmed = Boolean(data?.onboarded_at);
+  }
+  if (!confirmed) {
+    throw new Error(
+      `completeOnboarding(${email}): onboarded_at never became set`,
+    );
+  }
 
+  // Step 2: navigate off /welcome. The gate is provably cleared now, so this only has
+  // to settle the URL past the transient redirect race.
+  let lastError: unknown = null;
+  for (let attempt = 0; attempt < 4; attempt += 1) {
     try {
       // Fresh navigation → server re-reads the now-set flag → no /welcome redirect.
       await page.goto(home, { waitUntil: "domcontentloaded" });
@@ -193,7 +212,7 @@ export async function completeOnboarding(
       return;
     } catch (err) {
       lastError = err;
-      // Still gated — loop and re-run the idempotent RPC + navigation.
+      // Redirect still resolving — re-navigate and let waitForURL settle it.
     }
   }
 
@@ -204,8 +223,13 @@ export async function completeOnboarding(
   );
 }
 
-/** A signed-in access token for `email`, without a browser — for direct REST/RLS checks. */
-export async function getAccessToken(email: string): Promise<string> {
+/**
+ * A verified session for `email`, without a browser — the access token plus the user id.
+ * Used for direct REST/RLS checks and to key admin lookups to the exact user.
+ */
+export async function getSession(
+  email: string,
+): Promise<{ accessToken: string; userId: string }> {
   const { tokenHash, type } = await prepareMagicVerification(email);
 
   const anon = createClient(SUPABASE_URL, ANON_KEY, {
@@ -220,7 +244,15 @@ export async function getAccessToken(email: string): Promise<string> {
       `verifyOtp(${email}): ${verifyError?.message ?? "no session"}`,
     );
   }
-  return verified.session.access_token;
+  return {
+    accessToken: verified.session.access_token,
+    userId: verified.session.user.id,
+  };
+}
+
+/** A signed-in access token for `email`, without a browser — for direct REST/RLS checks. */
+export async function getAccessToken(email: string): Promise<string> {
+  return (await getSession(email)).accessToken;
 }
 
 /** Raw PostgREST GET as a specific user's access token — exercises real RLS. */
