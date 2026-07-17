@@ -47,6 +47,7 @@ export function WorkspaceSwitcher({
     return compact ? (
       <div className="flex justify-center py-1" title={current.name}>
         <WorkspaceMark name={current.name} />
+        <span className="sr-only">{current.name}</span>
       </div>
     ) : (
       <div className="flex items-center gap-2.5 px-1 py-1">
@@ -63,10 +64,11 @@ export function WorkspaceSwitcher({
           <button
             type="button"
             title={current.name}
-            aria-label="Switch workspace"
+            aria-label={`${current.name} — switch workspace`}
             className="flex justify-center rounded-md p-1 transition-colors hover:bg-accent"
           >
             <WorkspaceMark name={current.name} />
+            <span className="sr-only">{current.name}</span>
           </button>
         ) : (
           <button

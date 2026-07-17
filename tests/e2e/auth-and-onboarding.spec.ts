@@ -41,6 +41,8 @@ test("creating a workspace lands on Command View with the full admin sidebar", a
   ).toBeVisible();
 
   const sidebar = page.getByTestId("desktop-sidebar");
+  // The desktop rail is icon-only; the workspace name rides along as accessible
+  // (screen-reader) text on the workspace mark rather than a visible label.
   await expect(sidebar.getByText("Acme Creator Co")).toBeVisible();
   for (const label of [
     "Command View",
