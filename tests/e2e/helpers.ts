@@ -127,30 +127,31 @@ export async function createWorkspace(
 }
 
 /**
- * Clears the onboarding gate for a freshly-signed-in non-founder. Since Session 8, a
- * member who hasn't onboarded is redirected from their workspace home to /welcome, so
- * operator-flow tests must walk through (or skip) it before they reach their home.
- * No-op if the member is already onboarded or isn't redirected.
+ * Clears the onboarding gate for a signed-in operator, then lands them on their home.
+ * Since Session 8, a member who hasn't onboarded is redirected from their workspace
+ * home to /welcome, so operator-flow tests must clear it before reaching their home.
+ *
+ * The gate itself (and the full /welcome walkthrough) is covered by onboarding.spec;
+ * here we just need it out of the way, so we set onboarded_at directly via the
+ * service-role client (bypassing RLS) rather than driving the UI — deterministic, and
+ * independent of the walkthrough's client-side timing. The operator's own membership
+ * is the row whose invited_email matches; the founder's self-created row doesn't.
  */
 export async function completeOnboarding(
   page: Page,
   workspaceId: string,
+  email: string,
 ): Promise<void> {
-  await page.goto(`/w/${workspaceId}`);
-  if (!new URL(page.url()).pathname.endsWith("/welcome")) return;
-
-  for (let i = 0; i < 30; i++) {
-    const complete = await page
-      .getByTestId("onboarding-complete")
-      .isVisible()
-      .catch(() => false);
-    if (complete) break;
-    const next = page.getByTestId("onboarding-next");
-    if (!(await next.isVisible().catch(() => false))) break;
-    await next.click();
+  const { error } = await adminClient()
+    .from("memberships")
+    .update({ onboarded_at: new Date().toISOString() })
+    .eq("workspace_id", workspaceId)
+    .eq("invited_email", email);
+  if (error) {
+    throw new Error(`completeOnboarding(${email}): ${error.message}`);
   }
-  await page.getByTestId("onboarding-finish").click();
-  await page.waitForURL((url) => url.pathname === `/w/${workspaceId}`);
+  // Fresh navigation → server re-reads the now-set flag → no redirect to /welcome.
+  await page.goto(`/w/${workspaceId}`);
 }
 
 /** A signed-in access token for `email`, without a browser — for direct REST/RLS checks. */

@@ -76,7 +76,7 @@ test.describe("mobile viewport", () => {
     await desktopContext.close();
 
     await signInAs(page, operatorEmail);
-    await completeOnboarding(page, workspaceId);
+    await completeOnboarding(page, workspaceId, operatorEmail);
     await expect(page).toHaveURL(new RegExp(`/w/${workspaceId}$`));
 
     await expect(page.getByTestId("bottom-tab-bar")).toBeVisible();

@@ -71,7 +71,7 @@ test("feedback saved while reviewing a run appears in the Corrections mirror", a
   const opContext = await browser.newContext();
   const opPage = await opContext.newPage();
   await signInAs(opPage, operatorEmail);
-  await completeOnboarding(opPage, workspaceId);
+  await completeOnboarding(opPage, workspaceId, operatorEmail);
 
   // One-step playbook, handed to the operator.
   await page.goto(`/w/${workspaceId}/playbooks`);

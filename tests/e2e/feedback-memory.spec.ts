@@ -29,7 +29,7 @@ test("a correction saved to Feedback Memory surfaces on the operator's run, then
   const opContext = await browser.newContext();
   const opPage = await opContext.newPage();
   await signInAs(opPage, operatorEmail);
-  await completeOnboarding(opPage, workspaceId);
+  await completeOnboarding(opPage, workspaceId, operatorEmail);
 
   // Founder builds a one-step playbook and hands it off.
   await page.goto(`/w/${workspaceId}/playbooks`);

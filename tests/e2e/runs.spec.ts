@@ -31,7 +31,7 @@ test("hand off a playbook, operator runs and submits it, founder approves", asyn
   const opContext = await browser.newContext();
   const opPage = await opContext.newPage();
   await signInAs(opPage, operatorEmail);
-  await completeOnboarding(opPage, workspaceId);
+  await completeOnboarding(opPage, workspaceId, operatorEmail);
 
   // Founder builds a two-step playbook — the second step requires proof.
   await page.goto(`/w/${workspaceId}/playbooks`);
