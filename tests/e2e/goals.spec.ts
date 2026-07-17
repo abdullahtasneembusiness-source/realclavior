@@ -25,7 +25,10 @@ test("create a goal, link two playbooks, set progress — Command View reflects 
   // Create a goal → lands on its detail page.
   await page.goto(`/w/${workspaceId}/goals`);
   await page.getByTestId("new-goal-trigger").click();
-  await page.getByLabel("Goal").fill("10k newsletter subscribers");
+  // exact: the dialog's own accessible name is "New goal", which also contains "Goal".
+  await page
+    .getByLabel("Goal", { exact: true })
+    .fill("10k newsletter subscribers");
   await page.getByTestId("create-goal-submit").click();
   await expect(page).toHaveURL(
     new RegExp(`/w/${workspaceId}/goals/[0-9a-f-]+$`),
