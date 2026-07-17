@@ -62,7 +62,7 @@ export async function spawnLaunch(
     .eq("status", "armed")
     .select("id");
   // eslint-disable-next-line no-console
-  console.log(
+  console.error(
     `[spawn] claim launch=${launch.id} rows=${claimed?.length ?? 0} err=${claimError?.message ?? "none"}`,
   );
   if (!claimed || claimed.length === 0) return 0;
@@ -73,7 +73,7 @@ export async function spawnLaunch(
     .eq("launch_id", launch.id);
   const items = (itemRows ?? []) as LaunchItem[];
   // eslint-disable-next-line no-console
-  console.log(
+  console.error(
     `[spawn] items launch=${launch.id} count=${items.length} err=${itemError?.message ?? "none"}`,
   );
   if (items.length === 0) return 0;
@@ -131,7 +131,7 @@ export async function spawnLaunch(
       .select("id")
       .single();
     // eslint-disable-next-line no-console
-    console.log(
+    console.error(
       `[spawn] run launch=${launch.id} run=${run?.id ?? "null"} err=${runError?.message ?? "none"}`,
     );
     if (runError || !run) continue;
