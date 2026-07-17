@@ -35,18 +35,23 @@ test("add Brain entries across categories, then search and filter", async ({
   await page.getByTestId("save-brain-entry").click();
   await expect(page.getByText("Preferred editing tools")).toBeVisible();
 
+  // Reload so the list is settled (both entries server-rendered, no in-flight
+  // revalidation from the last create racing the search input).
+  await page.reload();
+  const list = page.getByTestId("brain-entry-list");
+
   // Search by a partial keyword surfaces only the matching entry.
   await page.getByTestId("brain-search").fill("punchy");
   await expect(
-    page.getByText("Brand voice is punchy and direct"),
+    list.getByText("Brand voice is punchy and direct"),
   ).toBeVisible();
-  await expect(page.getByText("Preferred editing tools")).toHaveCount(0);
+  await expect(list.getByText("Preferred editing tools")).toHaveCount(0);
 
   // Category filter narrows to one category.
   await page.getByTestId("brain-search").fill("");
   await page.getByTestId("brain-filter-tools").click();
-  await expect(page.getByText("Preferred editing tools")).toBeVisible();
-  await expect(page.getByText("Brand voice is punchy and direct")).toHaveCount(
+  await expect(list.getByText("Preferred editing tools")).toBeVisible();
+  await expect(list.getByText("Brand voice is punchy and direct")).toHaveCount(
     0,
   );
 });
@@ -93,6 +98,11 @@ test("feedback saved while reviewing a run appears in the Corrections mirror", a
   // Operator runs and submits.
   await opPage.goto(`/w/${workspaceId}`);
   await opPage.getByTestId("my-runs").getByRole("link").first().click();
+  // Wait for the client-side navigation to settle before reading the run id off the
+  // URL — otherwise it can still be the list URL and runId comes back undefined.
+  await expect(opPage).toHaveURL(
+    new RegExp(`/w/${workspaceId}/runs/[0-9a-f-]+$`),
+  );
   const runId = opPage.url().split("/runs/")[1];
   await opPage.getByTestId("run-start").click();
   const step = opPage.locator(runSteps).first();
