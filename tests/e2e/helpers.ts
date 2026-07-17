@@ -172,14 +172,24 @@ export async function completeOnboarding(
     } catch (err) {
       lastError = err;
       if (!/ERR_ABORTED/.test(String(err))) throw err;
-      // Aborted mid-redirect — fall through and let the URL check decide.
+      // Aborted mid-redirect — fall through and let waitForURL settle the real URL.
     }
 
-    // The gate is cleared once we've actually landed under the workspace home and
-    // are not sitting on /welcome. Requiring the workspace prefix guards against an
-    // aborted nav that left the page on a stale or blank URL counting as success.
-    const path = new URL(page.url()).pathname;
-    if (path.startsWith(home) && !path.endsWith("/welcome")) return;
+    // Don't trust an instantaneous page.url(): during a server redirect (or right after
+    // an aborted nav) it can transiently read the *requested* /w/{id} before the
+    // redirect to /welcome resolves. waitForURL settles on the final URL, and only
+    // counts success once we're genuinely under the workspace home and off /welcome.
+    try {
+      await page.waitForURL(
+        (url) =>
+          url.pathname.startsWith(home) && !url.pathname.endsWith("/welcome"),
+        { timeout: 5000 },
+      );
+      return;
+    } catch (err) {
+      lastError = err;
+      // Still gated — loop and re-run the idempotent RPC + navigation.
+    }
   }
 
   throw new Error(

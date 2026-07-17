@@ -43,7 +43,11 @@ export async function updateSession(request: NextRequest) {
 
   const isAuthRoute =
     pathname.startsWith("/login") || pathname.startsWith("/auth");
-  const isPublicRoute = pathname === "/" || isAuthRoute;
+  // The cron endpoints authenticate themselves with a Bearer secret and have no user
+  // session, so the login gate must not swallow them into a /login redirect — they need
+  // to reach their handler and return their own JSON status (e.g. 401 on a bad secret).
+  const isCronRoute = pathname.startsWith("/api/cron");
+  const isPublicRoute = pathname === "/" || isAuthRoute || isCronRoute;
 
   if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone();
