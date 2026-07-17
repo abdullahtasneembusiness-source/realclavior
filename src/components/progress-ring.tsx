@@ -55,7 +55,7 @@ export function ProgressRing({
         className="flex items-center justify-center"
         style={{ marginTop: -size, height: size }}
       >
-        <span className="text-lg font-semibold tabular-nums">{clamped}%</span>
+        <span className="text-lg font-semibold font-mono tabular-nums">{clamped}%</span>
       </div>
     </div>
   );

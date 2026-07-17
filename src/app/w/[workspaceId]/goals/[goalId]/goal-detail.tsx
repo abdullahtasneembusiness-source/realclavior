@@ -95,7 +95,7 @@ export function GoalDetail({
               <div className="flex items-center justify-between">
                 <Label htmlFor="goal-progress">Progress</Label>
                 <span
-                  className="text-sm font-medium tabular-nums"
+                  className="text-sm font-medium font-mono tabular-nums"
                   data-testid="goal-progress-value"
                 >
                   {progress}%

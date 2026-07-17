@@ -136,7 +136,7 @@ export function ManualInterview({ workspaceId }: { workspaceId: string }) {
           />
         </div>
         <span
-          className="shrink-0 text-sm tabular-nums text-muted-foreground"
+          className="shrink-0 text-sm font-mono tabular-nums text-muted-foreground"
           data-testid="interview-progress"
         >
           {step + 1} of {total}

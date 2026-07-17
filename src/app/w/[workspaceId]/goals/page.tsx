@@ -54,7 +54,7 @@ export default async function GoalsPage({
     <div className="flex flex-col gap-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Goals</h1>
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Goals</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Your plan at the top, playbooks connected beneath it.
           </p>
@@ -94,7 +94,7 @@ export default async function GoalsPage({
 
                   <div className="mt-auto flex flex-col gap-2 pt-1">
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span className="tabular-nums">{g.progress}%</span>
+                      <span className="font-mono tabular-nums">{g.progress}%</span>
                       {g.target_date ? (
                         <span className="inline-flex items-center gap-1.5">
                           <CalendarDays className="size-3.5" />

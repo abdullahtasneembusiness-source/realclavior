@@ -2,45 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Light, editorial identity (redesign). Warm off-white canvas, white surfaces,
+ * near-black ink, a single deep forest-green accent used sparingly. Amber stays the
+ * reserved Feedback Memory color. All tokens flow from here so every screen inherits it.
+ */
 :root {
-  --background: #0c0c0f;
-  --foreground: #f5f5f7;
+  color-scheme: light;
 
-  --card: #13131a;
-  --card-foreground: #f5f5f7;
-  --popover: #16161d;
-  --popover-foreground: #f5f5f7;
+  --background: #fafaf7; /* warm off-white canvas */
+  --foreground: #16150f; /* near-black ink */
 
-  --primary: #5b4be0;
-  --primary-hover: #4a3bc7;
-  --primary-subtle: rgba(91, 75, 224, 0.12);
+  --card: #ffffff;
+  --card-foreground: #16150f;
+  --popover: #ffffff;
+  --popover-foreground: #16150f;
+
+  --primary: #1f3d2b; /* deep forest green — the one accent */
+  --primary-hover: #16301f;
+  --primary-subtle: rgba(31, 61, 43, 0.1);
   --primary-foreground: #ffffff;
 
-  --secondary: #1c1c24;
-  --secondary-foreground: #f5f5f7;
+  --secondary: #f1f1ec; /* quiet surface */
+  --secondary-foreground: #16150f;
 
-  --muted: #17171f;
-  --muted-foreground: #8b8b94;
+  --muted: #f4f4ef;
+  --muted-foreground: #6b6a63; /* secondary text */
 
-  --accent: #1c1c24;
-  --accent-foreground: #f5f5f7;
+  --accent: #f1f1ec; /* hover fill */
+  --accent-foreground: #16150f;
 
-  --destructive: #f77c6a;
-  --destructive-foreground: #0c0c0f;
+  --destructive: #c0442e; /* restrained brick red — overdue/urgent */
+  --destructive-foreground: #ffffff;
 
-  --border: rgba(255, 255, 255, 0.08);
-  --border-subtle: rgba(255, 255, 255, 0.05);
-  --input: rgba(255, 255, 255, 0.08);
-  --ring: #5b4be0;
+  --border: #eaeae4; /* soft hairline */
+  --border-subtle: #f0f0ea;
+  --input: #eaeae4;
+  --ring: #1f3d2b;
 
-  /* Clovior brand accents (Section 8). The primary accent is now a deeper
-     indigo-violet (#5B4BE0); the token name is kept so class references don't move. */
-  --clovior-violet: #5b4be0;
-  --clovior-coral: #f77c6a;
-  --clovior-mint: #3dd68c;
-  --clovior-amber: #f7c76a;
+  /* Semantic accents. Names kept so class references don't move; values redesigned:
+     "violet" is now the forest accent, coral the brick overdue, mint the success green,
+     amber the reserved Feedback Memory color re-tuned for a light background. */
+  --clovior-violet: #1f3d2b;
+  --clovior-coral: #c0442e;
+  --clovior-mint: #2e7d52;
+  --clovior-amber: #e8a317;
 
-  --radius: 0.625rem;
+  --radius: 0.5rem; /* sharper, editorial — cards ~8px, buttons ~6px */
 }
 
 * {
@@ -53,19 +61,31 @@ body {
   font-feature-settings: "cv11", "ss01";
 }
 
-h1, h2, h3, h4, h5, h6 {
+/* Display face on every heading — big, tight, confident. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-display), var(--font-inter), sans-serif;
   font-weight: 700;
   letter-spacing: -0.03em;
 }
 
-/* Page titles (the big h1 on every screen) lean into the display face. */
-h1 {
-  font-weight: 800;
-}
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Understated section labels: small, uppercase, letter-spaced, mono, muted. */
+  .section-label {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.6875rem;
+    line-height: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
   }
 }

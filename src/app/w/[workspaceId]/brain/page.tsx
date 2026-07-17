@@ -73,7 +73,7 @@ export default async function BrainPage({
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Team Brain</h1>
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Team Brain</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Standards, voice, tools, and context — externalized, so it survives
           turnover.

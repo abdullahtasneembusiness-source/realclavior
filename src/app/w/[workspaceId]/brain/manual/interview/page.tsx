@@ -22,7 +22,7 @@ export default async function ManualInterviewPage({
           <ArrowLeft className="size-4" /> Founder&apos;s Manual
         </Link>
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
             A few quick questions
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">

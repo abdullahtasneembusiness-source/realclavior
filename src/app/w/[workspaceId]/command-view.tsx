@@ -61,11 +61,13 @@ function StatTile({
         : "text-foreground";
   return (
     <Card>
-      <CardContent className="flex flex-col gap-1 p-4">
-        <span className={`text-3xl font-semibold tabular-nums ${valueClass}`}>
+      <CardContent className="flex flex-col gap-2 p-5">
+        <span className="section-label">{label}</span>
+        <span
+          className={`font-mono text-5xl font-bold leading-none tabular-nums sm:text-6xl ${valueClass}`}
+        >
           {value}
         </span>
-        <span className="text-xs text-muted-foreground">{label}</span>
       </CardContent>
     </Card>
   );
@@ -257,7 +259,7 @@ export async function CommandView({
   return (
     <div className="flex flex-col gap-6" data-testid="command-view">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Command View</h1>
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Command View</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Is {workspaceName} moving? Everything that needs you, in one place.
         </p>
@@ -378,7 +380,7 @@ export async function CommandView({
                   >
                     <div className="flex items-center justify-between gap-2 text-sm">
                       <span className="truncate font-medium">{g.label}</span>
-                      <span className="tabular-nums text-muted-foreground">
+                      <span className="font-mono tabular-nums text-muted-foreground">
                         {g.progress}%
                       </span>
                     </div>

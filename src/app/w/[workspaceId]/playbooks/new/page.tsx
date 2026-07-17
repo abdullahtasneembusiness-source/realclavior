@@ -23,7 +23,7 @@ export default async function GeneratePlaybookPage({
           <ArrowLeft className="size-4" /> All playbooks
         </Link>
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Generate a playbook
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">

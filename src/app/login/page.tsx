@@ -13,7 +13,7 @@ export default function LoginPage({
           <div className="mb-5 flex justify-center">
             <BrandMark className="[&_span:last-child]:text-lg" />
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Sign in to Clovior
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">

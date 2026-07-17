@@ -9,14 +9,15 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-primary-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)] hover:bg-primary/90",
+        // Flat and confident — solid forest green, no gradient, no glow.
+        default: "bg-primary text-primary-foreground hover:bg-[var(--primary-hover)]",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        // Secondary: white with a thin border.
         outline:
-          "border border-border bg-transparent hover:bg-accent hover:text-accent-foreground",
+          "border border-border bg-card hover:bg-accent hover:text-accent-foreground",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          "border border-border bg-card text-foreground hover:bg-accent",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },

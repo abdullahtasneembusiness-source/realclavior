@@ -56,7 +56,7 @@ export default async function LaunchesPage({
 
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Launches</h1>
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Launches</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Pre-built sequences that spin up every task, assignment, and
             deadline in one go.

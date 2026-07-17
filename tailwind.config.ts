@@ -19,6 +19,7 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-inter)", "Inter", "sans-serif"],
         display: ["var(--font-display)", "var(--font-inter)", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
       colors: {
         background: "var(--background)",
@@ -62,9 +63,8 @@ const config: Config = {
         },
       },
       borderRadius: {
-        // Tightened, intentional scale (down from a uniform heavy rounding):
-        // cards ~10px, buttons ~8px, small pills stay fully rounded for contrast.
-        xl: "0.625rem",
+        // Sharper, editorial scale: cards ~8px, buttons ~6px.
+        xl: "0.5rem",
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",

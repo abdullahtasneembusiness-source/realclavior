@@ -48,7 +48,7 @@ export default async function TeamPage({
     <div className="flex flex-col gap-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Team</h1>
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Team</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Everyone who runs work inside {ctx.workspace.name}.
           </p>

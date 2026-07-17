@@ -22,7 +22,7 @@ function WorkspaceMark({
   return (
     <span
       className={cn(
-        "inline-flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground",
+        "font-mono inline-flex size-7 shrink-0 items-center justify-center rounded-md bg-primary text-sm font-semibold text-primary-foreground",
         className,
       )}
     >
@@ -34,14 +34,21 @@ function WorkspaceMark({
 export function WorkspaceSwitcher({
   current,
   workspaces,
+  compact = false,
 }: {
   current: WorkspaceSummary;
   workspaces: WorkspaceSummary[];
+  /** Icon-rail mode: mark-only trigger, no name/chevron. */
+  compact?: boolean;
 }) {
   const router = useRouter();
 
   if (workspaces.length <= 1) {
-    return (
+    return compact ? (
+      <div className="flex justify-center py-1" title={current.name}>
+        <WorkspaceMark name={current.name} />
+      </div>
+    ) : (
       <div className="flex items-center gap-2.5 px-1 py-1">
         <WorkspaceMark name={current.name} />
         <span className="truncate text-sm font-medium">{current.name}</span>
@@ -52,16 +59,27 @@ export function WorkspaceSwitcher({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          className="flex w-full items-center gap-2.5 rounded-lg px-1 py-1 text-left transition-colors hover:bg-accent"
-        >
+        {compact ? (
+          <button
+            type="button"
+            title={current.name}
+            aria-label="Switch workspace"
+            className="flex justify-center rounded-md p-1 transition-colors hover:bg-accent"
+          >
+            <WorkspaceMark name={current.name} />
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="flex w-full items-center gap-2.5 rounded-md px-1 py-1 text-left transition-colors hover:bg-accent"
+          >
           <WorkspaceMark name={current.name} />
           <span className="min-w-0 flex-1 truncate text-sm font-medium">
             {current.name}
           </span>
-          <ChevronsUpDown className="size-3.5 shrink-0 text-muted-foreground" />
-        </button>
+            <ChevronsUpDown className="size-3.5 shrink-0 text-muted-foreground" />
+          </button>
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-64">
         {workspaces.map((ws) => (

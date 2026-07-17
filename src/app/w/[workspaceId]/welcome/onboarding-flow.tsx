@@ -78,7 +78,7 @@ export function OnboardingFlow({
           />
         </div>
         <span
-          className="shrink-0 text-sm tabular-nums text-muted-foreground"
+          className="shrink-0 text-sm font-mono tabular-nums text-muted-foreground"
           data-testid="onboarding-progress"
         >
           {step + 1} of {items.length}

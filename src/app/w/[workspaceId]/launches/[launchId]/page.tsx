@@ -125,7 +125,7 @@ export default async function LaunchDetailPage({
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-semibold tracking-tight">
+              <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
                 {launch.name}
               </h1>
               <Badge variant={badge.variant}>{badge.label}</Badge>

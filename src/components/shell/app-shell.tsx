@@ -35,7 +35,7 @@ export function AppShell({
     <div className="flex min-h-screen">
       <aside
         data-testid="desktop-sidebar"
-        className="sticky top-0 hidden h-screen w-60 shrink-0 border-r border-border lg:flex lg:flex-col"
+        className="sticky top-0 hidden h-screen w-16 shrink-0 border-r border-border bg-card lg:flex lg:flex-col"
       >
         <SidebarContent
           workspaceId={ctx.workspace.id}
@@ -45,6 +45,7 @@ export function AppShell({
           displayName={displayName}
           email={ctx.email}
           color={ctx.membership.color}
+          collapsed
         />
       </aside>
 

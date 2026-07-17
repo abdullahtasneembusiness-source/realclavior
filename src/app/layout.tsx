@@ -1,19 +1,25 @@
 import type { Metadata } from "next";
-import { Inter, Bricolage_Grotesque } from "next/font/google";
+import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
+// Body / UI.
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
 });
 
-// Display face for headings + the wordmark. Bricolage Grotesque has real character
-// (tight, slightly editorial grotesque) — paired against Inter body it gives the app a
-// typographic fingerprint that reads intentional, not defaulted.
-const display = Bricolage_Grotesque({
+// Display face for headings + the wordmark — tight, confident, editorial.
+const display = Space_Grotesk({
   subsets: ["latin"],
-  weight: ["600", "700", "800"],
+  weight: ["500", "600", "700"],
   variable: "--font-display",
+});
+
+// Signature move: every number, metric, count, and date renders in mono.
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-mono",
 });
 
 export const metadata: Metadata = {
@@ -28,9 +34,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <body
-        className={`${inter.variable} ${display.variable} font-sans antialiased`}
+        className={`${inter.variable} ${display.variable} ${mono.variable} font-sans antialiased`}
       >
         {children}
       </body>

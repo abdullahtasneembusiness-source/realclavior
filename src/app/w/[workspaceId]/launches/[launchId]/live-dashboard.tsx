@@ -93,7 +93,7 @@ export function LiveDashboard({
           <div className="flex items-baseline justify-between">
             <span className="text-sm font-medium">Progress</span>
             <span
-              className="text-sm tabular-nums text-muted-foreground"
+              className="text-sm font-mono tabular-nums text-muted-foreground"
               data-testid="launch-percent"
             >
               {done} of {total} done · {percent}%

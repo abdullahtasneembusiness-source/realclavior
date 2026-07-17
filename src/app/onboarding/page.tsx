@@ -29,7 +29,7 @@ export default async function OnboardingPage() {
     <main className="flex min-h-screen items-center justify-center px-6">
       <div className="w-full max-w-sm">
         <div className="mb-8">
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Name your business
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
