@@ -126,3 +126,25 @@ Verified before starting that Sessions 1–8 are all built as real routes (login
 **Additions doc (Session 8.5) — NOT built.** The uploaded `CLOVIOR_ADDITIONS.md` (Founder's Manual + Drift Signals) is acknowledged but deferred per instruction to build only Launch Mode now. It slots between Session 8 and 9 in the doc's ordering; revisit before Session 10.
 
 **Live-DB follow-up.** `20260717160000_launch_runs.sql` needs applying to the live project alongside the run (it applies to CI's fresh stack automatically).
+
+## Session 8.5 — Founder's Manual + Drift Signals (Additions)
+
+Built from the uploaded `CLOVIOR_ADDITIONS.md`, after Launch Mode. The user's ask was explicitly to make the *foundation* strong, since neither had a data layer — so the migrations came first.
+
+**Feature A — Founder's Manual.**
+- **Foundation:** `founder_manual_sections` (`20260717180000`), one row per section keyed to a fixed six, unique per workspace. RLS: all active members read (it's the onboarding surface), founder/manager write — via the same `private.is_workspace_*` helpers, plus explicit grants.
+- A pinned, visually-distinct (violet, NOT the reserved amber) "Founder's Manual" card at the top of Team Brain → the manual view: the six guided sections, each inline-editable by admins, read-only for operators.
+- **AI interview** is the showcase creation path: a one-question-at-a-time flow (8 plain questions mapped to the six sections) → one forced tool-use Claude call synthesizes them into six clean sections in the founder's voice → the founder reviews and edits before anything saves (reusing the Session 4 draft-review pattern and the same `ANTHROPIC_BASE_URL` mock seam, extended to a `save_founder_manual` tool). "Write it myself" is just the section editor, blank.
+- **Onboarding integration:** the manual leads the walkthrough as the first item (`label: "Start here"`), composed from whatever sections have content; skipped entirely if empty. No rebuild of onboarding — just prepended.
+
+**Feature B — Drift Signals.**
+- **Foundation:** no new core table (it reads `feedback_notes`), but two indexes (`20260717180100`) for the windowed/grouped access paths — `feedback_notes(run_id)` and `(playbook_id, created_at)`.
+- **Attribution** (`src/lib/drift.ts`): a note is "about" the run's assignee when tied to a run, else the playbook's owner (standing note). Bulk queries, no N+1.
+- **Recurring flag** on the playbook detail page: same operator, same playbook, ≥3 notes in 30 days → a warm "Worth a check-in" callout naming the operator and count.
+- **Command View** gets a compact "Worth a check-in" section — only rendered when there's an actual signal, hidden otherwise.
+- **Team page** gets a per-operator trend badge (up / steady / down over recent-vs-prior fortnight), shown only when there's signal.
+- **Tone + gating:** every surface is admin-only (operators never see drift about themselves — enforced by the pages being `requireAdmin`), and the language is coaching ("worth a check-in", "might be worth a direct conversation"), never "underperforming".
+
+**E2E:** `founder-manual.spec` (AI interview → review → save → display; operator read-only + manual as the first onboarding item) and `drift-signals.spec` (three review cycles on one run → recurring flag on playbook + Command View, up-trend on Team, and the operator's own home shows no drift). Both real-browser.
+
+**Live-DB follow-up.** `20260717180000_founder_manual.sql` and `20260717180100_feedback_drift_indexes.sql` apply to CI automatically; both still need applying to the live project (Manual is inert on live until its table exists).

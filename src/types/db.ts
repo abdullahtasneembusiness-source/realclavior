@@ -221,6 +221,22 @@ export interface FeedbackNote {
   created_at: string;
 }
 
+export type ManualSectionKey =
+  | "communication"
+  | "delivery"
+  | "response_time"
+  | "dealbreakers"
+  | "trust"
+  | "standard";
+
+export interface ManualSection {
+  id: string;
+  workspace_id: string;
+  section_key: ManualSectionKey;
+  body: string | null;
+  updated_at: string;
+}
+
 /**
  * A single AI-drafted step, before anything is persisted. Mirrors the editable
  * fields of a real PlaybookStep (no id/position — those are assigned on save).

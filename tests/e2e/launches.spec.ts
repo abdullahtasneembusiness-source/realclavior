@@ -126,5 +126,7 @@ test("save a launch as a template, then start a new launch from it", async ({
     "Course drop — round 2",
   );
   await expect(page.locator("[data-testid^='launch-item-']")).toHaveCount(1);
-  await expect(page.getByText("Record the video")).toBeVisible();
+  await expect(
+    page.locator("[data-testid^='launch-item-']").first(),
+  ).toContainText("Record the video");
 });

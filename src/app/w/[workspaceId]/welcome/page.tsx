@@ -1,7 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { requireWorkspaceContext } from "@/lib/workspace";
 import { CATEGORY_LABELS } from "../brain/categories";
-import type { BrainEntry, Playbook } from "@/types/db";
+import { MANUAL_SECTIONS } from "../brain/manual/sections";
+import type { BrainEntry, ManualSection, Playbook } from "@/types/db";
 import { OnboardingFlow, type OnboardingItem } from "./onboarding-flow";
 
 /**
@@ -17,27 +18,54 @@ export default async function WelcomePage({
   const ctx = await requireWorkspaceContext(params.workspaceId);
   const supabase = await createClient();
 
-  const [{ data: entryRows }, { data: playbookRows }] = await Promise.all([
-    supabase
-      .from("brain_entries")
-      .select("*")
-      .eq("workspace_id", ctx.workspace.id)
-      .not("category", "eq", "corrections")
-      .order("category", { ascending: true })
-      .order("updated_at", { ascending: false }),
-    supabase
-      .from("playbooks")
-      .select("*")
-      .eq("workspace_id", ctx.workspace.id)
-      .eq("owner_membership_id", ctx.membership.id)
-      .eq("status", "active")
-      .order("created_at", { ascending: true }),
-  ]);
+  const [{ data: entryRows }, { data: playbookRows }, { data: manualRows }] =
+    await Promise.all([
+      supabase
+        .from("brain_entries")
+        .select("*")
+        .eq("workspace_id", ctx.workspace.id)
+        .not("category", "eq", "corrections")
+        .order("category", { ascending: true })
+        .order("updated_at", { ascending: false }),
+      supabase
+        .from("playbooks")
+        .select("*")
+        .eq("workspace_id", ctx.workspace.id)
+        .eq("owner_membership_id", ctx.membership.id)
+        .eq("status", "active")
+        .order("created_at", { ascending: true }),
+      supabase
+        .from("founder_manual_sections")
+        .select("*")
+        .eq("workspace_id", ctx.workspace.id),
+    ]);
 
   const entries = (entryRows ?? []) as BrainEntry[];
   const playbooks = (playbookRows ?? []) as Playbook[];
 
+  // The Founder's Manual leads onboarding — the first thing a new operator reads.
+  const manual = (manualRows ?? []) as ManualSection[];
+  const manualBody = new Map(manual.map((s) => [s.section_key, s.body]));
+  const manualText = MANUAL_SECTIONS.map((s) => {
+    const body = (manualBody.get(s.key) ?? "").trim();
+    return body ? `${s.heading}\n${body}` : null;
+  })
+    .filter((x): x is string => x !== null)
+    .join("\n\n");
+
+  const manualItem: OnboardingItem[] = manualText
+    ? [
+        {
+          id: "founder-manual",
+          label: "Start here",
+          title: "Founder's Manual",
+          body: manualText,
+        },
+      ]
+    : [];
+
   const items: OnboardingItem[] = [
+    ...manualItem,
     ...entries.map((e) => ({
       id: `brain-${e.id}`,
       label: CATEGORY_LABELS[e.category],

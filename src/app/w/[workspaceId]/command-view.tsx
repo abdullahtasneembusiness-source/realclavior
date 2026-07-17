@@ -14,6 +14,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { MemberAvatar } from "@/components/member-avatar";
 import { createClient } from "@/lib/supabase/server";
 import { timeAgo } from "@/lib/time";
+import { attributedFeedback, daysAgoIso, recurringSignals } from "@/lib/drift";
+import { CheckInCallout } from "@/components/drift";
 import type { Activity, ActivityVerb, Goal, Membership, Run } from "@/types/db";
 import { formatDue, runStatusBadge } from "./runs/run-format";
 
@@ -239,6 +241,19 @@ export async function CommandView({
 
   const prog = (id: string) => progress.get(id) ?? { total: 0, done: 0 };
 
+  // Drift: recurring corrections worth a coaching check-in. Hidden entirely when quiet.
+  const attributed = await attributedFeedback(
+    supabase,
+    workspaceId,
+    daysAgoIso(30),
+  );
+  const checkInSignals = recurringSignals(attributed).map((s) => ({
+    operatorName: memberName(memberById.get(s.operatorId)),
+    playbookId: s.playbookId,
+    playbookName: s.playbookName,
+    count: s.count,
+  }));
+
   return (
     <div className="flex flex-col gap-6" data-testid="command-view">
       <div>
@@ -270,6 +285,8 @@ export async function CommandView({
         <StatTile label="Awaiting review" value={stats.review} tone="review" />
         <StatTile label="Overdue" value={stats.overdue} tone="warn" />
       </div>
+
+      <CheckInCallout workspaceId={workspaceId} signals={checkInSignals} />
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="flex flex-col gap-6 lg:col-span-2">

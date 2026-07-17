@@ -47,6 +47,18 @@ function draftFor(description) {
   return /vague/i.test(description) ? LOW_CONFIDENCE : HIGH_CONFIDENCE;
 }
 
+// The Founder's Manual synthesis tool (Addition A) returns six keyed sections.
+const FOUNDER_MANUAL = {
+  communication: "I'm blunt but never personal. Tell me in the channel, fast.",
+  delivery: "Deliver it done and double-checked, not 90% and 'thoughts?'.",
+  response_time:
+    "Reply within a few hours in the workday. Urgent means revenue.",
+  dealbreakers:
+    "Silence when something's on fire is the fastest way to lose me.",
+  trust: "Own the outcome, flag risks early, and I'll hand you more.",
+  standard: "Good means I'd happily put my name on it without touching it.",
+};
+
 const server = createServer((req, res) => {
   if (req.method === "GET" && req.url === "/health") {
     res.writeHead(200).end("ok");
@@ -58,12 +70,15 @@ const server = createServer((req, res) => {
     req.on("data", (chunk) => (body += chunk));
     req.on("end", () => {
       let description = "";
+      let toolName = "save_playbook_draft";
       try {
         const parsed = JSON.parse(body);
         const first = parsed.messages?.[0]?.content;
         description = typeof first === "string" ? first : "";
+        // The forced tool tells us which feature is calling.
+        toolName = parsed.tools?.[0]?.name ?? toolName;
       } catch {
-        // fall through with empty description
+        // fall through with defaults
       }
 
       if (/boom/i.test(description)) {
@@ -72,6 +87,11 @@ const server = createServer((req, res) => {
         return;
       }
 
+      const input =
+        toolName === "save_founder_manual"
+          ? FOUNDER_MANUAL
+          : draftFor(description);
+
       const payload = {
         id: "msg_mock",
         type: "message",
@@ -79,12 +99,7 @@ const server = createServer((req, res) => {
         model: "mock-claude",
         stop_reason: "tool_use",
         content: [
-          {
-            type: "tool_use",
-            id: "toolu_mock",
-            name: "save_playbook_draft",
-            input: draftFor(description),
-          },
+          { type: "tool_use", id: "toolu_mock", name: toolName, input },
         ],
         usage: { input_tokens: 1, output_tokens: 1 },
       };

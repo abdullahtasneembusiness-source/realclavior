@@ -4,6 +4,8 @@ import { ArrowLeft } from "lucide-react";
 
 import { requireAdmin, requireWorkspaceContext } from "@/lib/workspace";
 import { createClient } from "@/lib/supabase/server";
+import { attributedFeedback, daysAgoIso, recurringSignals } from "@/lib/drift";
+import { CheckInCallout } from "@/components/drift";
 import type { Membership, Playbook, PlaybookStep } from "@/types/db";
 import type { FeedbackNote } from "@/types/db";
 import { PlaybookMetaForm } from "./playbook-meta-form";
@@ -92,6 +94,22 @@ export default async function PlaybookEditorPage({
     color: m.color,
   }));
 
+  // Drift signal: recurring corrections for the same operator on THIS playbook.
+  const memberName = new Map(owners.map((o) => [o.id, o.name]));
+  const attributed = await attributedFeedback(
+    supabase,
+    ctx.workspace.id,
+    daysAgoIso(30),
+  );
+  const driftSignals = recurringSignals(
+    attributed.filter((n) => n.playbookId === playbook.id),
+  ).map((s) => ({
+    operatorName: memberName.get(s.operatorId) ?? "An operator",
+    playbookId: s.playbookId,
+    playbookName: s.playbookName,
+    count: s.count,
+  }));
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
@@ -117,6 +135,12 @@ export default async function PlaybookEditorPage({
           />
         </div>
       </div>
+
+      <CheckInCallout
+        workspaceId={ctx.workspace.id}
+        signals={driftSignals}
+        showPlaybook={false}
+      />
 
       <PlaybookMetaForm
         workspaceId={ctx.workspace.id}

@@ -2,6 +2,8 @@ import { Badge } from "@/components/ui/badge";
 import { MemberAvatar } from "@/components/member-avatar";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin, requireWorkspaceContext } from "@/lib/workspace";
+import { attributedFeedback, daysAgoIso, operatorTrend } from "@/lib/drift";
+import { TrendBadge } from "@/components/drift";
 import type { Membership } from "@/types/db";
 import { InviteDialog } from "./invite-dialog";
 import { MemberActions } from "./member-actions";
@@ -31,6 +33,16 @@ export default async function TeamPage({
   const members = (data ?? []) as Membership[];
   const active = members.filter((m) => m.status === "active");
   const pending = members.filter((m) => m.status === "invited");
+
+  // Per-operator feedback trend — coaching signal, admin-only (this page is gated).
+  const attributed = await attributedFeedback(
+    supabase,
+    ctx.workspace.id,
+    daysAgoIso(28),
+  );
+  const trendByMember = new Map(
+    active.map((m) => [m.id, operatorTrend(attributed, m.id)]),
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -83,6 +95,12 @@ export default async function TeamPage({
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
+                  {(() => {
+                    const t = trendByMember.get(m.id);
+                    return t && !isSelf ? (
+                      <TrendBadge trend={t.trend} recent={t.recent} />
+                    ) : null;
+                  })()}
                   <Badge variant="outline">{roleLabel(m.role)}</Badge>
                   <MemberActions
                     workspaceId={ctx.workspace.id}
