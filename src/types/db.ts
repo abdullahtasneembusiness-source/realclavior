@@ -123,6 +123,7 @@ export interface Run {
   id: string;
   playbook_id: string;
   membership_id: string;
+  launch_id: string | null;
   title: string | null;
   due_at: string | null;
   status: RunStatus;
@@ -154,6 +155,39 @@ export interface RunSummary extends Run {
   doneSteps: number;
   assigneeName: string | null;
   assigneeColor: string | null;
+}
+
+export type LaunchStatus = "draft" | "armed" | "live" | "complete";
+
+export interface Launch {
+  id: string;
+  workspace_id: string;
+  name: string;
+  status: LaunchStatus;
+  start_date: string | null;
+  is_template: boolean;
+  created_at: string;
+}
+
+export interface LaunchItem {
+  id: string;
+  launch_id: string;
+  playbook_id: string;
+  membership_id: string | null;
+  offset_days: number;
+  due_time: string | null;
+}
+
+/** A launch item joined with the display data the builder/timeline need. */
+export interface LaunchItemView extends LaunchItem {
+  playbookName: string;
+  ownerName: string | null;
+  ownerColor: string | null;
+}
+
+/** A launch plus its item count, for the list view. */
+export interface LaunchSummary extends Launch {
+  itemCount: number;
 }
 
 export type ActivityVerb =

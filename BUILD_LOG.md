@@ -111,3 +111,18 @@ Shipped in two commits (Goals; then Brain + Corrections + Onboarding). The `goal
 - **Test fallout from the onboarding gate.** Every operator-flow spec now passes through onboarding before reaching an operator home, via a new `completeOnboarding` helper. Founders are exempt (they bootstrap the workspace), so founder specs are untouched.
 
 **Live-DB follow-up (not yet done).** `20260717140000_membership_onboarding.sql` (and the still-pending `ai_generations`) apply to CI's fresh stack every run but need applying to the live hosted project when the Supabase connector is reachable. On live, the onboarding redirect is inert until the column exists — apply this before onboarding real operators there.
+
+## Session 9 — Launch Mode (Phase 5)
+
+Verified before starting that Sessions 1–8 are all built as real routes (login, onboarding, team, playbooks + AI generator, runs, feedback memory, command view, goals, brain, welcome) — only `launches` was still a ComingSoon stub.
+
+- **No new migration for the core.** `launches` and `launch_items` already had tables, RLS (admin-only), and grants from the initial schema, so the builder/timeline/templates are pure app code. The one addition: `runs.launch_id` (`20260717160000_launch_runs.sql`) — a nullable back-reference so the live dashboard can compute progress per launch without guessing which runs belong to it. Additive, existing runs RLS already covers the row.
+- **Builder + timeline.** Create a launch (name/start date), add items (playbook + owner defaulting to the playbook's owner but overridable + day offset + optional due time), remove them. The timeline is owner-rows × day-columns, only rendering days that actually have items so it stays compact.
+- **Arm + spawn.** Arming locks the structure. Spawn creates a real run per item — the same immutable snapshot as a hand-off (playbook name on the run, step content on run_steps), with `due_at = start + offset (+ time)` — and flips the launch to live. Idempotent (only acts on an armed launch). An armed launch whose start date is already here (today or past) spawns immediately, so arming a day late doesn't silently skip runs.
+- **The cron gap, handled honestly.** The doc says "extend the existing cron infrastructure" — but the Phase 2a scheduler was never built, so there is none. Rather than fake it, spawn fires at arm-time when due, plus an opportunistic `checkDueLaunches` catch-up that runs when a founder opens the launches area (a small client effect). A real pg_cron calling the same path daily is the production trigger, deferred with the rest of scheduling. The smoke-test path ("arm for today → runs spawn now") is fully covered and tested.
+- **Live dashboard + templates.** A live launch shows percent complete (runs done / total), what's overdue, and what's due in the next 24h — reusing Command View's run/badge vocabulary. "Save as template" stores the structure (playbooks + owners + offsets) without dates; "New launch from template" copies it forward with a fresh date.
+- **E2E** (`launches.spec`): build a two-item launch, arm it for today, confirm the runs spawn into the live dashboard, complete one and confirm the percent updates; and the template round-trip (save → new-from-template carries the items). Real browser, as always.
+
+**Additions doc (Session 8.5) — NOT built.** The uploaded `CLOVIOR_ADDITIONS.md` (Founder's Manual + Drift Signals) is acknowledged but deferred per instruction to build only Launch Mode now. It slots between Session 8 and 9 in the doc's ordering; revisit before Session 10.
+
+**Live-DB follow-up.** `20260717160000_launch_runs.sql` needs applying to the live project alongside the run (it applies to CI's fresh stack automatically).
