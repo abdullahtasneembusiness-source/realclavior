@@ -1,5 +1,10 @@
 import { test, expect } from "@playwright/test";
-import { signInAs, testEmail, createWorkspace } from "./helpers";
+import {
+  signInAs,
+  testEmail,
+  createWorkspace,
+  completeOnboarding,
+} from "./helpers";
 
 const runSteps = "[data-testid^='run-step-']";
 const playbookSteps = "[data-testid^='step-row-']";
@@ -24,7 +29,7 @@ test("Command View surfaces active runs and the Live Feed tracks activity", asyn
   const opContext = await browser.newContext();
   const opPage = await opContext.newPage();
   await signInAs(opPage, operatorEmail);
-  await expect(opPage).toHaveURL(new RegExp(`/w/${workspaceId}$`));
+  await completeOnboarding(opPage, workspaceId);
 
   // Founder builds a one-step playbook and hands it off.
   await page.goto(`/w/${workspaceId}/playbooks`);

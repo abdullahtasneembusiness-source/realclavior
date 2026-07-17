@@ -1,7 +1,21 @@
-import { Brain as BrainIcon } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
+import { isAdminRole, requireWorkspaceContext } from "@/lib/workspace";
+import type { BrainEntry } from "@/types/db";
+import { BrainBoard, type CorrectionItem } from "./brain-board";
 
-import { ComingSoon } from "@/components/shell/coming-soon";
-import { requireWorkspaceContext } from "@/lib/workspace";
+interface FeedbackRow {
+  id: string;
+  body: string;
+  playbook_id: string;
+  created_at: string;
+  playbooks: { name: string } | { name: string }[] | null;
+}
+
+function playbookName(row: FeedbackRow): string {
+  const p = row.playbooks;
+  if (!p) return "A playbook";
+  return (Array.isArray(p) ? p[0]?.name : p.name) ?? "A playbook";
+}
 
 /** Open to every active member — Brain is the onboarding surface, not admin-only. */
 export default async function BrainPage({
@@ -9,7 +23,38 @@ export default async function BrainPage({
 }: {
   params: { workspaceId: string };
 }) {
-  await requireWorkspaceContext(params.workspaceId);
+  const ctx = await requireWorkspaceContext(params.workspaceId);
+  const isAdmin = isAdminRole(ctx.membership.role);
+
+  const supabase = await createClient();
+
+  const [{ data: entryRows }, { data: feedbackRows }] = await Promise.all([
+    supabase
+      .from("brain_entries")
+      .select("*")
+      .eq("workspace_id", ctx.workspace.id)
+      .not("category", "eq", "corrections")
+      .order("updated_at", { ascending: false }),
+    // Corrections mirror: live feedback_notes across the workspace's playbooks.
+    // RLS still applies — an operator only sees notes for playbooks they own or ran.
+    supabase
+      .from("feedback_notes")
+      .select("id, body, playbook_id, created_at, playbooks!inner(name)")
+      .eq("playbooks.workspace_id", ctx.workspace.id)
+      .eq("resolved", false)
+      .order("created_at", { ascending: false }),
+  ]);
+
+  const entries = (entryRows ?? []) as BrainEntry[];
+  const corrections: CorrectionItem[] = (
+    (feedbackRows ?? []) as FeedbackRow[]
+  ).map((row) => ({
+    id: row.id,
+    body: row.body,
+    playbookId: row.playbook_id,
+    playbookName: playbookName(row),
+    createdAt: row.created_at,
+  }));
 
   return (
     <div className="flex flex-col gap-6">
@@ -20,12 +65,11 @@ export default async function BrainPage({
           turnover.
         </p>
       </div>
-      <ComingSoon
-        icon={BrainIcon}
-        title="Institutional memory that isn't just in your head"
-        description="Voice, standards, tools, contacts, preferences — searchable, and the first thing a new team member walks through on day one."
-        phase="Coming in Phase 4"
-        accent="mint"
+      <BrainBoard
+        workspaceId={ctx.workspace.id}
+        isAdmin={isAdmin}
+        entries={entries}
+        corrections={corrections}
       />
     </div>
   );

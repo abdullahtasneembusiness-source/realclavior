@@ -1,5 +1,10 @@
 import { test, expect } from "@playwright/test";
-import { signInAs, testEmail, createWorkspace } from "./helpers";
+import {
+  signInAs,
+  testEmail,
+  createWorkspace,
+  completeOnboarding,
+} from "./helpers";
 
 async function createWorkspaceAs(
   page: import("@playwright/test").Page,
@@ -47,7 +52,9 @@ test("operator sees the simplified shell and can't reach admin routes by URL", a
   const operatorPage = await operatorContext.newPage();
   await signInAs(operatorPage, operatorEmail);
 
-  // accept_pending_invites() links them straight into the same workspace.
+  // accept_pending_invites() links them straight into the same workspace — after
+  // walking through onboarding (Session 8), which lands them on their home.
+  await completeOnboarding(operatorPage, workspaceId);
   await expect(operatorPage).toHaveURL(new RegExp(`/w/${workspaceId}$`));
   await expect(
     operatorPage.getByRole("heading", { name: "My Playbooks" }),
@@ -93,6 +100,9 @@ test("founder can promote an operator to manager, and it takes effect", async ({
   const operatorContext = await browser.newContext();
   const operatorPage = await operatorContext.newPage();
   await signInAs(operatorPage, operatorEmail);
+  // Clear onboarding now, so when they sign back in as a manager below they aren't
+  // sent back through it (managers who haven't onboarded are still gated).
+  await completeOnboarding(operatorPage, workspaceId);
   await expect(operatorPage).toHaveURL(new RegExp(`/w/${workspaceId}$`));
   await operatorContext.close();
 

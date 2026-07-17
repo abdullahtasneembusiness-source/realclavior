@@ -126,6 +126,33 @@ export async function createWorkspace(
   return page.url().split("/w/")[1];
 }
 
+/**
+ * Clears the onboarding gate for a freshly-signed-in non-founder. Since Session 8, a
+ * member who hasn't onboarded is redirected from their workspace home to /welcome, so
+ * operator-flow tests must walk through (or skip) it before they reach their home.
+ * No-op if the member is already onboarded or isn't redirected.
+ */
+export async function completeOnboarding(
+  page: Page,
+  workspaceId: string,
+): Promise<void> {
+  await page.goto(`/w/${workspaceId}`);
+  if (!new URL(page.url()).pathname.endsWith("/welcome")) return;
+
+  for (let i = 0; i < 30; i++) {
+    const complete = await page
+      .getByTestId("onboarding-complete")
+      .isVisible()
+      .catch(() => false);
+    if (complete) break;
+    const next = page.getByTestId("onboarding-next");
+    if (!(await next.isVisible().catch(() => false))) break;
+    await next.click();
+  }
+  await page.getByTestId("onboarding-finish").click();
+  await page.waitForURL((url) => url.pathname === `/w/${workspaceId}`);
+}
+
 /** A signed-in access token for `email`, without a browser — for direct REST/RLS checks. */
 export async function getAccessToken(email: string): Promise<string> {
   const { tokenHash, type } = await prepareMagicVerification(email);

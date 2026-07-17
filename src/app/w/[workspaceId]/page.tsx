@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 import { requireWorkspaceContext } from "@/lib/workspace";
 import { MyRuns } from "./runs/my-runs";
 import { CommandView } from "./command-view";
@@ -10,6 +12,12 @@ export default async function WorkspaceHome({
   const ctx = await requireWorkspaceContext(params.workspaceId);
   const isAdmin =
     ctx.membership.role === "founder" || ctx.membership.role === "manager";
+
+  // A team member who just joined walks through onboarding first. Founders bootstrap
+  // the workspace, so they skip it; everyone else lands here once, then never again.
+  if (ctx.membership.role !== "founder" && !ctx.membership.onboarded_at) {
+    redirect(`/w/${ctx.workspace.id}/welcome`);
+  }
 
   if (!isAdmin) {
     return (

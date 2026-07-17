@@ -27,6 +27,27 @@ export interface Membership {
   status: MembershipStatus;
   invited_email: string | null;
   invited_at: string | null;
+  onboarded_at: string | null;
+  created_at: string;
+}
+
+export type BrainCategory =
+  | "voice"
+  | "standards"
+  | "tools"
+  | "contacts"
+  | "preferences"
+  | "other"
+  | "corrections";
+
+export interface BrainEntry {
+  id: string;
+  workspace_id: string;
+  category: BrainCategory;
+  title: string;
+  body: string | null;
+  author_membership_id: string | null;
+  updated_at: string;
   created_at: string;
 }
 

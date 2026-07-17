@@ -1,5 +1,10 @@
 import { test, expect } from "@playwright/test";
-import { signInAs, testEmail, createWorkspace } from "./helpers";
+import {
+  signInAs,
+  testEmail,
+  createWorkspace,
+  completeOnboarding,
+} from "./helpers";
 
 test.describe("desktop viewport", () => {
   test.use({ viewport: { width: 1280, height: 800 } });
@@ -71,6 +76,7 @@ test.describe("mobile viewport", () => {
     await desktopContext.close();
 
     await signInAs(page, operatorEmail);
+    await completeOnboarding(page, workspaceId);
     await expect(page).toHaveURL(new RegExp(`/w/${workspaceId}$`));
 
     await expect(page.getByTestId("bottom-tab-bar")).toBeVisible();
