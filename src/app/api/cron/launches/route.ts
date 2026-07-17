@@ -54,6 +54,10 @@ export async function GET(request: Request) {
   }
 
   const due = (dueRows ?? []) as Launch[];
+  // eslint-disable-next-line no-console
+  console.log(
+    `[cron] due=${due.length} ids=${due.map((d) => `${d.id}:${d.status}:${d.start_date}`).join(",")}`,
+  );
   let launched = 0;
   let spawned = 0;
   for (const launch of due) {
