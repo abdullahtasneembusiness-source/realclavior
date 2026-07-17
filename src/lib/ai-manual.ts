@@ -80,7 +80,7 @@ export async function generateFounderManual(
   const baseUrl = (
     process.env.ANTHROPIC_BASE_URL ?? "https://api.anthropic.com"
   ).replace(/\/$/, "");
-  const model = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-5";
+  const model = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-5";
 
   const transcript = qa
     .map((p) => `Q: ${p.q}\nA: ${p.a.trim().slice(0, 1000)}`)

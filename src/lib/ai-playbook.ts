@@ -123,7 +123,7 @@ export async function generatePlaybookDraft(
   const baseUrl = (
     process.env.ANTHROPIC_BASE_URL ?? "https://api.anthropic.com"
   ).replace(/\/$/, "");
-  const model = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-5";
+  const model = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-5";
 
   // Cap the request so a giant paste can't run up cost or latency.
   const input = description.trim().slice(0, 8000);

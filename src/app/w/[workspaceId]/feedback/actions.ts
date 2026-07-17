@@ -104,7 +104,7 @@ export async function distillFeedback(
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        model: process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-5",
+        model: process.env.ANTHROPIC_MODEL ?? "claude-sonnet-5",
         max_tokens: 200,
         system:
           "You turn a founder's raw, messy correction to a team member into ONE crisp standing rule, in plain direct language, imperative voice, no preamble, one or two sentences max. Return only the rule text, nothing else.",
