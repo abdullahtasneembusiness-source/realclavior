@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useFormStatus } from "react-dom";
 import {
   ArrowLeft,
   ArrowRight,
@@ -12,7 +12,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { markOnboarded } from "./actions";
+import { finishOnboarding } from "./actions";
 
 export interface OnboardingItem {
   id: string;
@@ -21,28 +21,25 @@ export interface OnboardingItem {
   body: string | null;
 }
 
+function FinishButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Button type="submit" data-testid="onboarding-finish" disabled={pending}>
+      {pending ? <Loader2 className="animate-spin" /> : null} Go to my workspace{" "}
+      <ArrowRight />
+    </Button>
+  );
+}
+
 export function OnboardingFlow({
   workspaceId,
   items,
-  homeHref,
 }: {
   workspaceId: string;
   items: OnboardingItem[];
-  homeHref: string;
 }) {
-  const router = useRouter();
   const [step, setStep] = useState(0);
-  const [finishing, startFinishing] = useTransition();
   const finished = step >= items.length;
-
-  // Persist completion, THEN navigate — home redirects back here while onboarded_at is
-  // still null, so the write must land before we leave (awaiting it closes that race).
-  function finish() {
-    startFinishing(async () => {
-      await markOnboarded(workspaceId);
-      router.replace(homeHref);
-    });
-  }
 
   if (finished) {
     return (
@@ -59,14 +56,11 @@ export function OnboardingFlow({
               You&apos;ve got the context you need. Your playbooks are waiting.
             </p>
           </div>
-          <Button
-            data-testid="onboarding-finish"
-            onClick={finish}
-            disabled={finishing}
-          >
-            {finishing ? <Loader2 className="animate-spin" /> : null} Go to my
-            workspace <ArrowRight />
-          </Button>
+          {/* Server action marks onboarded and redirects home in one request, so the
+              flag is committed before the home page's redirect check runs. */}
+          <form action={finishOnboarding.bind(null, workspaceId)}>
+            <FinishButton />
+          </form>
         </CardContent>
       </Card>
     );

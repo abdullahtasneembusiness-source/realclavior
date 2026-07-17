@@ -132,23 +132,30 @@ export async function createWorkspace(
  * home to /welcome, so operator-flow tests must clear it before reaching their home.
  *
  * The gate itself (and the full /welcome walkthrough) is covered by onboarding.spec;
- * here we just need it out of the way, so we set onboarded_at directly via the
- * service-role client (bypassing RLS) rather than driving the UI — deterministic, and
- * independent of the walkthrough's client-side timing. The operator's own membership
- * is the row whose invited_email matches; the founder's self-created row doesn't.
+ * here we just need it out of the way. We call the real mark_self_onboarded RPC as the
+ * operator (their own token), rather than the service-role client — the authenticated
+ * role has the table grants the RPC needs, and this exercises the actual function
+ * instead of poking the table directly.
  */
 export async function completeOnboarding(
   page: Page,
   workspaceId: string,
   email: string,
 ): Promise<void> {
-  const { error } = await adminClient()
-    .from("memberships")
-    .update({ onboarded_at: new Date().toISOString() })
-    .eq("workspace_id", workspaceId)
-    .eq("invited_email", email);
-  if (error) {
-    throw new Error(`completeOnboarding(${email}): ${error.message}`);
+  const token = await getAccessToken(email);
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/mark_self_onboarded`, {
+    method: "POST",
+    headers: {
+      apikey: ANON_KEY,
+      Authorization: `Bearer ${token}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({ p_workspace_id: workspaceId }),
+  });
+  if (!res.ok) {
+    throw new Error(
+      `completeOnboarding(${email}): ${res.status} ${await res.text()}`,
+    );
   }
   // Fresh navigation → server re-reads the now-set flag → no redirect to /welcome.
   await page.goto(`/w/${workspaceId}`);

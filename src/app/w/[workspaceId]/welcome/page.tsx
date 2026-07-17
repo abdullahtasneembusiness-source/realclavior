@@ -66,11 +66,7 @@ export default async function WelcomePage({
         </p>
       </div>
 
-      <OnboardingFlow
-        workspaceId={ctx.workspace.id}
-        items={items}
-        homeHref={`/w/${ctx.workspace.id}`}
-      />
+      <OnboardingFlow workspaceId={ctx.workspace.id} items={items} />
     </div>
   );
 }
