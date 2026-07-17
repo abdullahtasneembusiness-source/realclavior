@@ -14,6 +14,8 @@ export interface NavItem {
   icon: LucideIcon;
   /** Matches the current pathname against this segment, "" means the workspace root. */
   segment: string;
+  /** Sidebar section this item sits under (admin nav only; operator nav is flat). */
+  group?: string;
 }
 
 /**
@@ -27,36 +29,42 @@ export const ADMIN_NAV: NavItem[] = [
     href: (id) => `/w/${id}`,
     icon: LayoutDashboard,
     segment: "",
+    group: "Workspace",
   },
   {
     label: "Playbooks",
     href: (id) => `/w/${id}/playbooks`,
     icon: ListChecks,
     segment: "playbooks",
+    group: "Workspace",
   },
   {
     label: "Team",
     href: (id) => `/w/${id}/team`,
     icon: Users,
     segment: "team",
+    group: "Workspace",
   },
   {
     label: "Goals",
     href: (id) => `/w/${id}/goals`,
     icon: Target,
     segment: "goals",
-  },
-  {
-    label: "Brain",
-    href: (id) => `/w/${id}/brain`,
-    icon: Brain,
-    segment: "brain",
+    group: "Growth",
   },
   {
     label: "Launches",
     href: (id) => `/w/${id}/launches`,
     icon: Rocket,
     segment: "launches",
+    group: "Growth",
+  },
+  {
+    label: "Brain",
+    href: (id) => `/w/${id}/brain`,
+    icon: Brain,
+    segment: "brain",
+    group: "Growth",
   },
 ];
 
