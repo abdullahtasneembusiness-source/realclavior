@@ -49,6 +49,9 @@ export default defineConfig({
       env: {
         ANTHROPIC_API_KEY: "e2e-test-key",
         ANTHROPIC_BASE_URL: `http://127.0.0.1:${AI_MOCK_PORT}`,
+        // Shared secret the launch-cron endpoint checks. The suite sends the same value
+        // as a Bearer token; keep it in sync with tests/e2e/launch-cron.spec.ts.
+        CRON_SECRET: "e2e-cron-secret",
       },
     },
   ],

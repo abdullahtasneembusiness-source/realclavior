@@ -1,6 +1,9 @@
-import type { createClient } from "@/lib/supabase/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
-type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>;
+// Accepts either the RLS-scoped server client or the service-role admin client — both
+// are SupabaseClient. When called on the service-role client (the cron), getUser()
+// returns no user and the log is silently skipped, which is the intended behavior.
+type SupabaseServerClient = SupabaseClient;
 
 export type ActivityVerb =
   | "started"

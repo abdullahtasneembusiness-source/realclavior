@@ -5,8 +5,8 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
-import { logActivity } from "@/lib/activity";
-import type { Launch, LaunchItem, PlaybookStep } from "@/types/db";
+import { spawnLaunch } from "@/lib/launches";
+import type { Launch, LaunchItem } from "@/types/db";
 
 export type LaunchState = { error?: string; success?: string };
 
@@ -28,24 +28,6 @@ function blank(value: FormDataEntryValue | null): string | undefined {
 
 function today(): string {
   return new Date().toISOString().slice(0, 10);
-}
-
-/** due_at = start_date + offset_days (+ due_time, else 17:00 UTC). Kept in UTC — a
- * launch's schedule is date-shaped, not tied to a viewer's timezone, in v1. */
-function computeDueAt(
-  startDate: string,
-  offsetDays: number,
-  dueTime: string | null,
-): string {
-  const d = new Date(`${startDate}T00:00:00Z`);
-  d.setUTCDate(d.getUTCDate() + offsetDays);
-  if (dueTime) {
-    const [h, m] = dueTime.split(":").map((n) => Number(n));
-    d.setUTCHours(h ?? 0, m ?? 0, 0, 0);
-  } else {
-    d.setUTCHours(17, 0, 0, 0);
-  }
-  return d.toISOString();
 }
 
 // ---- Launch CRUD -----------------------------------------------------------
@@ -237,119 +219,6 @@ export async function removeLaunchItem(
 }
 
 // ---- Spawn (arm → live) ----------------------------------------------------
-
-/**
- * Spawns real runs for every item of an armed launch and flips it to 'live'. This is
- * the piece a scheduled job would normally fire on the start date; since the cron
- * scheduler (Phase 2a) isn't built yet, it runs at arm time when the launch is already
- * due, and via the opportunistic checkDueLaunches catch-up — see BUILD_LOG. Idempotent:
- * only acts on an 'armed' launch, so it can't double-spawn.
- *
- * Each spawned run is an immutable snapshot, exactly like a hand-off: the playbook name
- * on the run and the step content on run_steps, with due_at = start + offset (+ time).
- */
-async function spawnLaunch(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  workspaceId: string,
-  launch: Launch,
-): Promise<number> {
-  if (launch.status !== "armed" || !launch.start_date) return 0;
-
-  const { data: itemRows } = await supabase
-    .from("launch_items")
-    .select("*")
-    .eq("launch_id", launch.id);
-  const items = (itemRows ?? []) as LaunchItem[];
-  if (items.length === 0) return 0;
-
-  const playbookIds = Array.from(new Set(items.map((i) => i.playbook_id)));
-  const [{ data: pbRows }, { data: stepRows }] = await Promise.all([
-    supabase
-      .from("playbooks")
-      .select("id, name, status, owner_membership_id")
-      .in("id", playbookIds),
-    supabase
-      .from("playbook_steps")
-      .select("*")
-      .in("playbook_id", playbookIds)
-      .order("position", { ascending: true }),
-  ]);
-
-  const playbooks = new Map(
-    (pbRows ?? []).map((p) => [
-      p.id,
-      p as {
-        id: string;
-        name: string;
-        status: string;
-        owner_membership_id: string | null;
-      },
-    ]),
-  );
-  const stepsByPlaybook = new Map<string, PlaybookStep[]>();
-  for (const s of (stepRows ?? []) as PlaybookStep[]) {
-    const list = stepsByPlaybook.get(s.playbook_id) ?? [];
-    list.push(s);
-    stepsByPlaybook.set(s.playbook_id, list);
-  }
-
-  let spawned = 0;
-  for (const item of items) {
-    const pb = playbooks.get(item.playbook_id);
-    if (!pb || pb.status === "archived") continue;
-    const owner = item.membership_id ?? pb.owner_membership_id;
-    if (!owner) continue;
-    const steps = stepsByPlaybook.get(item.playbook_id) ?? [];
-    if (steps.length === 0) continue;
-
-    const { data: run, error: runError } = await supabase
-      .from("runs")
-      .insert({
-        playbook_id: item.playbook_id,
-        membership_id: owner,
-        launch_id: launch.id,
-        title: pb.name,
-        due_at: computeDueAt(
-          launch.start_date,
-          item.offset_days,
-          item.due_time,
-        ),
-        status: "queued",
-      })
-      .select("id")
-      .single();
-    if (runError || !run) continue;
-
-    await supabase.from("run_steps").insert(
-      steps.map((s) => ({
-        run_id: run.id,
-        playbook_step_id: s.id,
-        position: s.position,
-        title: s.title,
-        detail: s.detail,
-        link_url: s.link_url,
-        requires_proof: s.requires_proof,
-        done: false,
-      })),
-    );
-    spawned += 1;
-  }
-
-  await supabase
-    .from("launches")
-    .update({ status: "live" })
-    .eq("id", launch.id)
-    .eq("status", "armed");
-
-  await logActivity(supabase, {
-    workspaceId,
-    verb: "launched",
-    targetType: "launch",
-    targetId: launch.id,
-  });
-
-  return spawned;
-}
 
 /**
  * Arms a launch: locks its structure. If the start date is already here (today or
