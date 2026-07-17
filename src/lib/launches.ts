@@ -55,27 +55,19 @@ export async function spawnLaunch(
   if (launch.status !== "armed" || !launch.start_date) return 0;
 
   // Atomically claim the launch. Only the caller that flips armed→live proceeds.
-  const { data: claimed, error: claimError } = await supabase
+  const { data: claimed } = await supabase
     .from("launches")
     .update({ status: "live" })
     .eq("id", launch.id)
     .eq("status", "armed")
     .select("id");
-  // eslint-disable-next-line no-console
-  console.error(
-    `[spawn] claim launch=${launch.id} rows=${claimed?.length ?? 0} err=${claimError?.message ?? "none"}`,
-  );
   if (!claimed || claimed.length === 0) return 0;
 
-  const { data: itemRows, error: itemError } = await supabase
+  const { data: itemRows } = await supabase
     .from("launch_items")
     .select("*")
     .eq("launch_id", launch.id);
   const items = (itemRows ?? []) as LaunchItem[];
-  // eslint-disable-next-line no-console
-  console.error(
-    `[spawn] items launch=${launch.id} count=${items.length} err=${itemError?.message ?? "none"}`,
-  );
   if (items.length === 0) return 0;
 
   const playbookIds = Array.from(new Set(items.map((i) => i.playbook_id)));
@@ -130,10 +122,6 @@ export async function spawnLaunch(
       })
       .select("id")
       .single();
-    // eslint-disable-next-line no-console
-    console.error(
-      `[spawn] run launch=${launch.id} run=${run?.id ?? "null"} err=${runError?.message ?? "none"}`,
-    );
     if (runError || !run) continue;
 
     await supabase.from("run_steps").insert(
