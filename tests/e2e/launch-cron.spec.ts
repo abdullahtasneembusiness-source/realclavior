@@ -91,24 +91,48 @@ test("the daily cron spawns an armed launch once its start date arrives", async 
   // The real cron call spawns the run(s) and flips the launch live.
   const res = await callCron(CRON_SECRET);
   expect(res.status).toBe(200);
-  const body = (await res.json()) as {
-    ok: boolean;
-    launched: number;
-    spawned: number;
-  };
+  const body = (await res.json()) as { ok: boolean; spawned: number };
   expect(body.ok).toBe(true);
-  // Other suites may leave their own due launches in the shared DB, so assert at-least.
-  expect(body.launched).toBeGreaterThanOrEqual(1);
-  expect(body.spawned).toBeGreaterThanOrEqual(1);
 
-  // The launch is now live with its spawned run visible on the dashboard.
-  await page.reload();
-  await expect(page.getByTestId("live-dashboard")).toBeVisible();
+  // Assert the cron's effect directly in the DB — deterministic, independent of any
+  // page-render timing: THIS launch flipped to live and got exactly one run.
+  await expect
+    .poll(
+      async () => {
+        const { data } = await admin
+          .from("launches")
+          .select("status")
+          .eq("id", launchId)
+          .single();
+        return data?.status ?? null;
+      },
+      { timeout: 5000 },
+    )
+    .toBe("live");
+
+  const { count: runCount } = await admin
+    .from("runs")
+    .select("id", { count: "exact", head: true })
+    .eq("launch_id", launchId);
+  expect(runCount).toBe(1);
+
+  // And the founder's UI reflects it on a fresh load. Retry the navigation so a
+  // transient render lag can't flake it — the DB assertion above already proved the
+  // cron's effect, this just confirms the surface renders it.
+  await expect(async () => {
+    await page.goto(`/w/${workspaceId}/launches/${launchId}`);
+    await expect(page.getByTestId("live-dashboard")).toBeVisible({
+      timeout: 3000,
+    });
+  }).toPass({ timeout: 15000 });
   await expect(page.getByTestId("launch-percent")).toContainText("0 of 1 done");
 
-  // Idempotent: a second cron run must not double-spawn this launch (it's live now).
+  // Idempotent: a second cron run must not double-spawn (the launch is live now).
   const again = await callCron(CRON_SECRET);
   expect(again.status).toBe(200);
-  await page.reload();
-  await expect(page.getByTestId("launch-percent")).toContainText("0 of 1 done");
+  const { count: runCountAfter } = await admin
+    .from("runs")
+    .select("id", { count: "exact", head: true })
+    .eq("launch_id", launchId);
+  expect(runCountAfter).toBe(1);
 });

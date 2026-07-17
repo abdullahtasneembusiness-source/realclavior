@@ -171,8 +171,13 @@ export async function completeOnboarding(
       await page.goto(home, { waitUntil: "domcontentloaded" });
     } catch (err) {
       lastError = err;
-      if (!/ERR_ABORTED/.test(String(err))) throw err;
-      // Aborted mid-redirect — fall through and let waitForURL settle the real URL.
+      // Both manifestations of the same redirect race: Chromium aborts the request
+      // (ERR_ABORTED), or Playwright reports the goto was "interrupted by another
+      // navigation" (the server's redirect to /welcome). Neither is a real failure —
+      // let waitForURL settle the real URL; re-throw anything genuinely unexpected.
+      if (!/ERR_ABORTED|interrupted by another navigation/.test(String(err))) {
+        throw err;
+      }
     }
 
     // Don't trust an instantaneous page.url(): during a server redirect (or right after
