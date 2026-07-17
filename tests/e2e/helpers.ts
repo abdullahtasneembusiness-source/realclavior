@@ -143,22 +143,50 @@ export async function completeOnboarding(
   email: string,
 ): Promise<void> {
   const token = await getAccessToken(email);
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/mark_self_onboarded`, {
-    method: "POST",
-    headers: {
-      apikey: ANON_KEY,
-      Authorization: `Bearer ${token}`,
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({ p_workspace_id: workspaceId }),
-  });
-  if (!res.ok) {
-    throw new Error(
-      `completeOnboarding(${email}): ${res.status} ${await res.text()}`,
-    );
+  const home = `/w/${workspaceId}`;
+
+  // Both the RPC and the landing nav are idempotent, so we retry the whole pair. The
+  // nav can throw net::ERR_ABORTED when it races a Server Component redirect() during
+  // document navigation — a transient framework race, not a real failure — so we
+  // swallow that specific abort and re-check the landed URL instead.
+  let lastError: unknown = null;
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/mark_self_onboarded`, {
+      method: "POST",
+      headers: {
+        apikey: ANON_KEY,
+        Authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({ p_workspace_id: workspaceId }),
+    });
+    if (!res.ok) {
+      throw new Error(
+        `completeOnboarding(${email}): ${res.status} ${await res.text()}`,
+      );
+    }
+
+    try {
+      // Fresh navigation → server re-reads the now-set flag → no /welcome redirect.
+      await page.goto(home, { waitUntil: "domcontentloaded" });
+    } catch (err) {
+      lastError = err;
+      if (!/ERR_ABORTED/.test(String(err))) throw err;
+      // Aborted mid-redirect — fall through and let the URL check decide.
+    }
+
+    // The gate is cleared once we've actually landed under the workspace home and
+    // are not sitting on /welcome. Requiring the workspace prefix guards against an
+    // aborted nav that left the page on a stale or blank URL counting as success.
+    const path = new URL(page.url()).pathname;
+    if (path.startsWith(home) && !path.endsWith("/welcome")) return;
   }
-  // Fresh navigation → server re-reads the now-set flag → no redirect to /welcome.
-  await page.goto(`/w/${workspaceId}`);
+
+  throw new Error(
+    `completeOnboarding(${email}): still on /welcome after retries${
+      lastError ? ` (last nav error: ${String(lastError)})` : ""
+    }`,
+  );
 }
 
 /** A signed-in access token for `email`, without a browser — for direct REST/RLS checks. */
