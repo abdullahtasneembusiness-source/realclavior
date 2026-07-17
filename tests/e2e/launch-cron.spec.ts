@@ -77,6 +77,16 @@ test("the daily cron spawns an armed launch once its start date arrives", async 
     .eq("id", launchId);
   expect(updateError).toBeNull();
 
+  // Confirm the precondition is committed and visible before invoking the cron: this
+  // launch is armed and due today. Removes any doubt that the cron's query would miss it.
+  const { data: preRow } = await admin
+    .from("launches")
+    .select("status, start_date")
+    .eq("id", launchId)
+    .single();
+  expect(preRow?.status).toBe("armed");
+  expect(preRow?.start_date).toBe(isoDaysFromNow(0));
+
   // An unauthenticated call is rejected and changes nothing.
   const unauth = await callCron(null);
   expect(unauth.status).toBe(401);

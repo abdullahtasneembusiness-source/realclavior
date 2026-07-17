@@ -33,9 +33,15 @@ export function computeDueAt(
 }
 
 /**
- * Spawns real runs for every item of an armed launch and flips it to 'live'. Idempotent:
- * only acts on an 'armed' launch and flips it in the same call guarded on status='armed',
- * so a retried or double-fired cron (or an arm + cron race) can never double-spawn.
+ * Spawns real runs for every item of a launch that has just gone live, flipping it
+ * 'armed' → 'live' atomically FIRST so the transition itself is the idempotency gate.
+ *
+ * The claim is a conditional update (`... where status = 'armed'`) that returns the row
+ * only to the caller that actually performed the flip. Any concurrent or retried
+ * invocation — two overlapping cron ticks, a cron racing arm-time, a re-fired job — sees
+ * zero rows updated and returns without spawning, so a launch's runs are created exactly
+ * once. (The old order spawned first and flipped last, which let a second call re-spawn
+ * a launch whose flip hadn't landed yet.)
  *
  * Each spawned run is an immutable snapshot, exactly like a hand-off: the playbook name
  * on the run and the step content on run_steps, with due_at = start + offset (+ time).
@@ -47,6 +53,15 @@ export async function spawnLaunch(
   launch: Launch,
 ): Promise<number> {
   if (launch.status !== "armed" || !launch.start_date) return 0;
+
+  // Atomically claim the launch. Only the caller that flips armed→live proceeds.
+  const { data: claimed } = await supabase
+    .from("launches")
+    .update({ status: "live" })
+    .eq("id", launch.id)
+    .eq("status", "armed")
+    .select("id");
+  if (!claimed || claimed.length === 0) return 0;
 
   const { data: itemRows } = await supabase
     .from("launch_items")
@@ -123,12 +138,6 @@ export async function spawnLaunch(
     );
     spawned += 1;
   }
-
-  await supabase
-    .from("launches")
-    .update({ status: "live" })
-    .eq("id", launch.id)
-    .eq("status", "armed");
 
   // Best-effort activity: logs a 'launched' entry when there's a signed-in user (the
   // action path). The cron's service-role client has no user, so it no-ops silently.
