@@ -97,6 +97,7 @@ export default async function PlaybooksPage({
         >
           {summaries.map((p) => {
             const badge = statusBadge(p.status);
+            const noSteps = p.stepCount === 0;
             return (
               <Link
                 key={p.id}
@@ -120,10 +121,17 @@ export default async function PlaybooksPage({
                       </p>
                     )}
                     <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-1 text-xs text-muted-foreground">
-                      <span className="inline-flex items-center gap-1.5">
-                        <ListChecks className="size-3.5" />
-                        {p.stepCount} {p.stepCount === 1 ? "step" : "steps"}
-                      </span>
+                      {noSteps ? (
+                        <span className="text-clovior-amber inline-flex items-center gap-1.5 font-medium">
+                          <ListChecks className="size-3.5" /> Add your first
+                          step
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5">
+                          <ListChecks className="size-3.5" />
+                          {p.stepCount} {p.stepCount === 1 ? "step" : "steps"}
+                        </span>
+                      )}
                       {p.est_minutes ? (
                         <span className="inline-flex items-center gap-1.5">
                           <Clock className="size-3.5" />
