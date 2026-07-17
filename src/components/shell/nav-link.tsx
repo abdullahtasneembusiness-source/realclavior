@@ -24,10 +24,13 @@ export function NavLink({
   item,
   workspaceId,
   onNavigate,
+  count,
 }: {
   item: NavItem;
   workspaceId: string;
   onNavigate?: () => void;
+  /** Optional count chip, right-aligned. Hidden when undefined or zero. */
+  count?: number;
 }) {
   const pathname = usePathname();
   const active = isActiveSegment(pathname, workspaceId, item.segment);
@@ -62,7 +65,19 @@ export function NavLink({
         )}
         strokeWidth={active ? 2.4 : 2}
       />
-      {item.label}
+      <span className="min-w-0 flex-1 truncate">{item.label}</span>
+      {count ? (
+        <span
+          className={cn(
+            "font-mono text-[0.6875rem] tabular-nums transition-colors",
+            active
+              ? "text-primary"
+              : "text-muted-foreground/70 group-hover:text-muted-foreground",
+          )}
+        >
+          {count}
+        </span>
+      ) : null}
     </Link>
   );
 }

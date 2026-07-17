@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import type { WorkspaceSummary } from "@/lib/workspace";
+import type { Role } from "@/types/db";
 
 function WorkspaceMark({
   name,
@@ -34,9 +35,12 @@ function WorkspaceMark({
 export function WorkspaceSwitcher({
   current,
   workspaces,
+  role,
 }: {
   current: WorkspaceSummary;
   workspaces: WorkspaceSummary[];
+  /** Viewer's role in this workspace, shown as a subtle line under the name. */
+  role?: Role;
 }) {
   const router = useRouter();
 
@@ -44,7 +48,10 @@ export function WorkspaceSwitcher({
     return (
       <div className="flex items-center gap-2.5 px-1 py-1">
         <WorkspaceMark name={current.name} />
-        <span className="truncate text-sm font-medium">{current.name}</span>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium">{current.name}</p>
+          {role ? <p className="section-label">{role}</p> : null}
+        </div>
       </div>
     );
   }
@@ -57,9 +64,10 @@ export function WorkspaceSwitcher({
           className="flex w-full items-center gap-2.5 rounded-md px-1 py-1 text-left transition-colors hover:bg-accent"
         >
           <WorkspaceMark name={current.name} />
-          <span className="min-w-0 flex-1 truncate text-sm font-medium">
-            {current.name}
-          </span>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium">{current.name}</p>
+            {role ? <p className="section-label">{role}</p> : null}
+          </div>
           <ChevronsUpDown className="size-3.5 shrink-0 text-muted-foreground" />
         </button>
       </DropdownMenuTrigger>

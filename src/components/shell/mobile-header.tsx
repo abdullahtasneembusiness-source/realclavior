@@ -11,9 +11,10 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { MemberAvatar } from "@/components/member-avatar";
-import type { NavItem } from "./nav-config";
+import type { NavItem, SidebarExtras } from "./nav-config";
 import { SidebarContent } from "./sidebar-content";
 import type { WorkspaceSummary } from "@/lib/workspace";
+import type { Role } from "@/types/db";
 
 /**
  * Admin (founder/manager) mobile header: hamburger opens a full sidebar drawer.
@@ -29,6 +30,8 @@ export function MobileHeader({
   displayName,
   email,
   color,
+  role,
+  extras,
 }: {
   workspaceId: string;
   workspace: WorkspaceSummary;
@@ -37,6 +40,8 @@ export function MobileHeader({
   displayName: string;
   email: string | null;
   color: string | null;
+  role: Role;
+  extras?: SidebarExtras;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -70,6 +75,8 @@ export function MobileHeader({
             displayName={displayName}
             email={email}
             color={color}
+            role={role}
+            extras={extras}
             onNavigate={() => setOpen(false)}
           />
         </SheetContent>

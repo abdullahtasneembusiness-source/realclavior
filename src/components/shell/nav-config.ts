@@ -19,6 +19,20 @@ export interface NavItem {
 }
 
 /**
+ * Live workspace data the admin sidebar decorates its nav with: count chips on a
+ * few rows and a short list of recently-touched playbooks nested under Playbooks.
+ * Fetched server-side in the workspace layout; purely presentational.
+ */
+export interface SidebarExtras {
+  recentPlaybooks: { id: string; name: string }[];
+  counts: {
+    playbooks: number;
+    team: number;
+    launches: number;
+  };
+}
+
+/**
  * Founder/manager nav: the full 6-section product surface (Section 6, Phase 1-5).
  * Operator nav: deliberately 2 items — this isn't the admin shell with things hidden,
  * it's a genuinely simpler shell built for a different job (Section 3 of the doc).

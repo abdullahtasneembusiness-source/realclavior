@@ -1,6 +1,6 @@
 "use client";
 
-import { ADMIN_NAV, OPERATOR_NAV } from "./nav-config";
+import { ADMIN_NAV, OPERATOR_NAV, type SidebarExtras } from "./nav-config";
 import { SidebarContent } from "./sidebar-content";
 import { MobileHeader } from "./mobile-header";
 import { OperatorMobileHeader } from "./operator-mobile-header";
@@ -20,9 +20,11 @@ import type { ActiveContext } from "@/lib/workspace";
  */
 export function AppShell({
   ctx,
+  extras,
   children,
 }: {
   ctx: ActiveContext;
+  extras?: SidebarExtras;
   children: React.ReactNode;
 }) {
   const isAdmin =
@@ -45,6 +47,8 @@ export function AppShell({
           displayName={displayName}
           email={ctx.email}
           color={ctx.membership.color}
+          role={ctx.membership.role}
+          extras={extras}
         />
       </aside>
 
@@ -58,6 +62,8 @@ export function AppShell({
             displayName={displayName}
             email={ctx.email}
             color={ctx.membership.color}
+            role={ctx.membership.role}
+            extras={extras}
           />
         ) : (
           <OperatorMobileHeader
