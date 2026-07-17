@@ -18,6 +18,11 @@ export interface OwnerOption {
   color: string | null;
 }
 
+export interface GoalOption {
+  id: string;
+  label: string;
+}
+
 export default async function PlaybookEditorPage({
   params,
 }: {
@@ -42,30 +47,41 @@ export default async function PlaybookEditorPage({
     redirect(`/w/${ctx.workspace.id}/playbooks`);
   }
 
-  const [{ data: stepRows }, { data: memberRows }, { data: noteRows }] =
-    await Promise.all([
-      supabase
-        .from("playbook_steps")
-        .select("*")
-        .eq("playbook_id", playbook.id)
-        .order("position", { ascending: true }),
-      supabase
-        .from("memberships")
-        .select("id, title, color, invited_email")
-        .eq("workspace_id", ctx.workspace.id)
-        .eq("status", "active")
-        .order("created_at", { ascending: true }),
-      supabase
-        .from("feedback_notes")
-        .select("*")
-        .eq("playbook_id", playbook.id)
-        .eq("resolved", false)
-        .order("pinned", { ascending: false })
-        .order("created_at", { ascending: false }),
-    ]);
+  const [
+    { data: stepRows },
+    { data: memberRows },
+    { data: noteRows },
+    { data: goalRows },
+  ] = await Promise.all([
+    supabase
+      .from("playbook_steps")
+      .select("*")
+      .eq("playbook_id", playbook.id)
+      .order("position", { ascending: true }),
+    supabase
+      .from("memberships")
+      .select("id, title, color, invited_email")
+      .eq("workspace_id", ctx.workspace.id)
+      .eq("status", "active")
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("feedback_notes")
+      .select("*")
+      .eq("playbook_id", playbook.id)
+      .eq("resolved", false)
+      .order("pinned", { ascending: false })
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("goals")
+      .select("id, label")
+      .eq("workspace_id", ctx.workspace.id)
+      .eq("status", "active")
+      .order("created_at", { ascending: false }),
+  ]);
 
   const steps = (stepRows ?? []) as PlaybookStep[];
   const notes = (noteRows ?? []) as FeedbackNote[];
+  const goals = (goalRows ?? []) as GoalOption[];
   const members = (memberRows ?? []) as Pick<
     Membership,
     "id" | "title" | "color" | "invited_email"
@@ -107,6 +123,7 @@ export default async function PlaybookEditorPage({
         playbookId={playbook.id}
         playbook={playbook}
         owners={owners}
+        goals={goals}
       />
 
       <StepsEditor

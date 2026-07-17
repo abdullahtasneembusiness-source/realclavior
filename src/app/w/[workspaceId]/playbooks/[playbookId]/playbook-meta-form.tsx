@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { updatePlaybookMeta, type PlaybookState } from "../actions";
 import type { Playbook } from "@/types/db";
-import type { OwnerOption } from "./page";
+import type { GoalOption, OwnerOption } from "./page";
 
 const initialState: PlaybookState = {};
 
@@ -36,11 +36,13 @@ export function PlaybookMetaForm({
   playbookId,
   playbook,
   owners,
+  goals,
 }: {
   workspaceId: string;
   playbookId: string;
   playbook: Playbook;
   owners: OwnerOption[];
+  goals: GoalOption[];
 }) {
   const bound = updatePlaybookMeta.bind(null, workspaceId, playbookId);
   const [state, formAction] = useFormState(bound, initialState);
@@ -71,6 +73,24 @@ export function PlaybookMetaForm({
               placeholder="What this playbook is for, and when to run it."
               className="flex w-full rounded-md border border-input bg-card px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="pb-goal">Goal this drives</Label>
+            <select
+              id="pb-goal"
+              name="goalId"
+              defaultValue={playbook.goal_id ?? ""}
+              className={selectClass}
+              data-testid="pb-goal-select"
+            >
+              <option value="">Not linked to a goal</option>
+              {goals.map((g) => (
+                <option key={g.id} value={g.id}>
+                  {g.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-3">

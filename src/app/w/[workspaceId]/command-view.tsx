@@ -4,6 +4,7 @@ import {
   ArrowRight,
   ClipboardList,
   Clock,
+  Target,
   Users,
 } from "lucide-react";
 
@@ -13,7 +14,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { MemberAvatar } from "@/components/member-avatar";
 import { createClient } from "@/lib/supabase/server";
 import { timeAgo } from "@/lib/time";
-import type { Activity, ActivityVerb, Membership, Run } from "@/types/db";
+import type { Activity, ActivityVerb, Goal, Membership, Run } from "@/types/db";
 import { formatDue, runStatusBadge } from "./runs/run-format";
 
 type MemberLite = Pick<Membership, "id" | "title" | "color" | "invited_email">;
@@ -141,21 +142,34 @@ export async function CommandView({
 }) {
   const supabase = await createClient();
 
-  const [{ data: pbRows }, { data: memberRows }, { data: activityRows }] =
-    await Promise.all([
-      supabase.from("playbooks").select("id").eq("workspace_id", workspaceId),
-      supabase
-        .from("memberships")
-        .select("id, title, color, invited_email")
-        .eq("workspace_id", workspaceId)
-        .eq("status", "active"),
-      supabase
-        .from("activities")
-        .select("*")
-        .eq("workspace_id", workspaceId)
-        .order("created_at", { ascending: false })
-        .limit(15),
-    ]);
+  const [
+    { data: pbRows },
+    { data: memberRows },
+    { data: activityRows },
+    { data: goalRows },
+  ] = await Promise.all([
+    supabase.from("playbooks").select("id").eq("workspace_id", workspaceId),
+    supabase
+      .from("memberships")
+      .select("id, title, color, invited_email")
+      .eq("workspace_id", workspaceId)
+      .eq("status", "active"),
+    supabase
+      .from("activities")
+      .select("*")
+      .eq("workspace_id", workspaceId)
+      .order("created_at", { ascending: false })
+      .limit(15),
+    supabase
+      .from("goals")
+      .select("*")
+      .eq("workspace_id", workspaceId)
+      .eq("status", "active")
+      .order("created_at", { ascending: false })
+      .limit(5),
+  ]);
+
+  const goals = (goalRows ?? []) as Goal[];
 
   const members = (memberRows ?? []) as MemberLite[];
   const memberById = new Map(members.map((m) => [m.id, m]));
@@ -326,50 +340,88 @@ export async function CommandView({
           </section>
         </div>
 
-        <section className="flex flex-col gap-2">
-          <h2 className="text-sm font-medium">Live Feed</h2>
-          {activities.length > 0 ? (
-            <ol
-              data-testid="live-feed"
-              className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4"
-            >
-              {activities.map((a) => {
-                const actor = a.membership_id
-                  ? memberById.get(a.membership_id)
-                  : undefined;
-                const target =
-                  a.target_type === "run"
-                    ? (runTitle.get(a.target_id) ?? "a run")
-                    : "";
-                return (
-                  <li key={a.id} className="flex items-start gap-2.5 text-sm">
-                    <MemberAvatar
-                      name={memberName(actor)}
-                      color={actor?.color ?? null}
-                      size="sm"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <p className="leading-snug">
-                        <span className="font-medium">{memberName(actor)}</span>{" "}
-                        <span className="text-muted-foreground">
-                          {verbPhrase(a.verb)}
-                        </span>{" "}
-                        <span className="font-medium">{target}</span>
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {timeAgo(a.created_at)}
-                      </p>
+        <div className="flex flex-col gap-6">
+          {goals.length > 0 ? (
+            <section className="flex flex-col gap-2" data-testid="cv-goals">
+              <h2 className="flex items-center gap-2 text-sm font-medium">
+                <Target className="size-4 text-primary" />
+                Goals
+                <span className="text-muted-foreground">· {goals.length}</span>
+              </h2>
+              <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
+                {goals.map((g) => (
+                  <Link
+                    key={g.id}
+                    href={`/w/${workspaceId}/goals/${g.id}`}
+                    data-testid={`cv-goal-${g.id}`}
+                    className="flex flex-col gap-1.5"
+                  >
+                    <div className="flex items-center justify-between gap-2 text-sm">
+                      <span className="truncate font-medium">{g.label}</span>
+                      <span className="tabular-nums text-muted-foreground">
+                        {g.progress}%
+                      </span>
                     </div>
-                  </li>
-                );
-              })}
-            </ol>
-          ) : (
-            <p className="rounded-xl border border-dashed border-border px-4 py-5 text-center text-sm text-muted-foreground">
-              Your team&apos;s activity will show up here as they run playbooks.
-            </p>
-          )}
-        </section>
+                    <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                      <div
+                        className="h-full rounded-full bg-primary"
+                        style={{ width: `${g.progress}%` }}
+                      />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          ) : null}
+
+          <section className="flex flex-col gap-2">
+            <h2 className="text-sm font-medium">Live Feed</h2>
+            {activities.length > 0 ? (
+              <ol
+                data-testid="live-feed"
+                className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4"
+              >
+                {activities.map((a) => {
+                  const actor = a.membership_id
+                    ? memberById.get(a.membership_id)
+                    : undefined;
+                  const target =
+                    a.target_type === "run"
+                      ? (runTitle.get(a.target_id) ?? "a run")
+                      : "";
+                  return (
+                    <li key={a.id} className="flex items-start gap-2.5 text-sm">
+                      <MemberAvatar
+                        name={memberName(actor)}
+                        color={actor?.color ?? null}
+                        size="sm"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="leading-snug">
+                          <span className="font-medium">
+                            {memberName(actor)}
+                          </span>{" "}
+                          <span className="text-muted-foreground">
+                            {verbPhrase(a.verb)}
+                          </span>{" "}
+                          <span className="font-medium">{target}</span>
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {timeAgo(a.created_at)}
+                        </p>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ol>
+            ) : (
+              <p className="rounded-xl border border-dashed border-border px-4 py-5 text-center text-sm text-muted-foreground">
+                Your team&apos;s activity will show up here as they run
+                playbooks.
+              </p>
+            )}
+          </section>
+        </div>
       </div>
     </div>
   );

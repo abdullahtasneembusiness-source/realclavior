@@ -1,3 +1,19 @@
+/**
+ * Formats a date-only string ("YYYY-MM-DD", e.g. a goal target date) without any
+ * timezone shift — the value has no time component, so it's rendered in UTC to avoid
+ * showing the previous day west of Greenwich.
+ */
+export function formatDate(dateOnly: string): string {
+  const d = new Date(`${dateOnly}T00:00:00Z`);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
 /** Compact relative time for the Live Feed: "just now", "5m ago", "3h ago", "2d ago". */
 export function timeAgo(iso: string): string {
   const then = new Date(iso).getTime();

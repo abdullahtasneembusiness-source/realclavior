@@ -153,6 +153,7 @@ const metaSchema = z.object({
     .max(2000, "That description is a bit long.")
     .optional(),
   ownerMembershipId: z.string().uuid().optional(),
+  goalId: z.string().uuid().optional(),
   estMinutes: z
     .number()
     .int()
@@ -181,6 +182,7 @@ export async function updatePlaybookMeta(
     name: formData.get("name"),
     description: blankToUndefined(formData.get("description")),
     ownerMembershipId: blankToUndefined(formData.get("ownerMembershipId")),
+    goalId: blankToUndefined(formData.get("goalId")),
     estMinutes: estRaw === undefined ? undefined : Number(estRaw),
     schedule: formData.get("schedule"),
   });
@@ -188,7 +190,7 @@ export async function updatePlaybookMeta(
     return { error: parsed.error.issues[0]?.message ?? "Invalid input." };
   }
 
-  const { name, description, ownerMembershipId, estMinutes, schedule } =
+  const { name, description, ownerMembershipId, goalId, estMinutes, schedule } =
     parsed.data;
 
   const supabase = await createClient();
@@ -198,6 +200,7 @@ export async function updatePlaybookMeta(
       name,
       description: description ?? null,
       owner_membership_id: ownerMembershipId ?? null,
+      goal_id: goalId ?? null,
       est_minutes: estMinutes ?? null,
       schedule,
     })

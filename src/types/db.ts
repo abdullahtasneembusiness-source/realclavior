@@ -35,6 +35,24 @@ export interface MembershipWithWorkspace extends Membership {
   workspace: Workspace;
 }
 
+export type GoalStatus = "active" | "done" | "archived";
+
+export interface Goal {
+  id: string;
+  workspace_id: string;
+  label: string;
+  description: string | null;
+  target_date: string | null;
+  progress: number;
+  status: GoalStatus;
+  created_at: string;
+}
+
+/** A goal plus the count of playbooks linked to it, for the list view. */
+export interface GoalSummary extends Goal {
+  playbookCount: number;
+}
+
 export type PlaybookStatus = "active" | "paused" | "archived";
 export type PlaybookSchedule =
   "none" | "daily" | "weekly" | "monthly" | "custom_rrule";
