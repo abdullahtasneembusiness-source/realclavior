@@ -1,3 +1,4 @@
+import { BrandMark } from "@/components/brand-mark";
 import { LoginForm } from "./login-form";
 
 export default function LoginPage({
@@ -9,8 +10,8 @@ export default function LoginPage({
     <main className="flex min-h-screen items-center justify-center px-6">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="mb-4 inline-flex size-10 items-center justify-center rounded-xl bg-primary text-lg font-semibold text-primary-foreground">
-            C
+          <div className="mb-5 flex justify-center">
+            <BrandMark className="[&_span:last-child]:text-lg" />
           </div>
           <h1 className="text-2xl font-semibold tracking-tight">
             Sign in to Clovior

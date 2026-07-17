@@ -18,6 +18,11 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ["var(--font-inter)", "Inter", "sans-serif"],
+        display: [
+          "var(--font-space-grotesk)",
+          "var(--font-inter)",
+          "sans-serif",
+        ],
       },
       colors: {
         background: "var(--background)",
@@ -61,6 +66,9 @@ const config: Config = {
         },
       },
       borderRadius: {
+        // Tightened, intentional scale (down from a uniform heavy rounding):
+        // cards ~10px, buttons ~8px, small pills stay fully rounded for contrast.
+        xl: "0.625rem",
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",

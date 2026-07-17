@@ -3,7 +3,7 @@
  * complementary hues so a team of up to ~8 operators each gets a distinct circle.
  */
 export const MEMBER_COLORS = [
-  "#7C6AF7", // violet (brand)
+  "#5B4BE0", // indigo (brand)
   "#F77C6A", // coral
   "#3DD68C", // mint
   "#F7C76A", // amber

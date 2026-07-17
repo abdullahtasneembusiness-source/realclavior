@@ -292,6 +292,7 @@ export async function CommandView({
         <div className="flex flex-col gap-6 lg:col-span-2">
           <section className="flex flex-col gap-2">
             <h2 className="flex items-center gap-2 text-sm font-medium">
+              <span aria-hidden className="h-4 w-0.5 rounded-full bg-primary" />
               <AlertTriangle className="size-4 text-clovior-coral" />
               Needs your attention
               <span className="text-muted-foreground">
@@ -327,6 +328,7 @@ export async function CommandView({
 
           <section className="flex flex-col gap-2">
             <h2 className="flex items-center gap-2 text-sm font-medium">
+              <span aria-hidden className="h-4 w-0.5 rounded-full bg-primary" />
               <ClipboardList className="size-4 text-primary" />
               In progress
               <span className="text-muted-foreground">· {inFlight.length}</span>
@@ -361,6 +363,7 @@ export async function CommandView({
           {goals.length > 0 ? (
             <section className="flex flex-col gap-2" data-testid="cv-goals">
               <h2 className="flex items-center gap-2 text-sm font-medium">
+                <span aria-hidden className="h-4 w-0.5 rounded-full bg-primary" />
                 <Target className="size-4 text-primary" />
                 Goals
                 <span className="text-muted-foreground">· {goals.length}</span>
@@ -392,7 +395,10 @@ export async function CommandView({
           ) : null}
 
           <section className="flex flex-col gap-2">
-            <h2 className="text-sm font-medium">Live Feed</h2>
+            <h2 className="flex items-center gap-2 text-sm font-medium">
+              <span aria-hidden className="h-4 w-0.5 rounded-full bg-primary" />
+              Live Feed
+            </h2>
             {activities.length > 0 ? (
               <ol
                 data-testid="live-feed"

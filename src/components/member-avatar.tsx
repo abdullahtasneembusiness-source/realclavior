@@ -27,7 +27,7 @@ export function MemberAvatar({
         dims,
         className,
       )}
-      style={{ backgroundColor: color ?? "#7C6AF7" }}
+      style={{ backgroundColor: color ?? "#5B4BE0" }}
       aria-hidden="true"
     >
       {initial}

@@ -25,7 +25,7 @@ test("REST: a signed-in user can create a workspace + founder membership via RPC
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ p_name: "Diag Co", p_color: "#7C6AF7" }),
+    body: JSON.stringify({ p_name: "Diag Co", p_color: "#5B4BE0" }),
   });
   const text = await res.text();
   // eslint-disable-next-line no-console
