@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
@@ -12,7 +14,9 @@ export default function Home() {
       <p className="max-w-md text-muted-foreground">
         The operating system for the team behind the info business.
       </p>
-      <Button size="lg">Get started</Button>
+      <Button asChild size="lg">
+        <Link href="/login">Get started</Link>
+      </Button>
     </main>
   );
 }
