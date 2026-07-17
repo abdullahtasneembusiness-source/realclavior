@@ -18,11 +18,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ["var(--font-inter)", "Inter", "sans-serif"],
-        display: [
-          "var(--font-space-grotesk)",
-          "var(--font-inter)",
-          "sans-serif",
-        ],
+        display: ["var(--font-display)", "var(--font-inter)", "sans-serif"],
       },
       colors: {
         background: "var(--background)",

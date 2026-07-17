@@ -12,10 +12,7 @@ export function BrandMark({ className }: { className?: string }) {
         aria-hidden
         className="size-2.5 shrink-0 rounded-[3px] bg-primary"
       />
-      <span
-        className="font-display text-[15px] font-bold tracking-[-0.03em] text-[#f0f0f8]"
-        style={{ fontFeatureSettings: "normal" }}
-      >
+      <span className="font-display text-[15px] font-extrabold tracking-[-0.04em] text-[#f0f0f8]">
         Clovior
       </span>
     </span>

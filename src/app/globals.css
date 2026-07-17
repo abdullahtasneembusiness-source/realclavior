@@ -54,8 +54,14 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-space-grotesk), var(--font-inter), sans-serif;
-  letter-spacing: -0.025em;
+  font-family: var(--font-display), var(--font-inter), sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+/* Page titles (the big h1 on every screen) lean into the display face. */
+h1 {
+  font-weight: 800;
 }
 
 @layer utilities {
