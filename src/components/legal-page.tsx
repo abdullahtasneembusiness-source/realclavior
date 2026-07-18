@@ -12,19 +12,6 @@ import { BrandMark } from "@/components/brand-mark";
  */
 export const LEGAL_LAST_UPDATED = "July 18, 2026";
 
-/**
- * A clearly-marked fill-in. Rendered with the reserved amber tone + mono so every real
- * detail the owner still needs to supply (legal entity name, contact email, governing
- * law) is impossible to miss on the page and greppable in the source as "[PLACEHOLDER:".
- */
-export function Placeholder({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="bg-clovior-amber/15 rounded px-1.5 py-0.5 font-mono text-[0.85em] text-foreground">
-      [PLACEHOLDER: {children}]
-    </span>
-  );
-}
-
 export function LegalPage({
   title,
   children,

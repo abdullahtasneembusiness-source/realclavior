@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { LegalPage, Placeholder } from "@/components/legal-page";
+import { LegalPage } from "@/components/legal-page";
 
 export const metadata: Metadata = {
   title: "Terms of Service — Clovior",
@@ -10,17 +10,15 @@ export const metadata: Metadata = {
 /**
  * Public Terms of Service. Plain-language, good-faith terms for a small SaaS in early
  * access — NOT a substitute for lawyer-reviewed documents. Real-world details the owner
- * must supply (legal entity, contact email, governing-law jurisdiction) are marked with
- * <Placeholder>. No guarantees or certifications are invented.
+ * No guarantees or certifications are invented.
  */
 export default function TermsPage() {
   return (
     <LegalPage title="Terms of Service">
       <p>
         These Terms of Service (&ldquo;Terms&rdquo;) govern your use of Clovior
-        (&ldquo;Clovior,&rdquo; &ldquo;the service&rdquo;), operated by{" "}
-        <Placeholder>legal company name, e.g. AB Commerce Group LLC</Placeholder>{" "}
-        (&ldquo;the Company,&rdquo; &ldquo;we,&rdquo; &ldquo;us&rdquo;). Please read
+        (&ldquo;Clovior,&rdquo; &ldquo;the service&rdquo;), operated by AB Commerce Group
+        LLC (&ldquo;the Company,&rdquo; &ldquo;we,&rdquo; &ldquo;us&rdquo;). Please read
         them carefully.
       </p>
 
@@ -86,6 +84,14 @@ export default function TermsPage() {
         features will be clearly identified before you are charged.
       </p>
 
+      <h2>Indemnification</h2>
+      <p>
+        You agree to indemnify and hold harmless the Company from any claims, damages,
+        losses, or expenses (including reasonable legal fees) arising out of your misuse
+        of the service, your violation of these Terms, or the content you or your team
+        put into the service.
+      </p>
+
       <h2>Disclaimers</h2>
       <p>
         The service is provided &ldquo;as is&rdquo; and &ldquo;as available,&rdquo;
@@ -114,9 +120,15 @@ export default function TermsPage() {
 
       <h2>Governing law</h2>
       <p>
-        These Terms are governed by the laws of{" "}
-        <Placeholder>governing-law jurisdiction, e.g. the State of ___, USA</Placeholder>
-        , without regard to its conflict-of-laws rules.
+        These Terms are governed by the laws of the Commonwealth of Kentucky, USA,
+        without regard to its conflict-of-laws rules.
+      </p>
+
+      <h2>Dispute resolution</h2>
+      <p>
+        If a dispute arises, you agree to first contact us and try to resolve it
+        informally before starting any formal legal proceeding — and we&apos;ll do the
+        same. Most issues can be sorted out this way.
       </p>
 
       <h2>Changes to these terms</h2>
@@ -129,7 +141,7 @@ export default function TermsPage() {
       <h2>Contact</h2>
       <p>
         Questions about these Terms? Contact us at{" "}
-        <Placeholder>contact email, e.g. support@clovior.com</Placeholder>.
+        <a href="mailto:support@clovior.com">support@clovior.com</a>.
       </p>
     </LegalPage>
   );

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { LegalPage, Placeholder } from "@/components/legal-page";
+import { LegalPage } from "@/components/legal-page";
 
 export const metadata: Metadata = {
   title: "Privacy Policy — Clovior",
@@ -10,9 +10,8 @@ export const metadata: Metadata = {
 
 /**
  * Public Privacy Policy. Plain-language, good-faith description of Clovior's actual data
- * practices — NOT a substitute for lawyer-reviewed documents. Real-world details the
- * owner must supply are marked with <Placeholder>. No compliance certifications are
- * claimed; the page describes only what is actually done.
+ * practices — NOT a substitute for lawyer-reviewed documents. No compliance
+ * certifications are claimed; the page describes only what is actually done.
  */
 export default function PrivacyPage() {
   return (
@@ -27,11 +26,9 @@ export default function PrivacyPage() {
 
       <h2>Who we are and how to contact us</h2>
       <p>
-        Clovior is operated by{" "}
-        <Placeholder>legal company name, e.g. AB Commerce Group LLC</Placeholder>{" "}
-        (&ldquo;the Company&rdquo;). If you have any question about this policy or your
-        data, contact us at{" "}
-        <Placeholder>privacy contact email, e.g. support@clovior.com</Placeholder>.
+        Clovior is operated by AB Commerce Group LLC (&ldquo;the Company&rdquo;). If you
+        have any question about this policy or your data, contact us at{" "}
+        <a href="mailto:support@clovior.com">support@clovior.com</a>.
       </p>
 
       <h2>What information we collect</h2>
@@ -104,7 +101,7 @@ export default function PrivacyPage() {
       <p>
         We keep your information for as long as your account is active or as needed to
         provide the service. You can request deletion of your data by contacting us at{" "}
-        <Placeholder>privacy contact email, e.g. support@clovior.com</Placeholder>. We
+        <a href="mailto:support@clovior.com">support@clovior.com</a>. We
         may retain limited information where required for legal, security, or
         record-keeping reasons.
       </p>
@@ -127,7 +124,7 @@ export default function PrivacyPage() {
       <p>
         You may request access to, correction of, or deletion of your personal
         information. To exercise any of these, contact us at{" "}
-        <Placeholder>privacy contact email, e.g. support@clovior.com</Placeholder>.
+        <a href="mailto:support@clovior.com">support@clovior.com</a>.
       </p>
 
       <h2>Changes to this policy</h2>
