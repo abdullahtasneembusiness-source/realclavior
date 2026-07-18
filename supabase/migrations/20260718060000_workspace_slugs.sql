@@ -12,7 +12,14 @@ immutable
 as $$
   select trim(both '-' from
     regexp_replace(
-      regexp_replace(lower(coalesce(p_text, '')), '[''’‘`"]', '', 'g'),
+      -- Strip apostrophes/quotes (ASCII ' ` " and curly ‘ ’) via chr() codes so the
+      -- source stays plain ASCII and survives copy-paste into the SQL editor.
+      regexp_replace(
+        lower(coalesce(p_text, '')),
+        '[' || chr(39) || chr(96) || chr(34) || chr(8216) || chr(8217) || ']',
+        '',
+        'g'
+      ),
       '[^a-z0-9]+', '-', 'g'
     )
   );
