@@ -1,22 +1,28 @@
-import Link from "next/link";
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/server";
+import { Landing } from "@/components/landing";
 
-export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 text-center">
-      <span className="border-clovior-violet/30 bg-clovior-violet/10 rounded-full border px-3 py-1 text-xs font-medium text-clovior-violet">
-        Team Brain · Playbooks · Feedback Memory
-      </span>
-      <h1 className="max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl">
-        Your team, running without you.
-      </h1>
-      <p className="max-w-md text-muted-foreground">
-        The operating system for the team behind the info business.
-      </p>
-      <Button asChild size="lg">
-        <Link href="/login">Get started</Link>
-      </Button>
-    </main>
-  );
+export const metadata: Metadata = {
+  title: "Clovior — Your team can't move without you",
+  description:
+    "Clovior gives your operators playbooks that run themselves, feedback that sticks, and one place where nothing waits on you.",
+};
+
+/**
+ * Root route. Logged-out visitors see the public marketing landing page; anyone
+ * signed in is sent into the app (which resolves their workspace / Command View).
+ */
+export default async function Home() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    redirect("/app");
+  }
+
+  return <Landing />;
 }
