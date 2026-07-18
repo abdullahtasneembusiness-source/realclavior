@@ -20,9 +20,10 @@ test("add Brain entries across categories, then search and filter", async ({
   await page.getByTestId("new-brain-entry").click();
   await page.getByLabel("Title").fill("Brand voice is punchy and direct");
   await page.locator("#entry-category").selectOption("voice");
-  await page
-    .getByLabel("Details")
-    .fill("Short sentences. No corporate filler.");
+  // Details is now a rich text editor (contenteditable); type into it directly.
+  const details = page.getByLabel("Details");
+  await details.click();
+  await details.pressSequentially("Short sentences. No corporate filler.");
   await page.getByTestId("save-brain-entry").click();
   await expect(
     page.getByText("Brand voice is punchy and direct"),

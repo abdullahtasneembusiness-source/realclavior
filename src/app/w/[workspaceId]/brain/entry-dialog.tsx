@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
+import dynamic from "next/dynamic";
 import { Loader2, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createBrainEntry, updateBrainEntry, type BrainState } from "./actions";
+
+// Code-split the editor (Tiptap/ProseMirror) so it only loads when a dialog opens.
+const RichTextEditor = dynamic(
+  () => import("@/components/rich-text").then((m) => m.RichTextEditor),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-40 items-center justify-center rounded-md border border-input text-sm text-muted-foreground">
+        <Loader2 className="size-4 animate-spin" />
+      </div>
+    ),
+  },
+);
 import { CATEGORY_LABELS, EDITABLE_CATEGORIES } from "./categories";
 import type { BrainEntry } from "@/types/db";
 
@@ -101,14 +115,11 @@ export function EntryDialog({
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="entry-body">Details</Label>
-            <textarea
-              id="entry-body"
+            <RichTextEditor
               name="body"
-              rows={5}
-              maxLength={8000}
+              editorId="entry-body"
+              ariaLabel="Details"
               defaultValue={entry?.body ?? ""}
-              placeholder="The actual knowledge — write it the way you'd explain it to a new hire."
-              className="flex w-full rounded-md border border-input bg-card px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             />
           </div>
 

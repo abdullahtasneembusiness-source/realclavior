@@ -2,15 +2,37 @@
 
 import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { Loader2, Pencil, Search, Sparkles, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { excerpt, htmlToText } from "@/lib/rich-text";
 import { deleteBrainEntry } from "./actions";
 import { CATEGORY_LABELS, EDITABLE_CATEGORIES } from "./categories";
 import { EntryDialog } from "./entry-dialog";
 import type { BrainCategory, BrainEntry } from "@/types/db";
+
+// Code-split the read-only rich viewer so Tiptap only loads when a card is opened.
+const RichTextViewer = dynamic(
+  () => import("@/components/rich-text").then((m) => m.RichTextViewer),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-16 items-center justify-center text-sm text-muted-foreground">
+        <Loader2 className="size-4 animate-spin" />
+      </div>
+    ),
+  },
+);
 
 export interface CorrectionItem {
   id: string;
@@ -29,7 +51,64 @@ function matches(entry: BrainEntry, query: string): boolean {
   const q = query.toLowerCase();
   return (
     entry.title.toLowerCase().includes(q) ||
-    (entry.body ?? "").toLowerCase().includes(q)
+    // Match against the readable text, not the underlying HTML markup.
+    htmlToText(entry.body).toLowerCase().includes(q)
+  );
+}
+
+/** Read-only view of a full entry — renders the rich body with proper formatting. */
+function ViewEntryDialog({
+  entry,
+  trigger,
+}: {
+  entry: BrainEntry;
+  trigger: React.ReactNode;
+}) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>{entry.title}</DialogTitle>
+        </DialogHeader>
+        <p className="section-label -mt-1">{CATEGORY_LABELS[entry.category]}</p>
+        <div className="max-h-[70vh] overflow-y-auto">
+          <RichTextViewer body={entry.body} />
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/** Card preview: a short plain-text excerpt, with a link to the full rich view. */
+function BrainEntryPreview({ entry }: { entry: BrainEntry }) {
+  const preview = excerpt(entry.body);
+  // Long docs truncate; entries with block formatting (headings/lists) also get a
+  // "Read" link so the formatting is viewable even when the text itself is short.
+  const hasBlockFormatting = /<(h[1-6]|ul|ol)/i.test(entry.body ?? "");
+  const showRead = preview.truncated || hasBlockFormatting;
+
+  return (
+    <div className="flex flex-col items-start gap-1.5">
+      {preview.text ? (
+        <p className="line-clamp-3 text-sm text-muted-foreground">
+          {preview.text}
+        </p>
+      ) : null}
+      {showRead ? (
+        <ViewEntryDialog
+          entry={entry}
+          trigger={
+            <button
+              type="button"
+              className="text-xs font-medium text-primary hover:underline"
+            >
+              Read full entry
+            </button>
+          }
+        />
+      ) : null}
+    </div>
   );
 }
 
@@ -93,9 +172,7 @@ function EntryCard({
           ) : null}
         </div>
         {entry.body ? (
-          <p className="whitespace-pre-wrap text-sm text-muted-foreground">
-            {entry.body}
-          </p>
+          <BrainEntryPreview entry={entry} />
         ) : null}
         {error ? (
           <p className="text-xs text-destructive" role="alert">

@@ -32,7 +32,9 @@ const entrySchema = z.object({
     "preferences",
     "other",
   ]),
-  body: z.string().trim().max(8000, "That entry is a bit long.").optional(),
+  // Bodies now hold rich HTML (headings, lists, links, long-form docs), so the cap
+  // is generous. The column is `text`, so no schema change is needed to store this.
+  body: z.string().trim().max(100000, "That entry is a bit long.").optional(),
 });
 
 function parseEntry(formData: FormData) {
