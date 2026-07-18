@@ -2,18 +2,20 @@
 -- Routing resolves a workspace by slug; old /w/<uuid> links 301-redirect to the slug.
 -- Column + helper-function change only. No RLS, permission, or feature change: RLS still
 -- gates every row, and the slug is only a second lookup key for the same workspace row.
+--
+-- Uses named dollar-quote tags and set-based backfill (no anonymous DO block) so the whole
+-- script runs cleanly in the Supabase SQL editor as well as the CLI.
 
--- Slugify a name: lowercase, drop apostrophes/quotes, collapse any run of non-alphanumeric
--- characters to a single hyphen, then trim hyphens. "Abdullah's team" -> "abdullahs-team".
+-- Slugify a name: lowercase, drop apostrophes/quotes (built from chr() codes so the source
+-- stays plain ASCII), collapse non-alphanumeric runs to a single hyphen, trim hyphens.
+-- "Abdullah's team" -> "abdullahs-team".
 create or replace function public.slugify(p_text text)
 returns text
 language sql
 immutable
-as $$
+as $slugify$
   select trim(both '-' from
     regexp_replace(
-      -- Strip apostrophes/quotes (ASCII ' ` " and curly ‘ ’) via chr() codes so the
-      -- source stays plain ASCII and survives copy-paste into the SQL editor.
       regexp_replace(
         lower(coalesce(p_text, '')),
         '[' || chr(39) || chr(96) || chr(34) || chr(8216) || chr(8217) || ']',
@@ -23,7 +25,7 @@ as $$
       '[^a-z0-9]+', '-', 'g'
     )
   );
-$$;
+$slugify$;
 
 -- Add the column nullable first so we can backfill, then lock it to NOT NULL + unique.
 alter table workspaces add column if not exists slug text;
@@ -33,7 +35,7 @@ alter table workspaces add column if not exists slug text;
 create or replace function public.unique_workspace_slug(p_name text, p_exclude uuid default null)
 returns text
 language plpgsql
-as $$
+as $uniq$
 declare
   v_base text := public.slugify(p_name);
   v_slug text;
@@ -52,17 +54,26 @@ begin
   end loop;
   return v_slug;
 end;
-$$;
+$uniq$;
 
--- Backfill existing workspaces, oldest first so earlier workspaces keep the cleanest slug.
-do $$
-declare
-  r record;
-begin
-  for r in select id, name from workspaces where slug is null order by created_at loop
-    update workspaces set slug = public.unique_workspace_slug(r.name, r.id) where id = r.id;
-  end loop;
-end $$;
+-- Backfill (set-based, no procedural block). First give every workspace a base slug, with
+-- the random fallback for empty ones.
+update workspaces
+set slug = coalesce(
+  nullif(public.slugify(name), ''),
+  'team-' || substr(md5(gen_random_uuid()::text), 1, 6)
+)
+where slug is null;
+
+-- Then de-duplicate: keep the oldest workspace's slug, suffix later collisions (-2, -3, ...).
+with ranked as (
+  select id, slug, row_number() over (partition by slug order by created_at, id) as rn
+  from workspaces
+)
+update workspaces w
+set slug = w.slug || '-' || r.rn
+from ranked r
+where w.id = r.id and r.rn > 1;
 
 alter table workspaces alter column slug set not null;
 create unique index if not exists workspaces_slug_key on workspaces (slug);
@@ -74,7 +85,7 @@ returns uuid
 language plpgsql
 security definer
 set search_path = public, pg_catalog
-as $$
+as $cw$
 declare
   v_uid uuid := auth.uid();
   v_name text := btrim(p_name);
@@ -105,4 +116,4 @@ begin
 
   return v_workspace_id;
 end;
-$$;
+$cw$;
