@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireWorkspaceContext } from "@/lib/workspace";
 import { ColorPicker } from "./color-picker";
@@ -34,6 +36,15 @@ export default async function SettingsPage({
           </div>
         </CardContent>
       </Card>
+
+      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+        <Link href="/privacy" className="hover:text-foreground">
+          Privacy
+        </Link>
+        <Link href="/terms" className="hover:text-foreground">
+          Terms
+        </Link>
+      </div>
     </div>
   );
 }

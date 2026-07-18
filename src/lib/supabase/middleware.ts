@@ -68,7 +68,11 @@ export async function updateSession(request: NextRequest) {
   // session, so the login gate must not swallow them into a /login redirect — they need
   // to reach their handler and return their own JSON status (e.g. 401 on a bad secret).
   const isCronRoute = pathname.startsWith("/api/cron");
-  const isPublicRoute = pathname === "/" || isAuthRoute || isCronRoute;
+  // Public legal pages must be reachable signed-out (they're linked from the footer and
+  // the signup screen), so the login gate must not bounce them.
+  const isLegalRoute = pathname === "/privacy" || pathname === "/terms";
+  const isPublicRoute =
+    pathname === "/" || isAuthRoute || isCronRoute || isLegalRoute;
 
   if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone();

@@ -280,9 +280,15 @@ export function Landing() {
       <footer className="border-t border-border">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-start justify-between gap-4 px-5 py-8 sm:flex-row sm:items-center sm:px-8">
           <BrandMark />
-          <div className="flex items-center gap-5 text-sm text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-5 text-sm text-muted-foreground">
             <Link href="/login" className="hover:text-foreground">
               Log in
+            </Link>
+            <Link href="/privacy" className="hover:text-foreground">
+              Privacy
+            </Link>
+            <Link href="/terms" className="hover:text-foreground">
+              Terms
             </Link>
             <span className="font-mono text-xs">© 2026 Clovior</span>
           </div>

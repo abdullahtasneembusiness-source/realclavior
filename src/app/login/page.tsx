@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { BrandMark } from "@/components/brand-mark";
 import { LoginForm } from "./login-form";
 
@@ -21,6 +23,23 @@ export default function LoginPage({
           </p>
         </div>
         <LoginForm initialError={searchParams.error} />
+        <p className="mt-6 text-center text-xs leading-relaxed text-muted-foreground">
+          By creating an account you agree to our{" "}
+          <Link
+            href="/terms"
+            className="text-foreground underline underline-offset-2 hover:text-primary"
+          >
+            Terms
+          </Link>{" "}
+          and{" "}
+          <Link
+            href="/privacy"
+            className="text-foreground underline underline-offset-2 hover:text-primary"
+          >
+            Privacy Policy
+          </Link>
+          .
+        </p>
       </div>
     </main>
   );
