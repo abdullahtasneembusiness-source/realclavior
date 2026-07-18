@@ -5,6 +5,7 @@ import type { Membership, Workspace } from "@/types/db";
 
 export interface WorkspaceSummary {
   id: string;
+  slug: string;
   name: string;
 }
 
@@ -18,44 +19,74 @@ export interface ActiveContext {
   allWorkspaces: WorkspaceSummary[];
 }
 
+type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>;
+
 type MembershipRow = Membership & { workspace: Workspace | Workspace[] };
 
 function normalizeWorkspace(row: Workspace | Workspace[]): Workspace {
   return Array.isArray(row) ? row[0] : row;
 }
 
+/** Matches a bare UUID — used to tell an old /w/<uuid> link from a slug. */
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export function isUuid(value: string): boolean {
+  return UUID_RE.test(value);
+}
+
 /**
- * Resolves the user's default workspace (their earliest-joined active membership).
- * Used by entry points that don't already carry a workspace in the URL — post-login,
- * post-onboarding. Once a user is on a /w/[workspaceId] route, that URL itself is
- * the persisted "active workspace" (bookmarkable, survives refresh) — no separate
- * cookie needed on top of it.
+ * Resolves a workspace slug to its id for server actions. Actions receive the slug
+ * (it's what the URL and every internal link carry now), but DB rows are still keyed
+ * by the workspace UUID. Runs under the caller's RLS, so it only returns an id for a
+ * workspace the user actually belongs to — doubling as an access check.
  */
-export async function getDefaultWorkspaceId(
+export async function resolveWorkspaceId(
+  supabase: SupabaseServerClient,
+  slug: string,
+): Promise<string | null> {
+  const { data } = await supabase
+    .from("workspaces")
+    .select("id")
+    .eq("slug", slug)
+    .maybeSingle();
+  return (data as { id: string } | null)?.id ?? null;
+}
+
+/**
+ * Resolves the user's default workspace slug (their earliest-joined active membership).
+ * Used by entry points that don't already carry a workspace in the URL — post-login,
+ * post-onboarding. Once a user is on a /w/[slug] route, that URL itself is the
+ * persisted "active workspace" (bookmarkable, survives refresh).
+ */
+export async function getDefaultWorkspaceSlug(
   userId: string,
 ): Promise<string | null> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("memberships")
-    .select("workspace_id")
+    .select("workspace:workspaces(slug)")
     .eq("user_id", userId)
     .eq("status", "active")
     .order("created_at", { ascending: true })
     .limit(1)
     .maybeSingle();
 
-  return data?.workspace_id ?? null;
+  const ws = (data as { workspace: { slug: string } | { slug: string }[] } | null)
+    ?.workspace;
+  if (!ws) return null;
+  return (Array.isArray(ws) ? ws[0]?.slug : ws.slug) ?? null;
 }
 
 /**
- * Resolves the current user's context for a specific workspace route
- * (/w/[workspaceId]/...). Redirects to /login if signed out, and to /app (which
- * re-resolves a valid default) if the user has no active membership in this
- * particular workspace — this covers both "wrong workspace id" and "not a member"
- * without ever showing a bare error page.
+ * Resolves the current user's context for a workspace route (/w/[slug]/...). The param
+ * is normally the slug, but an old /w/<uuid> bookmark still resolves by id (middleware
+ * 301s those to the slug URL; resolving both here is a safety net). Redirects to /login
+ * if signed out, and to /app if the user has no active membership in this workspace —
+ * covering "wrong slug" and "not a member" without ever showing a bare error page.
  */
 export async function requireWorkspaceContext(
-  workspaceId: string,
+  slugOrId: string,
 ): Promise<ActiveContext> {
   const supabase = await createClient();
   const {
@@ -74,7 +105,10 @@ export async function requireWorkspaceContext(
     .order("created_at", { ascending: true });
 
   const rows = (data ?? []) as MembershipRow[];
-  const match = rows.find((row) => row.workspace_id === workspaceId);
+  const match = rows.find((row) => {
+    const ws = normalizeWorkspace(row.workspace);
+    return ws.slug === slugOrId || ws.id === slugOrId;
+  });
 
   if (!match) {
     redirect("/app");
@@ -88,10 +122,10 @@ export async function requireWorkspaceContext(
     fullName: (user.user_metadata?.full_name as string | undefined) ?? null,
     membership: membershipRow,
     workspace: normalizeWorkspace(workspace),
-    allWorkspaces: rows.map((row) => ({
-      id: row.workspace_id,
-      name: normalizeWorkspace(row.workspace).name,
-    })),
+    allWorkspaces: rows.map((row) => {
+      const ws = normalizeWorkspace(row.workspace);
+      return { id: ws.id, slug: ws.slug, name: ws.name };
+    }),
   };
 }
 
@@ -106,6 +140,6 @@ export function isAdminRole(role: Membership["role"]): boolean {
  */
 export function requireAdmin(ctx: ActiveContext): void {
   if (!isAdminRole(ctx.membership.role)) {
-    redirect(`/w/${ctx.workspace.id}`);
+    redirect(`/w/${ctx.workspace.slug}`);
   }
 }

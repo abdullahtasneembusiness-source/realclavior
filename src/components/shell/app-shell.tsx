@@ -40,7 +40,7 @@ export function AppShell({
         className="sticky top-0 hidden h-screen w-60 shrink-0 border-r border-border bg-card lg:flex lg:flex-col"
       >
         <SidebarContent
-          workspaceId={ctx.workspace.id}
+          workspaceId={ctx.workspace.slug}
           workspace={ctx.workspace}
           allWorkspaces={ctx.allWorkspaces}
           navItems={navItems}
@@ -55,7 +55,7 @@ export function AppShell({
       <div className="flex min-w-0 flex-1 flex-col">
         {isAdmin ? (
           <MobileHeader
-            workspaceId={ctx.workspace.id}
+            workspaceId={ctx.workspace.slug}
             workspace={ctx.workspace}
             allWorkspaces={ctx.allWorkspaces}
             navItems={navItems}
@@ -67,7 +67,7 @@ export function AppShell({
           />
         ) : (
           <OperatorMobileHeader
-            workspaceId={ctx.workspace.id}
+            workspaceId={ctx.workspace.slug}
             workspaceName={ctx.workspace.name}
             displayName={displayName}
             color={ctx.membership.color}
@@ -84,7 +84,7 @@ export function AppShell({
         </main>
 
         {!isAdmin ? (
-          <BottomTabBar workspaceId={ctx.workspace.id} navItems={navItems} />
+          <BottomTabBar workspaceId={ctx.workspace.slug} navItems={navItems} />
         ) : null}
       </div>
     </div>

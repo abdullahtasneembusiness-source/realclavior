@@ -41,6 +41,27 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
+  // Backward compatibility: old /w/<uuid> links (bookmarks, shared URLs) permanently
+  // redirect to the new /w/<slug> URL. The UUID regex means slug URLs skip this lookup
+  // entirely, so normal navigation pays no extra query. Runs as the signed-in user, so
+  // the slug is only revealed for a workspace they belong to.
+  const legacyMatch = pathname.match(
+    /^\/w\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(\/.*)?$/i,
+  );
+  if (user && legacyMatch) {
+    const { data: ws } = await supabase
+      .from("workspaces")
+      .select("slug")
+      .eq("id", legacyMatch[1])
+      .maybeSingle();
+    const slug = (ws as { slug: string } | null)?.slug;
+    if (slug) {
+      const url = request.nextUrl.clone();
+      url.pathname = `/w/${slug}${legacyMatch[2] ?? ""}`;
+      return NextResponse.redirect(url, 308);
+    }
+  }
+
   const isAuthRoute =
     pathname.startsWith("/login") || pathname.startsWith("/auth");
   // The cron endpoints authenticate themselves with a Bearer secret and have no user

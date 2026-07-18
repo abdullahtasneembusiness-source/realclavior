@@ -1,0 +1,169 @@
+import { Badge } from "@/components/ui/badge";
+import { MemberAvatar } from "@/components/member-avatar";
+import { createClient } from "@/lib/supabase/server";
+import { requireAdmin, requireWorkspaceContext } from "@/lib/workspace";
+import { attributedFeedback, daysAgoIso, operatorTrend } from "@/lib/drift";
+import { TrendBadge } from "@/components/drift";
+import type { Membership } from "@/types/db";
+import { InviteDialog } from "./invite-dialog";
+import { MemberActions } from "./member-actions";
+
+function roleLabel(role: Membership["role"]) {
+  return role.charAt(0).toUpperCase() + role.slice(1);
+}
+
+export default async function TeamPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const ctx = await requireWorkspaceContext(params.slug);
+  requireAdmin(ctx);
+
+  const callerIsFounder = ctx.membership.role === "founder";
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("memberships")
+    .select("*")
+    .eq("workspace_id", ctx.workspace.id)
+    .not("status", "eq", "archived")
+    .order("created_at", { ascending: true });
+
+  const members = (data ?? []) as Membership[];
+  const active = members.filter((m) => m.status === "active");
+  const pending = members.filter((m) => m.status === "invited");
+
+  // Per-operator feedback trend — coaching signal, admin-only (this page is gated).
+  const attributed = await attributedFeedback(
+    supabase,
+    ctx.workspace.id,
+    daysAgoIso(28),
+  );
+  const trendByMember = new Map(
+    active.map((m) => [m.id, operatorTrend(attributed, m.id)]),
+  );
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Team</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Everyone who runs work inside {ctx.workspace.name}.
+          </p>
+        </div>
+        <InviteDialog workspaceId={ctx.workspace.slug} />
+      </div>
+
+      {error ? (
+        <p className="border-destructive/30 bg-destructive/10 rounded-md border px-3 py-2 text-sm text-destructive">
+          Couldn&apos;t load your team. Refresh to try again.
+        </p>
+      ) : null}
+
+      <section className="flex flex-col gap-2">
+        <h2 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          Active · {active.length}
+        </h2>
+        <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
+          {active.map((m) => {
+            const displayName = m.title || m.invited_email || "Member";
+            const isSelf = m.id === ctx.membership.id;
+            return (
+              <div
+                key={m.id}
+                data-testid={`member-row-${m.invited_email ?? "self"}`}
+                className="flex items-center justify-between gap-4 px-4 py-3"
+              >
+                <div className="flex items-center gap-3">
+                  <MemberAvatar name={displayName} color={m.color} />
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium">{displayName}</span>
+                      {isSelf ? (
+                        <span className="text-xs text-muted-foreground">
+                          (you)
+                        </span>
+                      ) : null}
+                    </div>
+                    {m.invited_email ? (
+                      <p className="text-xs text-muted-foreground">
+                        {m.invited_email}
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  {(() => {
+                    const t = trendByMember.get(m.id);
+                    return t && !isSelf ? (
+                      <TrendBadge trend={t.trend} recent={t.recent} />
+                    ) : null;
+                  })()}
+                  <Badge variant="outline">{roleLabel(m.role)}</Badge>
+                  <MemberActions
+                    workspaceId={ctx.workspace.slug}
+                    membershipId={m.id}
+                    pending={false}
+                    currentRole={m.role}
+                    canArchive={m.role !== "founder" && !isSelf}
+                    canChangeRole={
+                      !isSelf && (m.role !== "founder" || callerIsFounder)
+                    }
+                    callerIsFounder={callerIsFounder}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {pending.length > 0 ? (
+        <section className="flex flex-col gap-2">
+          <h2 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            Pending · {pending.length}
+          </h2>
+          <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
+            {pending.map((m) => (
+              <div
+                key={m.id}
+                data-testid={`member-row-${m.invited_email ?? "self"}`}
+                className="flex items-center justify-between gap-4 px-4 py-3"
+              >
+                <div className="flex items-center gap-3">
+                  <MemberAvatar
+                    name={m.invited_email ?? "?"}
+                    color={m.color}
+                    className="opacity-70"
+                  />
+                  <div>
+                    <span className="text-sm font-medium">
+                      {m.invited_email}
+                    </span>
+                    <p className="text-xs text-muted-foreground">
+                      Invited — awaiting sign-up
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Badge variant="outline">{roleLabel(m.role)}</Badge>
+                  <MemberActions
+                    workspaceId={ctx.workspace.slug}
+                    membershipId={m.id}
+                    pending
+                    currentRole={m.role}
+                    canArchive
+                    canChangeRole={false}
+                    callerIsFounder={callerIsFounder}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
+    </div>
+  );
+}

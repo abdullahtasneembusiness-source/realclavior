@@ -150,7 +150,16 @@ export async function generatePlaybookDraft(
       }),
     });
 
-    if (!res.ok) return { ok: false, code: "failed" };
+    if (!res.ok) {
+      // Surface the real reason in the server logs (Vercel function logs) so a failing
+      // key, an unknown model, or a billing/credit problem is diagnosable. The API error
+      // body never contains the key; it's safe to log.
+      const detail = await res.text().catch(() => "");
+      console.error(
+        `[ai-playbook] Anthropic ${res.status} ${res.statusText}: ${detail.slice(0, 500)}`,
+      );
+      return { ok: false, code: "failed" };
+    }
 
     const data = (await res.json()) as { content?: AnthropicContentBlock[] };
     const toolUse = data.content?.find(

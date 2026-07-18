@@ -108,7 +108,15 @@ export async function generateFounderManual(
         messages: [{ role: "user", content: transcript }],
       }),
     });
-    if (!res.ok) return { ok: false, code: "failed" };
+    if (!res.ok) {
+      // Log the real reason (Vercel function logs) — unknown model, bad key, or a
+      // billing/credit problem. The error body carries no secret; safe to log.
+      const detail = await res.text().catch(() => "");
+      console.error(
+        `[ai-manual] Anthropic ${res.status} ${res.statusText}: ${detail.slice(0, 500)}`,
+      );
+      return { ok: false, code: "failed" };
+    }
 
     const data = (await res.json()) as { content?: AnthropicContentBlock[] };
     const toolUse = data.content?.find(

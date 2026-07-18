@@ -53,5 +53,15 @@ export async function createWorkspace(
     };
   }
 
-  redirect(`/w/${workspaceId}`);
+  // The RPC returns the new workspace id; look up its auto-generated slug so we land
+  // on the clean /w/<slug> URL directly (rather than bouncing through the id → slug
+  // middleware redirect).
+  const { data: created } = await supabase
+    .from("workspaces")
+    .select("slug")
+    .eq("id", workspaceId)
+    .maybeSingle();
+  const slug = (created as { slug: string } | null)?.slug ?? workspaceId;
+
+  redirect(`/w/${slug}`);
 }

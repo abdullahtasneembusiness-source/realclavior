@@ -99,10 +99,14 @@ export async function signInAs(page: Page, email: string): Promise<void> {
 }
 
 /**
- * Fills the onboarding form and creates a workspace, returning its id. If the flow
- * does NOT land on /w/[id] within the timeout, throws with the landed pathname and any
- * visible form-error text — so a failure names its real cause instead of dying at a
- * generic `toHaveURL` mismatch.
+ * Fills the onboarding form and creates a workspace, returning its slug. Workspace URLs
+ * are now /w/<slug> (a human-readable slug derived from the name), so this returns the
+ * slug — which is exactly what every internal link and route expects. When a raw
+ * workspace UUID is needed (direct DB/RLS checks), resolve it with workspaceIdBySlug().
+ *
+ * If the flow does NOT land on /w/<slug> within the timeout, throws with the landed
+ * pathname and any visible form-error text — so a failure names its real cause instead
+ * of dying at a generic `toHaveURL` mismatch.
  */
 export async function createWorkspace(
   page: Page,
@@ -112,18 +116,36 @@ export async function createWorkspace(
   await page.getByRole("button", { name: "Create workspace" }).click();
 
   try {
-    await expect(page).toHaveURL(/\/w\/[0-9a-f-]+$/, { timeout: 15000 });
+    await expect(page).toHaveURL(/\/w\/[a-z0-9-]+$/, { timeout: 15000 });
   } catch {
     const alert = await page
       .getByRole("alert")
       .textContent()
       .catch(() => null);
     throw new Error(
-      `createWorkspace("${name}") did not reach /w/[id]. Landed on ${new URL(page.url()).pathname}. Form error: ${alert ?? "(none shown)"}`,
+      `createWorkspace("${name}") did not reach /w/[slug]. Landed on ${new URL(page.url()).pathname}. Form error: ${alert ?? "(none shown)"}`,
     );
   }
 
   return page.url().split("/w/")[1];
+}
+
+/**
+ * Resolves a workspace slug (what createWorkspace returns and the URL carries) to its
+ * raw UUID, for the tests that talk to the database directly — RLS checks over
+ * PostgREST, and the mark_self_onboarded RPC — where the id column is a UUID.
+ */
+export async function workspaceIdBySlug(slug: string): Promise<string> {
+  const admin = adminClient();
+  const { data, error } = await admin
+    .from("workspaces")
+    .select("id")
+    .eq("slug", slug)
+    .single();
+  if (error || !data) {
+    throw new Error(`workspaceIdBySlug(${slug}): ${error?.message ?? "not found"}`);
+  }
+  return data.id as string;
 }
 
 /**
@@ -139,11 +161,14 @@ export async function createWorkspace(
  */
 export async function completeOnboarding(
   page: Page,
-  workspaceId: string,
+  workspaceSlug: string,
   email: string,
 ): Promise<void> {
   const { accessToken, userId } = await getSession(email);
-  const home = `/w/${workspaceId}`;
+  const home = `/w/${workspaceSlug}`;
+  // The URL carries the slug, but mark_self_onboarded and the memberships table are
+  // keyed by the workspace UUID — resolve it once for the direct DB calls below.
+  const workspaceId = await workspaceIdBySlug(workspaceSlug);
   const admin = adminClient();
 
   // Step 1: mark onboarded and CONFIRM the flag is committed and visible before we

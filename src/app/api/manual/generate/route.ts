@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
-import { isAdminRole } from "@/lib/workspace";
+import { isAdminRole, resolveWorkspaceId } from "@/lib/workspace";
 import { generateFounderManual } from "@/lib/ai-manual";
 
 /**
@@ -15,7 +15,8 @@ import { generateFounderManual } from "@/lib/ai-manual";
 const DAILY_LIMIT = 25;
 
 const bodySchema = z.object({
-  workspaceId: z.string().uuid(),
+  // The client sends the workspace slug from the URL; it's resolved to the id below.
+  workspaceId: z.string().min(1).max(200),
   answers: z
     .array(z.object({ q: z.string().max(500), a: z.string().max(2000) }))
     .min(1)
@@ -57,10 +58,15 @@ export async function POST(request: Request) {
     );
   }
 
+  const wsId = await resolveWorkspaceId(supabase, workspaceId);
+  if (!wsId) {
+    return NextResponse.json({ error: "Invalid workspace." }, { status: 400 });
+  }
+
   const { data: membership } = await supabase
     .from("memberships")
     .select("id, role")
-    .eq("workspace_id", workspaceId)
+    .eq("workspace_id", wsId)
     .eq("user_id", user.id)
     .eq("status", "active")
     .maybeSingle();
@@ -76,7 +82,7 @@ export async function POST(request: Request) {
   const { count } = await supabase
     .from("ai_generations")
     .select("id", { count: "exact", head: true })
-    .eq("workspace_id", workspaceId)
+    .eq("workspace_id", wsId)
     .gte("created_at", startOfDay.toISOString());
   if ((count ?? 0) >= DAILY_LIMIT) {
     return NextResponse.json(
@@ -86,7 +92,7 @@ export async function POST(request: Request) {
   }
 
   const { error: usageError } = await supabase.from("ai_generations").insert({
-    workspace_id: workspaceId,
+    workspace_id: wsId,
     membership_id: membership.id,
     kind: "founder_manual",
   });

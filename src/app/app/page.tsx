@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
-import { getDefaultWorkspaceId } from "@/lib/workspace";
+import { getDefaultWorkspaceSlug } from "@/lib/workspace";
 
 /**
  * Entry-point resolver, not a real screen. Sends the user to their default
@@ -19,11 +19,11 @@ export default async function AppEntry() {
     redirect("/login");
   }
 
-  const workspaceId = await getDefaultWorkspaceId(user.id);
+  const slug = await getDefaultWorkspaceSlug(user.id);
 
-  if (!workspaceId) {
+  if (!slug) {
     redirect("/onboarding");
   }
 
-  redirect(`/w/${workspaceId}`);
+  redirect(`/w/${slug}`);
 }

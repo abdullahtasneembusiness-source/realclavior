@@ -12,6 +12,7 @@ export type WorkspacePlan = "trial" | "solo" | "team" | "scale";
 export interface Workspace {
   id: string;
   name: string;
+  slug: string;
   owner_id: string;
   plan: WorkspacePlan;
   created_at: string;

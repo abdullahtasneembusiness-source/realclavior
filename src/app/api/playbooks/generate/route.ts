@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
-import { isAdminRole } from "@/lib/workspace";
+import { isAdminRole, resolveWorkspaceId } from "@/lib/workspace";
 import { generatePlaybookDraft } from "@/lib/ai-playbook";
 
 /**
@@ -21,7 +21,8 @@ import { generatePlaybookDraft } from "@/lib/ai-playbook";
 const DAILY_LIMIT = 25;
 
 const bodySchema = z.object({
-  workspaceId: z.string().uuid(),
+  // The client sends the workspace slug from the URL; it's resolved to the id below.
+  workspaceId: z.string().min(1).max(200),
   description: z
     .string()
     .trim()
@@ -59,10 +60,15 @@ export async function POST(request: Request) {
     );
   }
 
+  const wsId = await resolveWorkspaceId(supabase, workspaceId);
+  if (!wsId) {
+    return NextResponse.json({ error: "Invalid workspace." }, { status: 400 });
+  }
+
   const { data: membership } = await supabase
     .from("memberships")
     .select("id, role")
-    .eq("workspace_id", workspaceId)
+    .eq("workspace_id", wsId)
     .eq("user_id", user.id)
     .eq("status", "active")
     .maybeSingle();
@@ -81,7 +87,7 @@ export async function POST(request: Request) {
   const { count } = await supabase
     .from("ai_generations")
     .select("id", { count: "exact", head: true })
-    .eq("workspace_id", workspaceId)
+    .eq("workspace_id", wsId)
     .gte("created_at", startOfDay.toISOString());
 
   if ((count ?? 0) >= DAILY_LIMIT) {
@@ -98,7 +104,7 @@ export async function POST(request: Request) {
   // by racing requests. A blocked insert (non-admin) also means we never call out.
   const { error: usageError } = await supabase
     .from("ai_generations")
-    .insert({ workspace_id: workspaceId, membership_id: membership.id });
+    .insert({ workspace_id: wsId, membership_id: membership.id });
   if (usageError) {
     return NextResponse.json(
       { error: "Couldn't start generation. Try again." },

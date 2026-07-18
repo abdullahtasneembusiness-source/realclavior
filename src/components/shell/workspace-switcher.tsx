@@ -75,7 +75,7 @@ export function WorkspaceSwitcher({
         {workspaces.map((ws) => (
           <DropdownMenuItem
             key={ws.id}
-            onSelect={() => router.push(`/w/${ws.id}`)}
+            onSelect={() => router.push(`/w/${ws.slug}`)}
             className="gap-2.5"
           >
             <WorkspaceMark name={ws.name} className="size-6 text-xs" />

@@ -94,15 +94,19 @@ export async function GET(request: NextRequest) {
   if (userId) {
     const { data: membership } = await supabase
       .from("memberships")
-      .select("workspace_id")
+      .select("workspace:workspaces(slug)")
       .eq("user_id", userId)
       .eq("status", "active")
       .order("created_at", { ascending: true })
       .limit(1)
       .maybeSingle();
 
-    if (membership) {
-      destination = `${origin}/w/${membership.workspace_id}`;
+    const ws = (
+      membership as { workspace: { slug: string } | { slug: string }[] } | null
+    )?.workspace;
+    const slug = ws ? (Array.isArray(ws) ? ws[0]?.slug : ws.slug) : null;
+    if (slug) {
+      destination = `${origin}/w/${slug}`;
     }
   }
 

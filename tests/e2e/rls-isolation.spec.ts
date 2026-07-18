@@ -5,6 +5,7 @@ import {
   getAccessToken,
   restGet,
   createWorkspace,
+  workspaceIdBySlug,
 } from "./helpers";
 
 /**
@@ -20,7 +21,8 @@ test("an unrelated signed-in user cannot read another workspace's data", async (
   const outsiderEmail = testEmail("outsider");
 
   await signInAs(page, founderEmail);
-  const workspaceId = await createWorkspace(page, "Private Co");
+  const workspaceSlug = await createWorkspace(page, "Private Co");
+  const workspaceId = await workspaceIdBySlug(workspaceSlug);
 
   const outsiderToken = await getAccessToken(outsiderEmail);
 
@@ -42,7 +44,8 @@ test("an unrelated signed-in user cannot read another workspace's data", async (
 test("an unauthenticated request reads nothing at all", async ({ page }) => {
   const founderEmail = testEmail("founder");
   await signInAs(page, founderEmail);
-  const workspaceId = await createWorkspace(page, "Anon Test Co");
+  const workspaceSlug = await createWorkspace(page, "Anon Test Co");
+  const workspaceId = await workspaceIdBySlug(workspaceSlug);
 
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
   const res = await fetch(
