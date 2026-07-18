@@ -3,6 +3,15 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { BrandMark } from "@/components/brand-mark";
 import { cn } from "@/lib/utils";
+import {
+  BrainMock,
+  CommandViewMock,
+  FeedbackMemoryMock,
+  GoalsMock,
+  LaunchesMock,
+  LiveFeedMock,
+  PlaybooksMock,
+} from "@/components/landing-mocks";
 
 /**
  * Signed-out marketing landing page. Fully static and public — no data fetching,
@@ -10,36 +19,30 @@ import { cn } from "@/lib/utils";
  * visitors and redirects everyone else into the app.
  */
 
-/** A framed placeholder for a real product screenshot dropped into /public/landing. */
-function Screenshot({
-  filename,
-  aspect = "aspect-[16/10]",
+/**
+ * An app-window frame around a product mockup (see landing-mocks.tsx). Reads as a
+ * real product screenshot; swap the child for a real <Image> when one exists.
+ */
+function Frame({
+  children,
   className,
 }: {
-  filename: string;
-  aspect?: string;
+  children: React.ReactNode;
   className?: string;
 }) {
   return (
     <figure
       className={cn(
-        "overflow-hidden rounded-[10px] border border-border bg-card shadow-[0_1px_2px_rgba(22,21,15,0.04),0_18px_40px_-24px_rgba(22,21,15,0.22)]",
+        "overflow-hidden rounded-[10px] border border-border bg-background shadow-[0_1px_2px_rgba(22,21,15,0.04),0_18px_40px_-24px_rgba(22,21,15,0.22)]",
         className,
       )}
     >
-      <div
-        className={cn(
-          "flex w-full items-center justify-center bg-[radial-gradient(circle_at_1px_1px,rgba(22,21,15,0.06)_1px,transparent_0)] [background-size:16px_16px]",
-          aspect,
-        )}
-      >
-        <div className="text-center">
-          <span className="section-label">Screenshot</span>
-          <p className="mt-1.5 font-mono text-xs text-muted-foreground">
-            /landing/{filename}
-          </p>
-        </div>
+      <div className="flex items-center gap-1.5 border-b border-border bg-card px-4 py-2.5">
+        <span className="size-2.5 rounded-full bg-border" />
+        <span className="size-2.5 rounded-full bg-border" />
+        <span className="size-2.5 rounded-full bg-border" />
       </div>
+      <div className="p-5 sm:p-6">{children}</div>
     </figure>
   );
 }
@@ -73,27 +76,27 @@ const FEATURES = [
   {
     name: "Playbooks",
     body: "Living checklists, always current. Never a dead Notion doc again.",
-    filename: "playbooks.png",
+    mock: <PlaybooksMock />,
   },
   {
     name: "Command View",
     body: "See if your team is moving in three seconds. No chasing.",
-    filename: "command-view-2.png",
+    mock: <LiveFeedMock />,
   },
   {
     name: "Team Brain",
     body: "Your standards, saved once, so a new hire onboards without you.",
-    filename: "brain.png",
+    mock: <BrainMock />,
   },
   {
     name: "Launches",
     body: "Spin up a launch's fifty moving pieces in one click.",
-    filename: "launches.png",
+    mock: <LaunchesMock />,
   },
   {
     name: "Goals",
     body: "Every task connected to what actually matters this quarter.",
-    filename: "goals.png",
+    mock: <GoalsMock />,
   },
 ];
 
@@ -147,8 +150,10 @@ export function Landing() {
             No credit card. First playbook live in 5 minutes.
           </p>
 
-          <div className="mt-14 w-full sm:mt-16">
-            <Screenshot filename="command-view.png" aspect="aspect-[16/9]" />
+          <div className="mx-auto mt-14 w-full max-w-3xl text-left sm:mt-16">
+            <Frame>
+              <CommandViewMock />
+            </Frame>
           </div>
         </section>
 
@@ -192,7 +197,9 @@ export function Landing() {
             <div className="relative">
               {/* Amber is the signature Feedback Memory color — used only here. */}
               <div className="bg-clovior-amber/12 absolute -inset-3 -z-10 rounded-2xl" />
-              <Screenshot filename="feedback-memory.png" aspect="aspect-[4/3]" />
+              <Frame>
+                <FeedbackMemoryMock />
+              </Frame>
             </div>
           </div>
         </section>
@@ -235,7 +242,7 @@ export function Landing() {
                   </p>
                 </div>
                 <div className={cn(i % 2 === 1 && "lg:order-1")}>
-                  <Screenshot filename={feature.filename} />
+                  <Frame>{feature.mock}</Frame>
                 </div>
               </div>
             ))}
