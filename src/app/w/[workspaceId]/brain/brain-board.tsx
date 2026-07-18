@@ -91,7 +91,7 @@ function BrainEntryPreview({ entry }: { entry: BrainEntry }) {
   return (
     <div className="flex flex-col items-start gap-1.5">
       {preview.text ? (
-        <p className="line-clamp-3 text-sm text-muted-foreground">
+        <p className="line-clamp-3 w-full break-words text-sm text-muted-foreground">
           {preview.text}
         </p>
       ) : null}
