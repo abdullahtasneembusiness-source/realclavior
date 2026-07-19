@@ -29,7 +29,9 @@ export async function sendInviteEmail(params: {
     return { sent: false, error: "email_not_configured" };
   }
 
-  const acceptUrl = `${getSiteUrl()}/login`;
+  // Land on /login with the email pre-filled, so the invitee just taps "Send magic
+  // link" — one tap, no retyping — then signs in and is auto-linked to the workspace.
+  const acceptUrl = `${getSiteUrl()}/login?email=${encodeURIComponent(params.to)}`;
   const { error } = await resend.emails.send({
     from: fromEmail,
     to: params.to,
@@ -37,7 +39,7 @@ export async function sendInviteEmail(params: {
     text: [
       `${params.inviterName} added you to ${params.workspaceName} as ${params.role}.`,
       "",
-      `Sign in with this email to join the team:`,
+      `Open this link and tap "Send magic link" to join the team:`,
       acceptUrl,
       "",
       "Clovior — your team, running without you.",

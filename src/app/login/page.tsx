@@ -6,7 +6,7 @@ import { LoginForm } from "./login-form";
 export default function LoginPage({
   searchParams,
 }: {
-  searchParams: { error?: string };
+  searchParams: { error?: string; email?: string };
 }) {
   return (
     <main className="flex min-h-screen items-center justify-center px-6">
@@ -22,7 +22,10 @@ export default function LoginPage({
             Your team, running without you.
           </p>
         </div>
-        <LoginForm initialError={searchParams.error} />
+        <LoginForm
+          initialError={searchParams.error}
+          initialEmail={searchParams.email}
+        />
         <p className="mt-6 text-center text-xs leading-relaxed text-muted-foreground">
           By creating an account you agree to our{" "}
           <Link

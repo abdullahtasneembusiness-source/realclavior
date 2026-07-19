@@ -31,7 +31,14 @@ function MagicLinkButton() {
   );
 }
 
-export function LoginForm({ initialError }: { initialError?: string }) {
+export function LoginForm({
+  initialError,
+  initialEmail,
+}: {
+  initialError?: string;
+  /** Pre-filled from an invite link (/login?email=…) so invitees don't retype it. */
+  initialEmail?: string;
+}) {
   const [state, formAction] = useFormState(sendMagicLink, initialState);
 
   if (state.sentTo) {
@@ -63,6 +70,7 @@ export function LoginForm({ initialError }: { initialError?: string }) {
             type="email"
             autoComplete="email"
             placeholder="you@yourbusiness.com"
+            defaultValue={initialEmail}
             required
           />
         </div>
