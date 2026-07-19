@@ -46,14 +46,16 @@ export default async function TeamPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-start justify-between gap-4">
-        <div>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Team</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Everyone who runs work inside {ctx.workspace.name}.
           </p>
         </div>
-        <InviteDialog workspaceId={ctx.workspace.slug} />
+        <div className="shrink-0">
+          <InviteDialog workspaceId={ctx.workspace.slug} />
+        </div>
       </div>
 
       {error ? (
@@ -74,27 +76,29 @@ export default async function TeamPage({
               <div
                 key={m.id}
                 data-testid={`member-row-${m.invited_email ?? "self"}`}
-                className="flex items-center justify-between gap-4 px-4 py-3"
+                className="flex items-center justify-between gap-3 px-4 py-3"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex min-w-0 items-center gap-3">
                   <MemberAvatar name={displayName} color={m.color} />
-                  <div>
+                  <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium">{displayName}</span>
+                      <span className="truncate text-sm font-medium">
+                        {displayName}
+                      </span>
                       {isSelf ? (
-                        <span className="text-xs text-muted-foreground">
+                        <span className="shrink-0 text-xs text-muted-foreground">
                           (you)
                         </span>
                       ) : null}
                     </div>
                     {m.invited_email ? (
-                      <p className="text-xs text-muted-foreground">
+                      <p className="truncate text-xs text-muted-foreground">
                         {m.invited_email}
                       </p>
                     ) : null}
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex shrink-0 items-center gap-3">
                   {(() => {
                     const t = trendByMember.get(m.id);
                     return t && !isSelf ? (
@@ -130,16 +134,16 @@ export default async function TeamPage({
               <div
                 key={m.id}
                 data-testid={`member-row-${m.invited_email ?? "self"}`}
-                className="flex items-center justify-between gap-4 px-4 py-3"
+                className="flex items-center justify-between gap-3 px-4 py-3"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex min-w-0 items-center gap-3">
                   <MemberAvatar
                     name={m.invited_email ?? "?"}
                     color={m.color}
                     className="opacity-70"
                   />
-                  <div>
-                    <span className="text-sm font-medium">
+                  <div className="min-w-0">
+                    <span className="block truncate text-sm font-medium">
                       {m.invited_email}
                     </span>
                     <p className="text-xs text-muted-foreground">
@@ -147,7 +151,7 @@ export default async function TeamPage({
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex shrink-0 items-center gap-3">
                   <Badge variant="outline">{roleLabel(m.role)}</Badge>
                   <MemberActions
                     workspaceId={ctx.workspace.slug}
