@@ -52,21 +52,29 @@ export async function sendMagicLink(
   return { sentTo: parsed.data };
 }
 
-/** Starts the Google OAuth flow and redirects the browser to Google's consent screen. */
-export async function signInWithGoogle(): Promise<void> {
+/**
+ * Finishes a Google sign-in started client-side with Google Identity Services.
+ *
+ * The browser has already exchanged Google's ID token for a Supabase session (see
+ * google-sign-in.tsx / signInWithIdToken), so the auth cookies are set by the time this
+ * runs. This mirrors the tail of /auth/callback for the redirect flow: link any invites
+ * addressed to this email before the account existed, then route into the app (which
+ * resolves the user's workspace or sends them to onboarding).
+ *
+ * Doing Google sign-in on our own domain — rather than redirecting through Supabase —
+ * is what makes Google's account screen read "clovior.com" instead of the raw Supabase
+ * project URL.
+ */
+export async function completeGoogleSignIn(): Promise<void> {
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: `${getSiteUrl()}/auth/callback`,
-    },
-  });
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (error || !data.url) {
-    redirect(
-      `/login?error=${encodeURIComponent(error?.message ?? "oauth_failed")}`,
-    );
+  if (!user) {
+    redirect(`/login?error=${encodeURIComponent("oauth_failed")}`);
   }
 
-  redirect(data.url);
+  await supabase.rpc("accept_pending_invites");
+  redirect("/app");
 }

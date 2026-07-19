@@ -6,13 +6,13 @@ import { CheckCircle2, Loader2, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  sendMagicLink,
-  signInWithGoogle,
-  type MagicLinkState,
-} from "./actions";
+import { sendMagicLink, type MagicLinkState } from "./actions";
+import { GoogleSignIn } from "./google-sign-in";
 
 const initialState: MagicLinkState = {};
+
+// Google's rendered sign-in button only appears once its Client ID is configured.
+const googleEnabled = !!process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
 function MagicLinkButton() {
   const { pending } = useFormStatus();
@@ -27,21 +27,6 @@ function MagicLinkButton() {
           <Mail /> Send magic link
         </>
       )}
-    </Button>
-  );
-}
-
-function GoogleButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button
-      type="submit"
-      variant="outline"
-      className="w-full"
-      disabled={pending}
-    >
-      {pending ? <Loader2 className="animate-spin" /> : <GoogleGlyph />}
-      Continue with Google
     </Button>
   );
 }
@@ -89,26 +74,16 @@ export function LoginForm({ initialError }: { initialError?: string }) {
         <MagicLinkButton />
       </form>
 
-      <div className="flex items-center gap-3 text-xs text-muted-foreground">
-        <span className="h-px flex-1 bg-border" />
-        or
-        <span className="h-px flex-1 bg-border" />
-      </div>
-
-      <form action={signInWithGoogle}>
-        <GoogleButton />
-      </form>
+      {googleEnabled ? (
+        <>
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <span className="h-px flex-1 bg-border" />
+            or
+            <span className="h-px flex-1 bg-border" />
+          </div>
+          <GoogleSignIn />
+        </>
+      ) : null}
     </div>
-  );
-}
-
-function GoogleGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" className="size-4" aria-hidden="true">
-      <path
-        fill="#EA4335"
-        d="M12 10.2v3.9h5.5c-.24 1.4-1.7 4.1-5.5 4.1-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.9 3.1 14.7 2 12 2 6.9 2 2.8 6.1 2.8 12S6.9 22 12 22c5.4 0 9-3.8 9-9.1 0-.6-.06-1.1-.15-1.6H12z"
-      />
-    </svg>
   );
 }
