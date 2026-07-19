@@ -1,6 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
@@ -58,8 +57,10 @@ export async function sendMagicLink(
  * The browser has already exchanged Google's ID token for a Supabase session (see
  * google-sign-in.tsx / signInWithIdToken), so the auth cookies are set by the time this
  * runs. This mirrors the tail of /auth/callback for the redirect flow: link any invites
- * addressed to this email before the account existed, then route into the app (which
- * resolves the user's workspace or sends them to onboarding).
+ * addressed to this email before the account existed. It deliberately does NOT redirect —
+ * the client navigates to /app itself with a full page load, which reliably applies the
+ * new session cookies (a server-action redirect invoked imperatively doesn't always move
+ * the browser). /app then resolves the workspace or sends the user to onboarding.
  *
  * Doing Google sign-in on our own domain — rather than redirecting through Supabase —
  * is what makes Google's account screen read "clovior.com" instead of the raw Supabase
@@ -71,10 +72,9 @@ export async function completeGoogleSignIn(): Promise<void> {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect(`/login?error=${encodeURIComponent("oauth_failed")}`);
-  }
+  if (!user) return;
 
+  // Link any invites addressed to this email before the account existed. Best-effort —
+  // the user still reaches the app (and can create their own workspace) if this no-ops.
   await supabase.rpc("accept_pending_invites");
-  redirect("/app");
 }

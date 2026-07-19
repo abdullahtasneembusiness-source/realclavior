@@ -126,8 +126,15 @@ export function GoogleSignIn() {
         setError("Google sign-in failed. Please try again.");
         return;
       }
-      // Session cookies are set; hand off to the server to link invites and route.
-      await completeGoogleSignIn();
+      // Session cookies are set. Link any pending invites (best-effort), then do a full
+      // navigation to /app — a hard load reliably applies the new session cookies, where
+      // a server-action redirect invoked from here does not always move the browser.
+      try {
+        await completeGoogleSignIn();
+      } catch {
+        // Invite-linking is best-effort; continue into the app regardless.
+      }
+      window.location.replace("/app");
     }
 
     async function setup() {
