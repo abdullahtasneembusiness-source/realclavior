@@ -51,19 +51,19 @@ const H1: React.CSSProperties = {
 
 export const Scene1: React.FC = () => {
   const frame = useCurrentFrame();
-  const clickTextarea = 26;
-  const typeStart = 30;
-  const clickGenerate = 104;
-  const resultAt = 120;
+  const clickTextarea = 36; // beat 2
+  const typeStart = 40;
+  const clickGenerate = 108; // beat 6
+  const resultAt = 126; // beat 7
 
   const ways: Way[] = [
     { f: 0, x: 1500, y: 950 },
-    { f: 20, x: 700, y: 330 },
+    { f: 30, x: 700, y: 330 },
     { f: clickTextarea, x: 700, y: 330, click: true },
-    { f: 88, x: 700, y: 330 },
-    { f: 98, x: 1168, y: 615 },
+    { f: 96, x: 700, y: 330 },
+    { f: 102, x: 1168, y: 615 },
     { f: clickGenerate, x: 1168, y: 615, click: true },
-    { f: 190, x: 1530, y: 700 },
+    { f: 196, x: 1530, y: 700 },
   ];
 
   const focused = frame >= clickTextarea;
@@ -75,7 +75,7 @@ export const Scene1: React.FC = () => {
   });
 
   return (
-    <SceneFade dur={210} fadeIn={false}>
+    <SceneFade dur={216} fadeIn={false}>
       <AppFrame variant="admin" active="Playbooks" userName="Abdullah" userInitial="A">
         <div style={COL}>
           <h1 style={{ ...H1, marginTop: 84 }}>New playbook</h1>
@@ -136,7 +136,7 @@ export const Scene1: React.FC = () => {
                 </div>
                 <div style={{ marginTop: 18 }}>
                   {STEPS.map((s, i) => (
-                    <Rise key={s} at={resultAt + 6 + i * 4} dy={8}>
+                    <Rise key={s} at={resultAt + i * 9} dy={8}>
                       <div
                         style={{
                           display: "flex",
@@ -164,7 +164,7 @@ export const Scene1: React.FC = () => {
             </Rise>
           ) : null}
         </div>
-        <Overlay text="Describe it once." at={146} hold={45} />
+        <Overlay text="Describe it once." at={144} hold={54} />
         <Cursor ways={ways} />
       </AppFrame>
     </SceneFade>
@@ -246,25 +246,25 @@ const Menu: React.FC<{
 
 export const Scene2: React.FC = () => {
   const frame = useCurrentFrame();
-  const openOwner = 32;
-  const pickMaya = 58;
-  const openSched = 90;
-  const pickWeekly = 118;
-  const save = 148;
+  const openOwner = 36; // beat 2
+  const pickMaya = 72; // bar 2
+  const openSched = 108; // beat 6
+  const pickWeekly = 144; // bar 3
+  const save = 180; // beat 10
 
   const ways: Way[] = [
     { f: 0, x: 1530, y: 700 },
-    { f: 26, x: 559, y: 261 },
+    { f: 28, x: 559, y: 261 },
     { f: openOwner, x: 559, y: 261, click: true },
-    { f: 52, x: 559, y: 333 },
+    { f: 64, x: 559, y: 333 },
     { f: pickMaya, x: 559, y: 333, click: true },
-    { f: 84, x: 1061, y: 261 },
+    { f: 100, x: 1061, y: 261 },
     { f: openSched, x: 1061, y: 261, click: true },
-    { f: 112, x: 1061, y: 437 },
+    { f: 136, x: 1061, y: 437 },
     { f: pickWeekly, x: 1061, y: 437, click: true },
-    { f: 142, x: 1233, y: 381 },
+    { f: 172, x: 1233, y: 381 },
     { f: save, x: 1233, y: 381, click: true },
-    { f: 200, x: 1545, y: 620 },
+    { f: 208, x: 1545, y: 620 },
   ];
 
   const ownerMenuOpen = frame >= openOwner && frame < pickMaya;
@@ -281,7 +281,7 @@ export const Scene2: React.FC = () => {
   );
 
   return (
-    <SceneFade dur={210}>
+    <SceneFade dur={216}>
       <AppFrame variant="admin" active="Playbooks" userName="Abdullah" userInitial="A">
         <div style={COL}>
           <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 84 }}>
@@ -320,7 +320,7 @@ export const Scene2: React.FC = () => {
               {ownerMenuOpen ? (
                 <Menu
                   x={28}
-                  hoverKey={frame > 48 ? "maya" : undefined}
+                  hoverKey={frame > 60 ? "maya" : undefined}
                   items={[
                     {
                       key: "maya",
@@ -352,7 +352,7 @@ export const Scene2: React.FC = () => {
               {schedMenuOpen ? (
                 <Menu
                   x={530}
-                  hoverKey={frame > 108 ? "weekly" : undefined}
+                  hoverKey={frame > 132 ? "weekly" : undefined}
                   items={[
                     { key: "none", label: "None" },
                     { key: "daily", label: "Daily" },
@@ -384,7 +384,7 @@ export const Scene2: React.FC = () => {
             </Card>
           </div>
         </div>
-        <Overlay text="Hand it off." at={128} hold={48} />
+        <Overlay text="Hand it off." at={126} hold={54} />
         <Cursor ways={ways} />
       </AppFrame>
     </SceneFade>
@@ -395,15 +395,15 @@ export const Scene2: React.FC = () => {
 
 export const Scene3: React.FC = () => {
   const frame = useCurrentFrame();
-  const checks = [120, 160, 200, 240, 280];
-  const submit = 330;
-  const submitted = frame >= submit + 10;
+  const checks = [126, 162, 198, 234, 270]; // beats 7,9,11,13,15
+  const submit = 324; // beat 18
+  const submitted = frame >= submit + 12;
 
   const rowY = (i: number) => 408 + i * 82; // frame-coord centers of checklist rows
 
   const ways: Way[] = [
     { f: 0, x: 1545, y: 620 },
-    { f: 46, x: 1150, y: 700 },
+    { f: 50, x: 1150, y: 700 },
     { f: checks[0] - 8, x: 354, y: rowY(0) },
     { f: checks[0], x: 354, y: rowY(0), click: true },
     { f: checks[1] - 8, x: 354, y: rowY(1) },
@@ -416,7 +416,7 @@ export const Scene3: React.FC = () => {
     { f: checks[4], x: 354, y: rowY(4), click: true },
     { f: submit - 8, x: 1203, y: 837 },
     { f: submit, x: 1203, y: 837, click: true },
-    { f: 384, x: 1310, y: 860 },
+    { f: 390, x: 1310, y: 860 },
   ];
 
   const done = checks.filter((c) => frame >= c + 4).length;
@@ -428,7 +428,7 @@ export const Scene3: React.FC = () => {
   );
 
   return (
-    <SceneFade dur={420}>
+    <SceneFade dur={432}>
       <AppFrame variant="operator" active="Home" userName="Maya" userInitial="M" userColor={C.mint}>
         <div style={COL}>
           <h1 style={{ ...H1, fontSize: 36, marginTop: 64 }}>
@@ -508,7 +508,7 @@ export const Scene3: React.FC = () => {
               </div>
             </>
           ) : (
-            <Rise at={submit + 10}>
+            <Rise at={submit + 18}>
               <Card
                 style={{
                   marginTop: 26,
@@ -558,7 +558,7 @@ export const Scene3: React.FC = () => {
             </Rise>
           )}
         </div>
-        <Overlay text="Your corrections show first." at={34} hold={55} />
+        <Overlay text="Your corrections show first." at={36} hold={72} />
         <Cursor ways={ways} />
       </AppFrame>
     </SceneFade>
@@ -594,28 +594,28 @@ const Toggle: React.FC = () => (
 
 export const Scene4: React.FC = () => {
   const frame = useCurrentFrame();
-  const openDialog = 30;
-  const focusNote = 58;
-  const typeStart = 62;
-  const send = 202;
+  const openDialog = 36; // beat 2
+  const focusNote = 54; // beat 3
+  const typeStart = 58;
+  const send = 198; // beat 11
   const dialogVisible = frame >= openDialog && frame < send + 8;
-  const toastAt = send + 12;
+  const toastAt = 216; // bar 4 — the payoff lands on a bar boundary
 
   const ways: Way[] = [
     { f: 0, x: 1310, y: 860 },
-    { f: 24, x: 566, y: 306 },
+    { f: 28, x: 566, y: 306 },
     { f: openDialog, x: 566, y: 306, click: true },
-    { f: 52, x: 959, y: 420 },
+    { f: 48, x: 959, y: 420 },
     { f: focusNote, x: 959, y: 420, click: true },
     { f: 150, x: 959, y: 420 },
     { f: 172, x: 623, y: 552 },
-    { f: 196, x: 1248, y: 622 },
+    { f: 192, x: 1248, y: 622 },
     { f: send, x: 1248, y: 622, click: true },
-    { f: 262, x: 1420, y: 850 },
+    { f: 258, x: 1420, y: 850 },
   ];
 
   return (
-    <SceneFade dur={300}>
+    <SceneFade dur={288}>
       <AppFrame variant="admin" active="Command View" userName="Abdullah" userInitial="A">
         <div style={COL}>
           <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 84 }}>
@@ -764,7 +764,7 @@ export const Scene4: React.FC = () => {
           </Rise>
         ) : null}
 
-        <Overlay text="Correct it once." at={222} hold={50} />
+        <Overlay text="Correct it once." at={234} hold={36} />
         <Cursor ways={ways} />
       </AppFrame>
     </SceneFade>
@@ -775,18 +775,18 @@ export const Scene4: React.FC = () => {
 
 export const Scene5: React.FC = () => {
   const frame = useCurrentFrame();
-  const endAt = 120;
-  const endO = interpolate(frame, [endAt, endAt + 14], [0, 1], {
+  const endAt = 144; // bar 2 of the scene — global bar boundary
+  const endO = interpolate(frame, [endAt, endAt + 16], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
-  const endScale = interpolate(frame, [endAt, endAt + 20], [0.985, 1], {
+  const endScale = interpolate(frame, [endAt, endAt + 22], [0.985, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
 
   return (
-    <SceneFade dur={210} fadeOut={false}>
+    <SceneFade dur={216} fadeOut={false}>
       <AppFrame variant="operator" active="Home" userName="Maya" userInitial="M" userColor={C.mint}>
         <div style={COL}>
           <h1 style={{ ...H1, fontSize: 36, marginTop: 64 }}>
@@ -817,7 +817,7 @@ export const Scene5: React.FC = () => {
             ))}
           </Card>
         </div>
-        <Overlay text="It never comes back." at={26} hold={52} />
+        <Overlay text="It never comes back." at={36} hold={54} />
       </AppFrame>
 
       {/* End card */}
