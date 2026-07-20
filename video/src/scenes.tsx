@@ -164,9 +164,9 @@ export const Scene1: React.FC = () => {
             </Rise>
           ) : null}
         </div>
-        <Overlay text="Describe it once." at={144} hold={54} />
         <Cursor ways={ways} />
       </AppFrame>
+      <Overlay text="Describe it once." at={144} hold={40} />
     </SceneFade>
   );
 };
@@ -384,9 +384,9 @@ export const Scene2: React.FC = () => {
             </Card>
           </div>
         </div>
-        <Overlay text="Hand it off." at={126} hold={54} />
         <Cursor ways={ways} />
       </AppFrame>
+      <Overlay text="Hand it off." at={126} hold={54} />
     </SceneFade>
   );
 };
@@ -558,9 +558,9 @@ export const Scene3: React.FC = () => {
             </Rise>
           )}
         </div>
-        <Overlay text="Your corrections show first." at={36} hold={72} />
         <Cursor ways={ways} />
       </AppFrame>
+      <Overlay text="Your corrections show first." at={36} hold={56} />
     </SceneFade>
   );
 };
@@ -764,9 +764,9 @@ export const Scene4: React.FC = () => {
           </Rise>
         ) : null}
 
-        <Overlay text="Correct it once." at={234} hold={36} />
         <Cursor ways={ways} />
       </AppFrame>
+      <Overlay text="Correct it once." at={234} hold={26} />
     </SceneFade>
   );
 };
@@ -817,8 +817,8 @@ export const Scene5: React.FC = () => {
             ))}
           </Card>
         </div>
-        <Overlay text="It never comes back." at={36} hold={54} />
       </AppFrame>
+      <Overlay text="It never comes back." at={36} hold={54} />
 
       {/* End card */}
       <div

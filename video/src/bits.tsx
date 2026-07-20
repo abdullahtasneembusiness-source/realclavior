@@ -366,55 +366,91 @@ export const FeedbackPanel: React.FC<{
   </div>
 );
 
-/* ---------- Lower-third overlay ---------- */
+/* ---------- Typographic overlay moment (Apple-style) ----------
+ *
+ * The UI recedes behind a frosted veil (backdrop blur + semi-opaque canvas tint) and
+ * the line materializes centered, word by word: each word arrives from a soft blur,
+ * rising a touch, while the whole line's tracking eases from airy to tight. Exit is a
+ * quiet dissolve — slight scale + blur — never a hard cut. Full-frame, so render it
+ * OUTSIDE the AppFrame.
+ */
+
+const clamp = {
+  extrapolateLeft: "clamp",
+  extrapolateRight: "clamp",
+} as const;
 
 export const Overlay: React.FC<{ text: string; at: number; hold?: number }> = ({
   text,
   at,
-  hold = 60,
+  hold = 54,
 }) => {
   const frame = useCurrentFrame();
-  const inEnd = at + 9;
-  const outStart = at + 9 + hold;
-  const o = interpolate(frame, [at, inEnd, outStart, outStart + 8], [0, 1, 1, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const y = interpolate(frame, [at, inEnd], [14, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  if (o <= 0) return null;
+  const outStart = at + 14 + hold;
+  const end = outStart + 12;
+  if (frame < at || frame > end) return null;
+
+  const words = text.split(" ");
+  const veil = interpolate(frame, [at, at + 12, outStart, end], [0, 1, 1, 0], clamp);
+  const exitO = interpolate(frame, [outStart, end], [1, 0], clamp);
+  const exitScale = interpolate(frame, [outStart, end], [1, 1.02], clamp);
+  const exitBlur = interpolate(frame, [outStart, end], [0, 7], clamp);
+  const tracking = interpolate(frame, [at, at + 28], [0.02, -0.028], clamp);
+
   return (
-    <div
-      style={{
-        position: "absolute",
-        left: 0,
-        right: 0,
-        bottom: 64,
-        display: "flex",
-        justifyContent: "center",
-        opacity: o,
-        transform: `translateY(${y}px)`,
-        zIndex: 80,
-      }}
-    >
+    <div style={{ position: "absolute", inset: 0, zIndex: 80 }}>
       <div
         style={{
-          background: "rgba(250,250,247,0.88)",
-          backdropFilter: "blur(10px)",
-          border: `1px solid ${C.border}`,
-          borderRadius: 12,
-          padding: "16px 34px",
-          fontFamily: F.display,
-          fontWeight: 600,
-          fontSize: 36,
-          letterSpacing: "-0.02em",
-          color: C.ink,
-          boxShadow: "0 12px 32px -16px rgba(22,21,15,0.25)",
+          position: "absolute",
+          inset: 0,
+          background: `rgba(250,250,247,${0.62 * veil})`,
+          backdropFilter: `blur(${16 * veil}px)`,
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          opacity: exitO,
+          transform: `scale(${exitScale})`,
+          filter: exitBlur > 0.05 ? `blur(${exitBlur}px)` : undefined,
         }}
       >
-        {text}
+        <div
+          style={{
+            display: "flex",
+            gap: "0.26em",
+            fontFamily: F.display,
+            fontWeight: 700,
+            fontSize: 76,
+            letterSpacing: `${tracking}em`,
+            color: C.ink,
+            textShadow: "0 2px 24px rgba(250,250,247,0.9)",
+          }}
+        >
+          {words.map((w, i) => {
+            const ws = at + 2 + i * 5;
+            const o = interpolate(frame, [ws, ws + 13], [0, 1], clamp);
+            const b = interpolate(frame, [ws, ws + 13], [14, 0], clamp);
+            const y = interpolate(frame, [ws, ws + 15], [22, 0], clamp);
+            return (
+              <span
+                key={`${w}-${i}`}
+                style={{
+                  display: "inline-block",
+                  opacity: o,
+                  transform: `translateY(${y}px)`,
+                  filter: b > 0.05 ? `blur(${b}px)` : undefined,
+                }}
+              >
+                {w}
+              </span>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
