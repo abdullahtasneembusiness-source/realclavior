@@ -55,6 +55,18 @@
   border-color: var(--border);
 }
 
+/* Smooth in-page anchor scrolling (nav → Product / How it works), motion-safe only. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Branded text selection — a small craft cue that the details are handled. */
+::selection {
+  background: rgba(31, 61, 43, 0.15);
+}
+
 body {
   color: var(--foreground);
   background: var(--background);

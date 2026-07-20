@@ -58,8 +58,22 @@ function Kicker({ children }: { children: React.ReactNode }) {
 function Header() {
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-background/85 backdrop-blur">
-      <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-5 sm:px-8">
-        <BrandMark />
+      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 sm:px-8">
+        <BrandMark large />
+        <nav
+          aria-label="Landing sections"
+          className="hidden items-center gap-6 text-sm font-medium text-muted-foreground md:flex"
+        >
+          <a href="#product" className="transition-colors hover:text-foreground">
+            Product
+          </a>
+          <a
+            href="#how-it-works"
+            className="transition-colors hover:text-foreground"
+          >
+            How it works
+          </a>
+        </nav>
         <div className="flex items-center gap-3">
           <Link
             href="/login"
@@ -67,7 +81,7 @@ function Header() {
           >
             Log in
           </Link>
-          <Button asChild size="sm">
+          <Button asChild size="sm" className="active:translate-y-px">
             <Link href="/login">Start free</Link>
           </Button>
         </div>
@@ -91,7 +105,7 @@ function Tile({
   return (
     <div
       className={cn(
-        "group flex flex-col overflow-hidden rounded-[10px] border border-border bg-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(22,21,15,0.04),0_16px_32px_-20px_rgba(22,21,15,0.22)]",
+        "group flex flex-col overflow-hidden rounded-[10px] border border-border bg-card transition-all duration-200 hover:-translate-y-0.5 hover:border-foreground/15 hover:shadow-[0_1px_2px_rgba(22,21,15,0.04),0_16px_32px_-20px_rgba(22,21,15,0.22)]",
         large && "sm:col-span-2",
       )}
     >
@@ -150,7 +164,7 @@ export function Landing() {
             stick. One view of everything, without chasing anyone.
           </p>
           <div className="mt-6 flex items-center gap-5">
-            <Button asChild size="lg">
+            <Button asChild size="lg" className="active:translate-y-px">
               <Link href="/login">Start free</Link>
             </Button>
             <Link
@@ -207,7 +221,10 @@ export function Landing() {
         </section>
 
         {/* 4 — BENTO GRID: dense, product-filled tiles. */}
-        <section className="border-t border-border py-14 sm:py-20">
+        <section
+          id="product"
+          className="scroll-mt-16 border-t border-border py-14 sm:py-20"
+        >
           <Reveal>
             <Kicker>The rest of the system</Kicker>
           </Reveal>
@@ -244,7 +261,10 @@ export function Landing() {
         </section>
 
         {/* 5 — HOW IT STARTS: compressed horizontal 3-step. */}
-        <section className="border-t border-border py-14 sm:py-20">
+        <section
+          id="how-it-works"
+          className="scroll-mt-16 border-t border-border py-14 sm:py-20"
+        >
           <Reveal>
             <Kicker>How it starts</Kicker>
             <div className="mt-6 grid gap-8 sm:grid-cols-3 sm:gap-6">
@@ -285,7 +305,7 @@ export function Landing() {
             <h2 className="max-w-2xl text-balance text-3xl font-bold tracking-[-0.03em] sm:text-4xl">
               See it with your own team.
             </h2>
-            <Button asChild size="lg" className="mt-6">
+            <Button asChild size="lg" className="mt-6 active:translate-y-px">
               <Link href="/login">Start free</Link>
             </Button>
             <p className="section-label mt-4">Free in early access</p>
@@ -295,7 +315,7 @@ export function Landing() {
 
       <footer className="border-t border-border">
         <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-5 py-6 sm:px-8">
-          <BrandMark />
+          <BrandMark large />
           <div className="flex flex-wrap items-center gap-5 text-sm text-muted-foreground">
             <Link href="/login" className="hover:text-foreground">
               Log in

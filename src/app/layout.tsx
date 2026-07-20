@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -23,9 +23,17 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://clovior.com",
+  ),
   title: "Clovior — Your team, running without you.",
   description:
     "Clovior is the operating system for the team behind the info business.",
+};
+
+// Tints the browser chrome (mobile address bar) to the site's warm off-white canvas.
+export const viewport: Viewport = {
+  themeColor: "#FAFAF7",
 };
 
 export default function RootLayout({

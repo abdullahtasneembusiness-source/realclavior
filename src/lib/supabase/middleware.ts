@@ -71,8 +71,17 @@ export async function updateSession(request: NextRequest) {
   // Public legal pages must be reachable signed-out (they're linked from the footer and
   // the signup screen), so the login gate must not bounce them.
   const isLegalRoute = pathname === "/privacy" || pathname === "/terms";
+  // Generated metadata assets (favicon, OG share card) are fetched by browsers and
+  // link-preview bots with no session — bouncing them to /login would break tab icons
+  // and Slack/X link cards.
+  const isMetadataAsset =
+    pathname === "/icon" || pathname === "/opengraph-image";
   const isPublicRoute =
-    pathname === "/" || isAuthRoute || isCronRoute || isLegalRoute;
+    pathname === "/" ||
+    isAuthRoute ||
+    isCronRoute ||
+    isLegalRoute ||
+    isMetadataAsset;
 
   if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone();
