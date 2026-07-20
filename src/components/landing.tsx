@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { BrandMark } from "@/components/brand-mark";
+import { Reveal } from "@/components/reveal";
 import { cn } from "@/lib/utils";
 import {
   BrainMock,
@@ -14,15 +15,20 @@ import {
 } from "@/components/landing-mocks";
 
 /**
- * Signed-out marketing landing page. Fully static and public — no data fetching,
- * no client JS. The root route (src/app/page.tsx) renders this for logged-out
- * visitors and redirects everyone else into the app.
+ * Signed-out marketing landing page — product-led, terse, "Linear-tier".
+ *
+ * Every section is anchored by product UI rather than copy; total word count is roughly
+ * half the previous page. No urgency mechanics, no emotional pitch — the audience
+ * (successful info-business founders) trusts restraint and real product surfaces.
+ *
+ * SCREENSHOT SWAP POINTS: each visual currently renders the in-code light-theme UI mock
+ * so production never shows a broken image. To replace with real captures, drop the
+ * named PNG into /public/landing/ and swap the mock for an <Image>. Files expected:
+ *   hero-command-view.png · feedback-memory.png · tile-playbooks.png · tile-command.png
+ *   tile-brain.png · tile-launches.png · tile-goals.png
  */
 
-/**
- * An app-window frame around a product mockup (see landing-mocks.tsx). Reads as a
- * real product screenshot; swap the child for a real <Image> when one exists.
- */
+/** Browser-style frame around product UI: hairline border, soft shadow, dot chrome. */
 function Frame({
   children,
   className,
@@ -33,7 +39,7 @@ function Frame({
   return (
     <figure
       className={cn(
-        "overflow-hidden rounded-[10px] border border-border bg-background shadow-[0_1px_2px_rgba(22,21,15,0.04),0_18px_40px_-24px_rgba(22,21,15,0.22)]",
+        "overflow-hidden rounded-[10px] border border-border bg-background shadow-[0_1px_2px_rgba(22,21,15,0.04),0_24px_48px_-24px_rgba(22,21,15,0.25)]",
         className,
       )}
     >
@@ -72,49 +78,60 @@ function Header() {
   );
 }
 
-const FEATURES = [
-  {
-    name: "Playbooks",
-    body: "Living checklists, always current. Never a dead Notion doc again.",
-    mock: <PlaybooksMock />,
-  },
-  {
-    name: "Command View",
-    body: "See if your team is moving in three seconds. No chasing.",
-    mock: <LiveFeedMock />,
-  },
-  {
-    name: "Team Brain",
-    body: "Your standards, saved once, so a new hire onboards without you.",
-    mock: <BrainMock />,
-  },
-  {
-    name: "Launches",
-    body: "Spin up a launch's fifty moving pieces in one click.",
-    mock: <LaunchesMock />,
-  },
-  {
-    name: "Goals",
-    body: "Every task connected to what actually matters this quarter.",
-    mock: <GoalsMock />,
-  },
-];
+/** Bento tile: cropped product UI filling most of the tile, short title, one line. */
+function Tile({
+  title,
+  line,
+  mock,
+  large,
+}: {
+  title: string;
+  line: string;
+  mock: React.ReactNode;
+  large?: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        "group flex flex-col overflow-hidden rounded-[10px] border border-border bg-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(22,21,15,0.04),0_16px_32px_-20px_rgba(22,21,15,0.22)]",
+        large && "sm:col-span-2",
+      )}
+    >
+      <div
+        className={cn(
+          "relative overflow-hidden border-b border-border bg-background",
+          large ? "h-56 sm:h-64" : "h-48 sm:h-52",
+        )}
+      >
+        <div className="pointer-events-none absolute inset-x-4 top-4 sm:inset-x-6 sm:top-5">
+          {mock}
+        </div>
+      </div>
+      <div className="px-5 py-4">
+        <h3 className="text-base font-semibold tracking-tight">{title}</h3>
+        <p className="mt-0.5 text-sm leading-relaxed text-muted-foreground">
+          {line}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 const STEPS = [
   {
     n: "01",
     title: "Describe how you work.",
-    body: "Paste a Loom transcript or just talk it out. Clovior turns it into a step-by-step playbook.",
+    line: "Paste a Loom transcript or type it out. Clovior turns it into a playbook.",
   },
   {
     n: "02",
     title: "Hand it off.",
-    body: "Assign it once. It runs on schedule, as a checklist your operator follows.",
+    line: "Runs on schedule as a checklist your operator follows.",
   },
   {
     n: "03",
     title: "Review and move on.",
-    body: "Approve in a tap. Correct once, and it sticks forever.",
+    line: "Approve in a tap. Corrections stick.",
   },
 ];
 
@@ -124,161 +141,168 @@ export function Landing() {
       <Header />
 
       <main className="mx-auto w-full max-w-6xl px-5 sm:px-8">
-        {/* SECTION 1 — HERO */}
-        <section className="flex flex-col items-center pt-16 text-center sm:pt-24">
-          <Kicker>Clovior</Kicker>
-          <h1 className="mt-5 max-w-3xl text-4xl font-bold leading-[1.05] tracking-[-0.03em] sm:text-5xl lg:text-6xl">
-            Your team can&apos;t move without you.
+        {/* 1 — HERO: terse copy, the product screenshot is the visual. */}
+        <section className="flex flex-col items-center pt-12 text-center sm:pt-16">
+          <Kicker>For founders running remote teams</Kicker>
+          <h1 className="mt-4 max-w-3xl text-balance text-4xl font-bold leading-[1.05] tracking-[-0.03em] sm:text-5xl lg:text-6xl">
+            Hand off work. It stays handed off.
           </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-            Clovior gives your operators playbooks that run themselves, feedback
-            that sticks, and one place where nothing waits on you. Even if
-            everything currently lives in your head.
+          <p className="mt-4 max-w-xl text-balance text-base leading-relaxed text-muted-foreground sm:text-lg">
+            Playbooks your operators run like checklists. Corrections that
+            stick. One view of everything, without chasing anyone.
           </p>
-          <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row">
+          <div className="mt-6 flex items-center gap-5">
             <Button asChild size="lg">
               <Link href="/login">Start free</Link>
             </Button>
-            <a
-              href="#how-it-works"
-              className="text-sm font-medium text-foreground underline-offset-4 hover:underline"
+            <Link
+              href="/login"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
-              See how it works
-            </a>
+              Log in
+            </Link>
           </div>
-          <p className="section-label mt-5">
-            No credit card. First playbook live in 5 minutes.
-          </p>
+          <p className="section-label mt-4">Free in early access</p>
 
-          <div className="mx-auto mt-14 w-full max-w-3xl text-left sm:mt-16">
+          {/* [SCREENSHOT: hero-command-view.png] — overlaps the hero's bottom hairline. */}
+          <div className="relative z-10 mx-auto -mb-10 mt-10 w-full max-w-4xl text-left sm:-mb-14 sm:mt-12">
             <Frame>
               <CommandViewMock />
             </Frame>
           </div>
         </section>
 
-        {/* SECTION 2 — RECOGNITION */}
-        <section className="mx-auto max-w-3xl py-24 sm:py-32">
-          <Kicker>The problem</Kicker>
-          <h2 className="mt-4 text-3xl font-bold tracking-[-0.03em] sm:text-4xl">
-            You&apos;re the bottleneck. And you built it by accident.
-          </h2>
-          <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-            Every task runs through your head. You re-explain the same things
-            every week. You gave feedback once and it didn&apos;t stick, so now
-            you&apos;re fixing the same mistake again. You can&apos;t tell
-            who&apos;s stuck without asking, which feels like micromanaging. And
-            every time an operator leaves, you rebuild from zero.
-          </p>
-          <p className="mt-8 font-display text-2xl font-medium leading-snug tracking-[-0.02em] text-foreground sm:text-[1.75rem]">
-            You didn&apos;t fail at delegating because you&apos;re bad at it. You
-            failed because no tool was built for how you actually run a team.
-          </p>
+        {/* 2 — ONE-LINE PROBLEM STRIP */}
+        <section className="border-t border-border pb-14 pt-24 sm:pb-16 sm:pt-32">
+          <Reveal>
+            <p className="mx-auto max-w-3xl text-balance text-center font-display text-xl font-medium leading-snug tracking-[-0.02em] sm:text-2xl">
+              Every task runs through you. Feedback doesn&apos;t stick. You
+              can&apos;t see who&apos;s stuck without asking.{" "}
+              <span className="text-muted-foreground">
+                Clovior is the layer that fixes this.
+              </span>
+            </p>
+          </Reveal>
         </section>
 
-        {/* SECTION 3 — THE MECHANISM */}
-        <section
-          id="how-it-works"
-          className="scroll-mt-20 border-y border-border py-24 sm:py-32"
-        >
-          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-            <div>
-              <Kicker>How it works</Kicker>
-              <h2 className="mt-4 text-3xl font-bold tracking-[-0.03em] sm:text-4xl lg:text-5xl">
-                Feedback that never has to be repeated.
+        {/* 3 — FEEDBACK MEMORY: the one deep-dive. Amber is reserved for this. */}
+        <section className="border-t border-border py-14 sm:py-20">
+          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
+            <Reveal>
+              <Kicker>The core mechanism</Kicker>
+              <h2 className="mt-3 text-3xl font-bold tracking-[-0.03em] sm:text-4xl">
+                Correct once. It sticks.
               </h2>
-              <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-                The first time you correct an operator, Clovior saves it to that
-                playbook. Permanently. Every future time they run it, your
-                correction is the first thing they see. The mistake doesn&apos;t
-                come back. Your team gets sharper without you saying a word.
+              <p className="mt-4 max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
+                The first time you correct an operator, Clovior pins it to that
+                playbook. Every future run, they see it before they start, so
+                the same mistake doesn&apos;t come back.
               </p>
-            </div>
-            <div className="relative">
-              {/* Amber is the signature Feedback Memory color — used only here. */}
+            </Reveal>
+            <Reveal className="relative">
               <div className="bg-clovior-amber/12 absolute -inset-3 -z-10 rounded-2xl" />
+              {/* [SCREENSHOT: feedback-memory.png] */}
               <Frame>
                 <FeedbackMemoryMock />
               </Frame>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* 4 — BENTO GRID: dense, product-filled tiles. */}
+        <section className="border-t border-border py-14 sm:py-20">
+          <Reveal>
+            <Kicker>The rest of the system</Kicker>
+          </Reveal>
+          <Reveal>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              {/* [SCREENSHOT: tile-playbooks.png] */}
+              <Tile
+                large
+                title="Playbooks"
+                line="Living checklists. Never a dead doc again."
+                mock={<PlaybooksMock />}
+              />
+              {/* [SCREENSHOT: tile-command.png] */}
+              <Tile
+                title="Command View"
+                line="Is the team moving? Three seconds."
+                mock={<LiveFeedMock />}
+              />
+              {/* [SCREENSHOT: tile-brain.png] */}
+              <Tile
+                title="Team Brain"
+                line="Your standards, saved once. New hires onboard themselves."
+                mock={<BrainMock />}
+              />
+              {/* [SCREENSHOT: tile-launches.png] */}
+              <Tile
+                title="Launches"
+                line="Fifty moving pieces. One click."
+                mock={<LaunchesMock />}
+              />
+              {/* [SCREENSHOT: tile-goals.png] */}
+              <Tile
+                title="Goals"
+                line="Every task tied to what matters this quarter."
+                mock={<GoalsMock />}
+              />
             </div>
-          </div>
+          </Reveal>
         </section>
 
-        {/* SECTION 4 — THREE STEPS */}
-        <section className="py-24 sm:py-32">
-          <Kicker>Set up in minutes</Kicker>
-          <div className="mt-10 grid gap-10 sm:grid-cols-3 sm:gap-8">
-            {STEPS.map((step) => (
-              <div key={step.n} className="flex flex-col gap-3">
-                <span className="font-mono text-2xl font-semibold tabular-nums text-primary">
-                  {step.n}
-                </span>
-                <h3 className="text-lg font-semibold tracking-tight">
-                  {step.title}
-                </h3>
-                <p className="leading-relaxed text-muted-foreground">
-                  {step.body}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* SECTION 5 — THE FULL PICTURE */}
-        <section className="border-t border-border py-24 sm:py-32">
-          <Kicker>Everything in one place</Kicker>
-          <div className="mt-14 flex flex-col gap-20">
-            {FEATURES.map((feature, i) => (
-              <div
-                key={feature.name}
-                className="grid items-center gap-8 lg:grid-cols-2 lg:gap-16"
-              >
-                <div className={cn(i % 2 === 1 && "lg:order-2")}>
-                  <h3 className="text-2xl font-bold tracking-[-0.02em] sm:text-3xl">
-                    {feature.name}
+        {/* 5 — HOW IT STARTS: compressed horizontal 3-step. */}
+        <section className="border-t border-border py-14 sm:py-20">
+          <Reveal>
+            <Kicker>How it starts</Kicker>
+            <div className="mt-6 grid gap-8 sm:grid-cols-3 sm:gap-6">
+              {STEPS.map((step) => (
+                <div key={step.n} className="flex flex-col gap-2">
+                  <span className="font-mono text-xl font-semibold tabular-nums text-primary">
+                    {step.n}
+                  </span>
+                  <h3 className="text-base font-semibold tracking-tight">
+                    {step.title}
                   </h3>
-                  <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-                    {feature.body}
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {step.line}
                   </p>
                 </div>
-                <div className={cn(i % 2 === 1 && "lg:order-1")}>
-                  <Frame>{feature.mock}</Frame>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </Reveal>
         </section>
 
-        {/* SECTION 6 — OBJECTION PRE-HANDLE */}
-        <section className="mx-auto max-w-3xl border-t border-border py-24 sm:py-32">
-          <Kicker>&ldquo;I already have Notion&rdquo;</Kicker>
-          <h2 className="mt-4 text-3xl font-bold tracking-[-0.03em] sm:text-4xl">
-            Notion is where you build a system. Clovior is the system.
-          </h2>
-          <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-            In Notion you build it yourself, then watch it rot into a ghost town.
-            Clovior is built for one job: running the people behind an info
-            business. You&apos;re not configuring databases. You hand off work,
-            and it stays handed off.
-          </p>
+        {/* 6 — THE NOTION LINE */}
+        <section className="border-t border-border py-14 text-center sm:py-20">
+          <Reveal>
+            <Kicker>Already have Notion?</Kicker>
+            <h2 className="mx-auto mt-3 max-w-2xl text-balance text-3xl font-bold tracking-[-0.03em] sm:text-4xl">
+              Notion is where you build a system. Clovior is the system.
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-balance text-base leading-relaxed text-muted-foreground sm:text-lg">
+              No databases to configure, no setup to maintain. The structure for
+              running an operator team is already built.
+            </p>
+          </Reveal>
         </section>
 
-        {/* SECTION 7 — FINAL CTA */}
-        <section className="flex flex-col items-center border-t border-border py-24 text-center sm:py-32">
-          <h2 className="max-w-2xl text-4xl font-bold tracking-[-0.03em] sm:text-5xl">
-            Stop being the thing your team waits on.
-          </h2>
-          <Button asChild size="lg" className="mt-8">
-            <Link href="/login">Start free</Link>
-          </Button>
-          <p className="section-label mt-5">
-            No card. Your first playbook live in 5 minutes.
-          </p>
+        {/* 7 — FINAL CTA: quiet close. */}
+        <section className="flex flex-col items-center border-t border-border py-16 text-center sm:py-24">
+          <Reveal className="flex flex-col items-center">
+            <h2 className="max-w-2xl text-balance text-3xl font-bold tracking-[-0.03em] sm:text-4xl">
+              See it with your own team.
+            </h2>
+            <Button asChild size="lg" className="mt-6">
+              <Link href="/login">Start free</Link>
+            </Button>
+            <p className="section-label mt-4">Free in early access</p>
+          </Reveal>
         </section>
       </main>
 
       <footer className="border-t border-border">
-        <div className="mx-auto flex w-full max-w-6xl flex-col items-start justify-between gap-4 px-5 py-8 sm:flex-row sm:items-center sm:px-8">
+        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-5 py-6 sm:px-8">
           <BrandMark />
           <div className="flex flex-wrap items-center gap-5 text-sm text-muted-foreground">
             <Link href="/login" className="hover:text-foreground">

@@ -5,9 +5,9 @@ import { createClient } from "@/lib/supabase/server";
 import { Landing } from "@/components/landing";
 
 export const metadata: Metadata = {
-  title: "Clovior — Your team can't move without you",
+  title: "Clovior — Hand off work. It stays handed off.",
   description:
-    "Clovior gives your operators playbooks that run themselves, feedback that sticks, and one place where nothing waits on you.",
+    "Playbooks your operators run like checklists. Corrections that stick. One view of everything, without chasing anyone.",
 };
 
 /**
