@@ -4,15 +4,15 @@ import { Button } from "@/components/ui/button";
 import { BrandMark } from "@/components/brand-mark";
 import { Reveal } from "@/components/reveal";
 import { cn } from "@/lib/utils";
+import { CommandViewMock } from "@/components/landing-mocks";
 import {
-  BrainMock,
-  CommandViewMock,
-  FeedbackMemoryMock,
-  GoalsMock,
-  LaunchesMock,
-  LiveFeedMock,
-  PlaybooksMock,
-} from "@/components/landing-mocks";
+  BrainDemo,
+  FeedbackMemoryDemo,
+  GoalsDemo,
+  LaunchDemo,
+  LiveFeedDemo,
+  PlaybookRunDemo,
+} from "@/components/landing-demos";
 
 /**
  * Signed-out marketing landing page — product-led, terse, "Linear-tier".
@@ -21,11 +21,9 @@ import {
  * half the previous page. No urgency mechanics, no emotional pitch — the audience
  * (successful info-business founders) trusts restraint and real product surfaces.
  *
- * SCREENSHOT SWAP POINTS: each visual currently renders the in-code light-theme UI mock
- * so production never shows a broken image. To replace with real captures, drop the
- * named PNG into /public/landing/ and swap the mock for an <Image>. Files expected:
- *   hero-command-view.png · feedback-memory.png · tile-playbooks.png · tile-command.png
- *   tile-brain.png · tile-launches.png · tile-goals.png
+ * The product visuals are live: looping pure-CSS demo scenes (landing-demos.tsx) — a
+ * cursor working through a run, a correction pinning to Feedback Memory, the feed
+ * streaming in. Reduced-motion users see each scene's completed state instead.
  */
 
 /** Browser-style frame around product UI: hairline border, soft shadow, dot chrome. */
@@ -100,7 +98,7 @@ function Tile({
       <div
         className={cn(
           "relative overflow-hidden border-b border-border bg-background",
-          large ? "h-56 sm:h-64" : "h-48 sm:h-52",
+          large ? "h-52 sm:h-56" : "h-48 sm:h-52",
         )}
       >
         <div className="pointer-events-none absolute inset-x-4 top-4 sm:inset-x-6 sm:top-5">
@@ -164,8 +162,8 @@ export function Landing() {
           </div>
           <p className="section-label mt-4">Free in early access</p>
 
-          {/* [SCREENSHOT: hero-command-view.png] — overlaps the hero's bottom hairline. */}
-          <div className="relative z-10 mx-auto -mb-10 mt-10 w-full max-w-4xl text-left sm:-mb-14 sm:mt-12">
+          {/* Hero visual: Command View, one-time fade-up, overlapping the hairline. */}
+          <div className="animate-hero-in relative z-10 mx-auto -mb-10 mt-10 w-full max-w-4xl text-left sm:-mb-14 sm:mt-12">
             <Frame>
               <CommandViewMock />
             </Frame>
@@ -201,9 +199,8 @@ export function Landing() {
             </Reveal>
             <Reveal className="relative">
               <div className="bg-clovior-amber/12 absolute -inset-3 -z-10 rounded-2xl" />
-              {/* [SCREENSHOT: feedback-memory.png] */}
               <Frame>
-                <FeedbackMemoryMock />
+                <FeedbackMemoryDemo />
               </Frame>
             </Reveal>
           </div>
@@ -216,36 +213,31 @@ export function Landing() {
           </Reveal>
           <Reveal>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              {/* [SCREENSHOT: tile-playbooks.png] */}
               <Tile
                 large
                 title="Playbooks"
                 line="Living checklists. Never a dead doc again."
-                mock={<PlaybooksMock />}
+                mock={<PlaybookRunDemo />}
               />
-              {/* [SCREENSHOT: tile-command.png] */}
               <Tile
                 title="Command View"
                 line="Is the team moving? Three seconds."
-                mock={<LiveFeedMock />}
+                mock={<LiveFeedDemo />}
               />
-              {/* [SCREENSHOT: tile-brain.png] */}
               <Tile
                 title="Team Brain"
                 line="Your standards, saved once. New hires onboard themselves."
-                mock={<BrainMock />}
+                mock={<BrainDemo />}
               />
-              {/* [SCREENSHOT: tile-launches.png] */}
               <Tile
                 title="Launches"
                 line="Fifty moving pieces. One click."
-                mock={<LaunchesMock />}
+                mock={<LaunchDemo />}
               />
-              {/* [SCREENSHOT: tile-goals.png] */}
               <Tile
                 title="Goals"
                 line="Every task tied to what matters this quarter."
-                mock={<GoalsMock />}
+                mock={<GoalsDemo />}
               />
             </div>
           </Reveal>

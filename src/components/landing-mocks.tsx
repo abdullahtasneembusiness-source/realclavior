@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
  * the actual app. Swap any of these for a real <Image> when screenshots exist.
  */
 
-function Avatar({ initial, color }: { initial: string; color: string }) {
+export function Avatar({ initial, color }: { initial: string; color: string }) {
   return (
     <span
       className="flex size-6 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold text-white"
@@ -32,7 +32,7 @@ const pillTones: Record<string, string> = {
   muted: "bg-secondary text-muted-foreground",
 };
 
-function Pill({
+export function Pill({
   tone = "muted",
   children,
 }: {

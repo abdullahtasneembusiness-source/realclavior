@@ -90,6 +90,396 @@ h6 {
   }
 }
 
+/* ---------------------------------------------------------------------------
+   Landing-page product demos: choreographed, looping pure-CSS scenes (a cursor
+   clicking through a run, a correction pinning, a feed streaming in). All motion
+   lives inside the no-preference media query; the base DOM is the COMPLETED
+   scene, so reduced-motion users (and anything that can't animate) see a full,
+   sensible screenshot rather than a half-played state. One shared 10s cycle.
+--------------------------------------------------------------------------- */
+
+.demo-cursor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+}
+.demo-cursor-ring {
+  position: absolute;
+  left: -7px;
+  top: -7px;
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  border: 1.5px solid var(--primary);
+  opacity: 0;
+  transform: scale(0.4);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* One-time hero entrance. */
+  @keyframes hero-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .animate-hero-in {
+    animation: hero-in 0.8s ease-out 0.1s both;
+  }
+
+  /* Generic looped entrance for staggered rows/cards (delay set inline). */
+  @keyframes demo-rise {
+    0% {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    5% {
+      opacity: 1;
+      transform: none;
+    }
+    90% {
+      opacity: 1;
+      transform: none;
+    }
+    96%,
+    100% {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+  .demo-rise {
+    animation: demo-rise 10s ease-out infinite both;
+  }
+
+  /* Playbook run demo: cursor visits three checkboxes, then the submit pill. */
+  @keyframes demo-pb-cursor {
+    0%,
+    4% {
+      left: 62%;
+      top: 20%;
+      opacity: 0;
+    }
+    10%,
+    12% {
+      left: 5%;
+      top: 26%;
+      opacity: 1;
+    }
+    28%,
+    30% {
+      left: 5%;
+      top: 55%;
+      opacity: 1;
+    }
+    46%,
+    48% {
+      left: 5%;
+      top: 84%;
+      opacity: 1;
+    }
+    58% {
+      left: 28%;
+      top: 88%;
+      opacity: 1;
+    }
+    64%,
+    100% {
+      left: 32%;
+      top: 90%;
+      opacity: 0;
+    }
+  }
+  .demo-pb-cursor {
+    animation: demo-pb-cursor 10s ease-in-out infinite both;
+  }
+  @keyframes demo-pb-ring {
+    0%,
+    10% {
+      opacity: 0;
+      transform: scale(0.4);
+    }
+    11% {
+      opacity: 0.5;
+      transform: scale(0.45);
+    }
+    16% {
+      opacity: 0;
+      transform: scale(1.3);
+    }
+    27% {
+      opacity: 0;
+      transform: scale(0.45);
+    }
+    29% {
+      opacity: 0.5;
+      transform: scale(0.45);
+    }
+    34% {
+      opacity: 0;
+      transform: scale(1.3);
+    }
+    45% {
+      opacity: 0;
+      transform: scale(0.45);
+    }
+    47% {
+      opacity: 0.5;
+      transform: scale(0.45);
+    }
+    52%,
+    100% {
+      opacity: 0;
+      transform: scale(1.3);
+    }
+  }
+  .demo-pb-cursor .demo-cursor-ring {
+    animation: demo-pb-ring 10s ease-out infinite both;
+  }
+  @keyframes demo-check {
+    0% {
+      opacity: 0;
+      transform: scale(0.4);
+    }
+    3% {
+      opacity: 1;
+      transform: scale(1.12);
+    }
+    5%,
+    92% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    97%,
+    100% {
+      opacity: 0;
+      transform: scale(0.4);
+    }
+  }
+  /* Same pop, phase-shifted to land right after each cursor click. */
+  .demo-check-1 {
+    animation: demo-check 10s ease-out infinite both;
+    animation-delay: 1.2s;
+  }
+  .demo-check-2 {
+    animation: demo-check 10s ease-out infinite both;
+    animation-delay: 3s;
+  }
+  .demo-check-3 {
+    animation: demo-check 10s ease-out infinite both;
+    animation-delay: 4.8s;
+  }
+  @keyframes demo-late-rise {
+    0%,
+    62% {
+      opacity: 0;
+      transform: translateY(5px);
+    }
+    66%,
+    92% {
+      opacity: 1;
+      transform: none;
+    }
+    97%,
+    100% {
+      opacity: 0;
+      transform: translateY(5px);
+    }
+  }
+  .demo-pb-submitted {
+    animation: demo-late-rise 10s ease-out infinite both;
+  }
+
+  /* Feedback Memory demo: cursor hits "Request changes", the note pins amber. */
+  @keyframes demo-fm-cursor {
+    0%,
+    4% {
+      left: 34%;
+      top: 62%;
+      opacity: 0;
+    }
+    12%,
+    16% {
+      left: 84%;
+      top: 12%;
+      opacity: 1;
+    }
+    24% {
+      left: 78%;
+      top: 30%;
+      opacity: 1;
+    }
+    32%,
+    100% {
+      left: 74%;
+      top: 38%;
+      opacity: 0;
+    }
+  }
+  .demo-fm-cursor {
+    animation: demo-fm-cursor 10s ease-in-out infinite both;
+  }
+  @keyframes demo-fm-ring {
+    0%,
+    13% {
+      opacity: 0;
+      transform: scale(0.4);
+    }
+    14% {
+      opacity: 0.5;
+      transform: scale(0.45);
+    }
+    20%,
+    100% {
+      opacity: 0;
+      transform: scale(1.3);
+    }
+  }
+  .demo-fm-cursor .demo-cursor-ring {
+    animation: demo-fm-ring 10s ease-out infinite both;
+  }
+  @keyframes demo-fm-press {
+    0%,
+    13% {
+      background-color: transparent;
+    }
+    15%,
+    18% {
+      background-color: rgba(31, 61, 43, 0.12);
+    }
+    22%,
+    100% {
+      background-color: transparent;
+    }
+  }
+  .demo-fm-press {
+    animation: demo-fm-press 10s ease-out infinite both;
+  }
+  @keyframes demo-fm-note {
+    0%,
+    18% {
+      opacity: 0;
+      transform: translateY(8px) scale(0.98);
+    }
+    24%,
+    92% {
+      opacity: 1;
+      transform: none;
+    }
+    97%,
+    100% {
+      opacity: 0;
+      transform: translateY(8px) scale(0.98);
+    }
+  }
+  .demo-fm-note {
+    animation: demo-fm-note 10s ease-out infinite both;
+  }
+  @keyframes demo-fm-chip {
+    0%,
+    30% {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+    34% {
+      opacity: 1;
+      transform: scale(1.08);
+    }
+    36%,
+    92% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    97%,
+    100% {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+  }
+  .demo-fm-chip {
+    animation: demo-fm-chip 10s ease-out infinite both;
+  }
+  @keyframes demo-fm-line {
+    0%,
+    42% {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    47%,
+    92% {
+      opacity: 1;
+      transform: none;
+    }
+    97%,
+    100% {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+  }
+  .demo-fm-line {
+    animation: demo-fm-line 10s ease-out infinite both;
+  }
+
+  /* Launch chip: Queued flips to Live mid-cycle. */
+  @keyframes demo-flip-out {
+    0%,
+    38% {
+      opacity: 1;
+    }
+    42%,
+    92% {
+      opacity: 0;
+    }
+    97%,
+    100% {
+      opacity: 1;
+    }
+  }
+  .demo-flip-out {
+    animation: demo-flip-out 10s ease-out infinite both;
+  }
+  @keyframes demo-flip-in {
+    0%,
+    38% {
+      opacity: 0;
+    }
+    42%,
+    92% {
+      opacity: 1;
+    }
+    97%,
+    100% {
+      opacity: 0;
+    }
+  }
+  .demo-flip-in {
+    animation: demo-flip-in 10s ease-out infinite both;
+  }
+
+  /* Goal bars fill from a sliver to their target width (set via --fill inline). */
+  @keyframes demo-fill {
+    0% {
+      width: 6%;
+    }
+    35%,
+    90% {
+      width: var(--fill);
+    }
+    100% {
+      width: 6%;
+    }
+  }
+  .demo-goal-bar {
+    animation: demo-fill 10s ease-in-out infinite both;
+  }
+}
+
 /* Rich text (Team Brain entry bodies): headings, lists, and links that Tailwind's
    preflight would otherwise flatten. Unlayered so it overrides the base reset. */
 .rich-content {
