@@ -62,11 +62,11 @@ function StatTile({
         ? "text-primary"
         : "text-foreground";
   return (
-    <Card>
-      <CardContent className="flex flex-col gap-2 p-5">
-        <span className="section-label">{label}</span>
+    <Card className="min-w-0">
+      <CardContent className="flex flex-col gap-2 p-4 sm:p-5">
+        <span className="section-label truncate">{label}</span>
         <span
-          className={`font-display text-5xl font-bold leading-none tabular-nums sm:text-6xl ${valueClass}`}
+          className={`font-display text-4xl font-bold leading-none tabular-nums sm:text-5xl lg:text-6xl ${valueClass}`}
         >
           <AnimatedNumber value={value} />
         </span>
@@ -104,11 +104,13 @@ function RunRow({
         size="sm"
       />
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-2">
           <span className="truncate text-sm font-medium">
             {run.title ?? "Playbook"}
           </span>
-          <Badge variant={badge.variant}>{badge.label}</Badge>
+          <Badge variant={badge.variant} className="shrink-0">
+            {badge.label}
+          </Badge>
         </div>
         <div className="mt-0.5 flex flex-wrap items-center gap-x-3 text-xs text-muted-foreground">
           <span>{memberName(assignee)}</span>

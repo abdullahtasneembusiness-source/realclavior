@@ -80,7 +80,13 @@ export function AppShell({
             !isAdmin && "pb-24 lg:pb-8",
           )}
         >
-          <div className="mx-auto w-full max-w-5xl">{children}</div>
+          {/* min-w-0 + clip: a hard guard so no page content can ever force the whole
+              app to scroll horizontally on mobile (Radix menus/dialogs portal out, so
+              they're not clipped). Individual components still truncate/wrap their own
+              content — this is only the last-resort safety net. */}
+          <div className="mx-auto w-full min-w-0 max-w-5xl [overflow-x:clip]">
+            {children}
+          </div>
         </main>
 
         {!isAdmin ? (
