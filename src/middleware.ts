@@ -13,6 +13,6 @@ export const config = {
      * - favicon.ico and common static image files
      * The auth session refresh should run everywhere else.
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4|webm|mp3|ico)$).*)",
   ],
 };

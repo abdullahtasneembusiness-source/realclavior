@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { BrandMark } from "@/components/brand-mark";
 import { Reveal } from "@/components/reveal";
 import { cn } from "@/lib/utils";
-import { CommandViewMock } from "@/components/landing-mocks";
+import { HeroVideo } from "@/components/hero-video";
 import {
   BrainDemo,
   FeedbackMemoryDemo,
@@ -30,9 +30,12 @@ import {
 function Frame({
   children,
   className,
+  flush,
 }: {
   children: React.ReactNode;
   className?: string;
+  /** Edge-to-edge content (the hero video) — no inner padding. */
+  flush?: boolean;
 }) {
   return (
     <figure
@@ -46,7 +49,7 @@ function Frame({
         <span className="size-2.5 rounded-full bg-border" />
         <span className="size-2.5 rounded-full bg-border" />
       </div>
-      <div className="p-5 sm:p-6">{children}</div>
+      <div className={cn(!flush && "p-5 sm:p-6")}>{children}</div>
     </figure>
   );
 }
@@ -176,10 +179,10 @@ export function Landing() {
           </div>
           <p className="section-label mt-4">Free in early access</p>
 
-          {/* Hero visual: Command View, one-time fade-up, overlapping the hairline. */}
+          {/* Hero visual: the product demo video, one-time fade-up, overlapping the hairline. */}
           <div className="animate-hero-in relative z-10 mx-auto -mb-10 mt-10 w-full max-w-4xl text-left sm:-mb-14 sm:mt-12">
-            <Frame>
-              <CommandViewMock />
+            <Frame flush>
+              <HeroVideo />
             </Frame>
           </div>
         </section>
