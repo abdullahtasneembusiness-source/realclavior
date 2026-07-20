@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { AnimatedNumber } from "@/components/animated-number";
 import { MemberAvatar } from "@/components/member-avatar";
 import { createClient } from "@/lib/supabase/server";
 import { resolveWorkspaceId } from "@/lib/workspace";
@@ -67,7 +68,7 @@ function StatTile({
         <span
           className={`font-display text-5xl font-bold leading-none tabular-nums sm:text-6xl ${valueClass}`}
         >
-          {value}
+          <AnimatedNumber value={value} />
         </span>
       </CardContent>
     </Card>

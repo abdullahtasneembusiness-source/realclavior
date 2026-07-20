@@ -67,6 +67,41 @@
   background: rgba(31, 61, 43, 0.15);
 }
 
+/* In-app page transition: content fades and rises 6px on every navigation (driven by
+   the workspace template.tsx remounting). Fast and purposeful — 240ms, ease-out —
+   so navigation reads as "arrived", never "processing". */
+@media (prefers-reduced-motion: no-preference) {
+  .animate-page-in {
+    animation: page-in 240ms cubic-bezier(0.2, 0.6, 0.2, 1) both;
+  }
+  @keyframes page-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Ticking a checkbox (run steps) gives a small satisfying pop. */
+  input[type="checkbox"]:checked {
+    animation: check-pop 180ms cubic-bezier(0.3, 1.4, 0.5, 1);
+  }
+  @keyframes check-pop {
+    0% {
+      transform: scale(0.8);
+    }
+    60% {
+      transform: scale(1.15);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
