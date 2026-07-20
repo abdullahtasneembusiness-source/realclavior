@@ -105,7 +105,7 @@ function RunRow({
       />
       <div className="min-w-0 flex-1">
         <div className="flex min-w-0 items-center gap-2">
-          <span className="truncate text-sm font-medium">
+          <span className="min-w-0 truncate text-sm font-medium">
             {run.title ?? "Playbook"}
           </span>
           <Badge variant={badge.variant} className="shrink-0">
@@ -297,7 +297,7 @@ export async function CommandView({
       <CheckInCallout workspaceId={workspaceId} signals={checkInSignals} />
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="flex flex-col gap-6 lg:col-span-2">
+        <div className="flex min-w-0 flex-col gap-6 lg:col-span-2">
           <section className="flex flex-col gap-2">
             <h2 className="flex items-center gap-2 text-sm font-medium">
               <span aria-hidden className="h-4 w-0.5 rounded-full bg-primary" />
@@ -367,7 +367,7 @@ export async function CommandView({
           </section>
         </div>
 
-        <div className="flex flex-col gap-6">
+        <div className="flex min-w-0 flex-col gap-6">
           {goals.length > 0 ? (
             <section className="flex flex-col gap-2" data-testid="cv-goals">
               <h2 className="flex items-center gap-2 text-sm font-medium">
@@ -428,7 +428,7 @@ export async function CommandView({
                         size="sm"
                       />
                       <div className="min-w-0 flex-1">
-                        <p className="leading-snug">
+                        <p className="leading-snug [overflow-wrap:anywhere]">
                           <span className="font-medium">
                             {memberName(actor)}
                           </span>{" "}
