@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
@@ -84,8 +85,12 @@ export async function getDefaultWorkspaceSlug(
  * 301s those to the slug URL; resolving both here is a safety net). Redirects to /login
  * if signed out, and to /app if the user has no active membership in this workspace —
  * covering "wrong slug" and "not a member" without ever showing a bare error page.
+ *
+ * Wrapped in React cache() below: the layout and the page of the same request both call
+ * it with the same slug, so this dedupes to a single getUser() + membership query per
+ * navigation instead of running twice.
  */
-export async function requireWorkspaceContext(
+async function loadWorkspaceContext(
   slugOrId: string,
 ): Promise<ActiveContext> {
   const supabase = await createClient();
@@ -128,6 +133,8 @@ export async function requireWorkspaceContext(
     }),
   };
 }
+
+export const requireWorkspaceContext = cache(loadWorkspaceContext);
 
 export function isAdminRole(role: Membership["role"]): boolean {
   return role === "founder" || role === "manager";
