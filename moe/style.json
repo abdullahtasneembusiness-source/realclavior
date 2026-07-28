@@ -1,0 +1,13 @@
+{
+  "_comment": "The channel look, in one place. Every image prompt in every episode gets `base` appended and `negative` applied, so all videos stay visually consistent. Change it here and the whole channel changes. Later this is where the trained LoRA gets referenced too.",
+
+  "base": "cinematic stylized 3D render, premium CGI visualization, volumetric fog and god rays, dramatic rim lighting, strong depth separation between foreground midground and background, cold desaturated blue-grey and slate palette with a single warm accent, moody atmospheric, highly detailed realistic materials, shallow depth of field, Unreal Engine 5 / Octane quality, 16:9 cinematic composition",
+
+  "negative": "cartoon, cel shaded, anime, illustration, painterly, flat vector, toy-like, plastic, oversaturated, cheerful, lens flare overload, text, watermark, logo, people, faces, human figures",
+
+  "notes": [
+    "3D-rendered stills with clear foreground/midground/background layers parallax far better in the depth-displacement component than flat photos do — the layer separation is what the depth map keys off. Keep 'strong depth separation' in the base prompt.",
+    "'stylized' + 'realistic materials' is the balance point: reads as premium 3D, not cartoon, not fake-photo.",
+    "Single warm accent keeps stills tonally consistent with the orange route line in the diagrams."
+  ]
+}

@@ -27,6 +27,15 @@ if (!token) {
 const promptsPath = argv[2] || "moe/episodes/blackreef/images.json";
 const outDir = argv[3] || "moe/out/images";
 
+// Channel-wide look. Episode prompts describe only the SUBJECT; the style comes
+// from here so every video across the channel matches.
+let style = { base: "", negative: "" };
+try {
+  style = JSON.parse(await readFile("moe/style.json", "utf8"));
+} catch {
+  console.warn("⚠ moe/style.json not found — generating without channel style.");
+}
+
 let prompts;
 try {
   prompts = JSON.parse(await readFile(promptsPath, "utf8"));
@@ -45,6 +54,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function generate(p) {
   console.log(`→ ${p.name}: ${p.prompt.slice(0, 70)}...`);
+  const fullPrompt = style.base ? `${p.prompt}, ${style.base}` : p.prompt;
   const res = await fetch(`https://api.replicate.com/v1/models/${model}/predictions`, {
     method: "POST",
     headers: {
@@ -53,7 +63,14 @@ async function generate(p) {
       Prefer: "wait", // run synchronously, return the result when ready
     },
     body: JSON.stringify({
-      input: { prompt: p.prompt, aspect_ratio: "16:9", output_format: "jpg", ...(p.input || {}) },
+      input: {
+        prompt: fullPrompt,
+        // Not every model accepts a negative prompt; harmless where unsupported.
+        ...(style.negative ? { negative_prompt: style.negative } : {}),
+        aspect_ratio: "16:9",
+        output_format: "jpg",
+        ...(p.input || {}),
+      },
     }),
   });
 

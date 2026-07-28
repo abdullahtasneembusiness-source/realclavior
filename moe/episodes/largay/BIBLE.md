@@ -29,20 +29,34 @@ must be unable to guess the answer, but must believe the answer exists and will 
 Vague drama ("Horrifying," "Disturbing") is the saturated end of this niche and reads as
 interchangeable. Numbers and paradox outperform adjectives.
 
-**Recommended title:**
-> ### They Came Within 100 Yards of Her. Three Times.
+**A curiosity gap only works if it's anchored.** A title built purely on mystery
+("They Came Within 100 Yards of Her") fails, because a stranger scrolling a feed can't
+tell who *they* are, who *her* is, or 100 yards of *what*. There's nothing to be curious
+*about* yet. The rule: **give the situation, withhold the explanation.** The viewer should
+understand the scenario in one glance and still not be able to guess the answer.
 
-Why it works: a hard number (specific = credible), an implied failure (why?), and a
-question the viewer cannot answer from the title alone. It promises a mechanism, not a mood.
+Every title below carries three things: **who/what happened** (a lost hiker),
+**a concrete number** (credibility + scale), and **an unresolved contradiction** (the gap).
+
+**Recommended title:**
+> ### She Survived 26 Days Lost. The Search Walked Past Her Three Times.
+
+62 characters — survives mobile truncation. "Lost" and "the search" instantly establish
+the scenario; "26 days" is the impressive fact that earns the click; "walked past her
+three times" is the contradiction that can't be resolved without watching. Nothing is
+vague, and nothing is spoiled.
 
 **Alternates, ranked:**
-2. *The Tent That Saved Her Life Hid Her Body* — leads with the paradox; strongest for
-   returning viewers who know the format, slightly weaker cold (spoils the loop).
-3. *She Was Two Miles From the Trail for 26 Days* — clean, strong, less mysterious.
-4. *Why the Search Dogs Walked Past Her* — good, but narrower appeal.
+2. *Lost 2 Miles From the Trail — And the Search Dogs Walked Right Past Her*
+   Strongest context of the set (names the trail scenario outright). Slightly long.
+3. *She Did Everything Right When She Got Lost. That's Why They Never Found Her.*
+   Best pure paradox, and closest to the channel's thesis. Weaker on concrete numbers —
+   a good A/B test against #1 once the channel has an audience that trusts the format.
+4. *The Lost Hiker Rescuers Walked Past Three Times*
+   Cleanest and shortest. Least specific, so probably the weakest cold-start performer.
 
 **Avoid:** anything with "Horrifying / Disturbing / Chilling." That's the competitor's
-lane and it signals "anthology reaction content," not "reconstruction."
+saturated lane and it signals reaction content, not reconstruction.
 
 **Thumbnail — this is our unfair advantage.**
 Nobody else in this niche can make this image. Use our own diagram style:
@@ -53,6 +67,26 @@ Nobody else in this niche can make this image. Use our own diagram style:
 
 Every competitor thumbnail is a photo of a forest or a person. Ours is *information*.
 It looks like evidence. That contrast is the click.
+
+---
+
+## 2b. Still-image look
+
+Defined channel-wide in `moe/style.json`, not per episode — every video inherits it.
+
+**Premium stylized 3D, not photography and not cartoon.** Cinematic CGI: volumetric fog,
+rim lighting, realistic materials, shallow depth of field, cold slate-blue palette with a
+single warm accent that ties to the orange route line in the diagrams.
+
+Two reasons this is the right call beyond taste:
+1. **It parallaxes properly.** The depth-displacement panel keys off foreground /
+   midground / background separation. Rendered 3D scenes have that separation by
+   construction; flat photographs often don't, and they smear when displaced.
+2. **It's ownable.** Photoreal stock imagery looks like everyone else's channel. A
+   consistent 3D look becomes recognisable at thumbnail size — and it's what the trained
+   LoRA will eventually lock in.
+
+Episode `images.json` files describe **subject only**. Style is appended automatically.
 
 ---
 

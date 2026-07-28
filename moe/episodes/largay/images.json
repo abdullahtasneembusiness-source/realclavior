@@ -1,18 +1,22 @@
 [
   {
     "name": "spruce-wall",
-    "prompt": "Dense dark spruce and fir forest interior, branches packed tight, no sightline beyond a few metres, flat overcast light, cold desaturated green-grey palette, documentary reconstruction still, no people, no text, photographic"
+    "prompt": "The interior of a dense spruce and fir forest, trunks packed tight in receding layers, branches closing off every sightline, thin mist between the trees"
   },
   {
     "name": "trail-thread",
-    "prompt": "A narrow footpath barely twenty inches wide threading through dense conifer forest, seen from standing height, the path almost swallowed by undergrowth, muted natural light, cold desaturated palette, documentary still, no people, no text, photographic"
+    "prompt": "A single narrow footpath barely visible threading between dense conifers, the path almost swallowed by undergrowth, forest pressing in from both sides"
   },
   {
     "name": "knoll-camp",
-    "prompt": "A small clearing on a low forested knoll in dense Maine spruce woods, dim overcast light filtering through canopy, quiet and enclosed, cold desaturated palette, documentary reconstruction still, no people, no tent, no text, photographic"
+    "prompt": "A small enclosed clearing on a low forested rise, ringed by tall dark conifers, dim light filtering down through the canopy, quiet and hemmed in"
   },
   {
     "name": "forest-dusk",
-    "prompt": "Northern conifer forest at last light, mist between trunks, deep blue-grey tones, still and silent, cinematic wide shot, documentary reconstruction still, no people, no text, photographic"
+    "prompt": "A northern conifer forest at last light, heavy mist layered between distant trunks, the far trees fading into darkness"
+  },
+  {
+    "name": "canopy-signal",
+    "prompt": "Looking steeply upward through a dense conifer canopy toward a pale overcast sky, branches fragmenting the light into narrow gaps"
   }
 ]
