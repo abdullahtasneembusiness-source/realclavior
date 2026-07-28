@@ -1,13 +1,13 @@
 {
-  "_comment": "The channel look, in one place. Every image prompt in every episode gets `base` appended and `negative` applied, so all videos stay visually consistent. Change it here and the whole channel changes. Later this is where the trained LoRA gets referenced too.",
+  "_comment": "The channel look, in one place. Every image prompt in every episode gets `base` appended, so all videos stay visually consistent. Change it here and the whole channel changes. This is also where a trained LoRA gets referenced later.",
 
-  "base": "cinematic stylized 3D render, premium CGI visualization, volumetric fog and god rays, dramatic rim lighting, strong depth separation between foreground midground and background, cold desaturated blue-grey and slate palette with a single warm accent, moody atmospheric, highly detailed realistic materials, shallow depth of field, Unreal Engine 5 / Octane quality, 16:9 cinematic composition",
+  "base": "cinematic stylized 3D render, premium CGI visualization with photographic realism in the materials and lighting, volumetric fog and shafts of light, dramatic rim lighting, strong depth separation between distinct foreground midground and background layers, cold desaturated blue-grey and slate palette with one restrained warm accent, sombre and atmospheric, shallow depth of field, fine surface detail, Unreal Engine 5 and Octane render quality, clean 16:9 cinematic composition, unpopulated landscape, no lettering",
 
-  "negative": "cartoon, cel shaded, anime, illustration, painterly, flat vector, toy-like, plastic, oversaturated, cheerful, lens flare overload, text, watermark, logo, people, faces, human figures",
+  "_why_no_negative_prompt": "Flux is a distilled model and does not accept a negative_prompt input — passing one is rejected, not ignored. Anything we want to avoid has to be phrased positively in `base` above. That's why it says 'photographic realism in the materials' (pushes away from cartoon), 'sombre' (away from cheerful), 'unpopulated' (away from people) and 'no lettering' (away from text artefacts).",
 
   "notes": [
     "3D-rendered stills with clear foreground/midground/background layers parallax far better in the depth-displacement component than flat photos do — the layer separation is what the depth map keys off. Keep 'strong depth separation' in the base prompt.",
-    "'stylized' + 'realistic materials' is the balance point: reads as premium 3D, not cartoon, not fake-photo.",
-    "Single warm accent keeps stills tonally consistent with the orange route line in the diagrams."
+    "'stylized 3D' + 'photographic realism in the materials' is the balance point: reads as premium CGI, not cartoon, not fake documentary photo.",
+    "The single warm accent keeps stills tonally consistent with the orange route line in the diagrams."
   ]
 }

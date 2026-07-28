@@ -52,35 +52,52 @@ try {
 await mkdir(outDir, { recursive: true });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+// Every network call gets a deadline. Without one, a stalled request hangs the
+// whole job with no output — which is exactly what happened the first time.
+const REQ_TIMEOUT_MS = 45_000;
+const MAX_POLL_MS = 120_000;
+
+const fetchWithTimeout = (url, opts = {}) =>
+  fetch(url, { ...opts, signal: AbortSignal.timeout(REQ_TIMEOUT_MS) });
+
 async function generate(p) {
   console.log(`→ ${p.name}: ${p.prompt.slice(0, 70)}...`);
   const fullPrompt = style.base ? `${p.prompt}, ${style.base}` : p.prompt;
-  const res = await fetch(`https://api.replicate.com/v1/models/${model}/predictions`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-      Prefer: "wait", // run synchronously, return the result when ready
-    },
-    body: JSON.stringify({
-      input: {
-        prompt: fullPrompt,
-        // Not every model accepts a negative prompt; harmless where unsupported.
-        ...(style.negative ? { negative_prompt: style.negative } : {}),
-        aspect_ratio: "16:9",
-        output_format: "jpg",
-        ...(p.input || {}),
+
+  // NOTE: no negative_prompt. Flux is a distilled model and does not take one —
+  // passing it is rejected rather than ignored. Things to avoid belong in the
+  // positive prompt (see moe/style.json).
+  const res = await fetchWithTimeout(
+    `https://api.replicate.com/v1/models/${model}/predictions`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Prefer: "wait", // run synchronously where the model supports it
       },
-    }),
-  });
+      body: JSON.stringify({
+        input: {
+          prompt: fullPrompt,
+          aspect_ratio: "16:9",
+          output_format: "jpg",
+          ...(p.input || {}),
+        },
+      }),
+    }
+  );
 
   let pred = await res.json();
   if (!res.ok) throw new Error(`Replicate ${res.status}: ${JSON.stringify(pred)}`);
 
-  let tries = 0;
-  while (pred.status && !["succeeded", "failed", "canceled"].includes(pred.status) && tries++ < 60) {
+  const deadline = Date.now() + MAX_POLL_MS;
+  while (pred.status && !["succeeded", "failed", "canceled"].includes(pred.status)) {
+    if (Date.now() > deadline) throw new Error(`timed out while status=${pred.status}`);
+    console.log(`   …${pred.status}`); // visible progress; a hang is now diagnosable
     await sleep(2000);
-    const g = await fetch(pred.urls.get, { headers: { Authorization: `Bearer ${token}` } });
+    const g = await fetchWithTimeout(pred.urls.get, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     pred = await g.json();
   }
   if (pred.status !== "succeeded") {
@@ -88,7 +105,7 @@ async function generate(p) {
   }
 
   const url = Array.isArray(pred.output) ? pred.output[0] : pred.output;
-  const img = await fetch(url);
+  const img = await fetchWithTimeout(url);
   const buf = Buffer.from(await img.arrayBuffer());
   const out = `${outDir}/${p.name}.jpg`;
   await writeFile(out, buf);
