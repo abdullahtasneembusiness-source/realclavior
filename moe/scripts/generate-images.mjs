@@ -54,8 +54,13 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // Every network call gets a deadline. Without one, a stalled request hangs the
 // whole job with no output — which is exactly what happened the first time.
-const REQ_TIMEOUT_MS = 45_000;
-const MAX_POLL_MS = 120_000;
+// Observed generation times are 20–45s with `Prefer: wait` holding the
+// connection open, so the per-request budget has to sit well above that.
+const REQ_TIMEOUT_MS = 150_000;
+const MAX_POLL_MS = 180_000;
+// Replicate occasionally returns a transient 404 ("No adapter found for model")
+// on a cold model, so each image gets a few attempts before we give up on it.
+const ATTEMPTS = 3;
 
 const fetchWithTimeout = (url, opts = {}) =>
   fetch(url, { ...opts, signal: AbortSignal.timeout(REQ_TIMEOUT_MS) });
@@ -81,6 +86,8 @@ async function generate(p) {
           prompt: fullPrompt,
           aspect_ratio: "16:9",
           output_format: "jpg",
+          output_quality: 92, // default compression was leaving stills at ~40KB
+          megapixels: "1",
           ...(p.input || {}),
         },
       }),
@@ -113,15 +120,24 @@ async function generate(p) {
 }
 
 let ok = 0;
-let fail = 0;
+const failed = [];
 for (const p of prompts) {
-  try {
-    await generate(p);
-    ok++;
-  } catch (e) {
-    console.error(`❌ ${p.name}: ${e.message}`);
-    fail++;
+  let done = false;
+  for (let attempt = 1; attempt <= ATTEMPTS && !done; attempt++) {
+    try {
+      await generate(p);
+      ok++;
+      done = true;
+    } catch (e) {
+      const last = attempt === ATTEMPTS;
+      console.error(`${last ? "❌" : "↻"} ${p.name} (attempt ${attempt}/${ATTEMPTS}): ${e.message}`);
+      if (last) failed.push(p.name);
+      else await sleep(3000 * attempt); // back off before retrying
+    }
   }
 }
-console.log(`Done: ${ok} generated, ${fail} failed.`);
+
+console.log(`Done: ${ok} generated, ${failed.length} failed.`);
+if (failed.length) console.log(`Failed after ${ATTEMPTS} attempts: ${failed.join(", ")}`);
+// Only hard-fail if nothing at all came back; a partial set is still usable.
 if (ok === 0) exit(1);

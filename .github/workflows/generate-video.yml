@@ -18,6 +18,8 @@ on:
 jobs:
   media:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # to commit generated stills back to the episode folder
     env:
       # Map every plausible secret name → the scripts pick whichever is set.
       ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
@@ -56,14 +58,33 @@ jobs:
       - name: Generate images (Replicate / Flux)
         id: images
         continue-on-error: true
-        run: node moe/scripts/generate-images.mjs "moe/episodes/${{ inputs.episode }}/images.json" "moe/out/images"
+        run: node moe/scripts/generate-images.mjs "moe/episodes/${{ inputs.episode }}/images.json" "moe/episodes/${{ inputs.episode }}/stills"
+
+      # Stills are committed so they're versioned, reviewable in the repo, and
+      # available to the Remotion render as ordinary files. The voiceover stays
+      # artifact-only — it's large and regenerated from SCRIPT.md on demand.
+      - name: Commit generated stills
+        if: always()
+        run: |
+          git config user.name "Claude"
+          git config user.email "noreply@anthropic.com"
+          git add "moe/episodes/${{ inputs.episode }}/stills" || true
+          if git diff --cached --quiet; then
+            echo "No new stills to commit."
+          else
+            git commit -m "Add generated stills for ${{ inputs.episode }} [skip ci]"
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
 
       - name: Upload media artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: media-${{ inputs.episode }}
-          path: moe/out/**
+          path: |
+            moe/out/**
+            moe/episodes/${{ inputs.episode }}/stills/**
           if-no-files-found: warn
 
       - name: Summary
