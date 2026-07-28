@@ -14,6 +14,19 @@ on:
         description: "Episode folder under moe/episodes/"
         default: "largay"
         required: true
+      steps:
+        description: "What to generate — never spend on both unless you mean to"
+        type: choice
+        default: "images"
+        options: ["images", "voice", "both"]
+      voice_mode:
+        description: "voice: 'sample' = first ~600 chars only (cheap A/B). 'full' = whole script."
+        type: choice
+        default: "sample"
+        options: ["sample", "full"]
+      voice_ids:
+        description: "Optional comma-separated ElevenLabs voice IDs to A/B against the sample"
+        default: ""
 
 jobs:
   media:
@@ -52,11 +65,16 @@ jobs:
 
       - name: Generate voiceover (ElevenLabs)
         id: voiceover
+        if: inputs.steps == 'voice' || inputs.steps == 'both'
         continue-on-error: true
+        env:
+          VOICE_MODE: ${{ inputs.voice_mode }}
+          VOICE_IDS: ${{ inputs.voice_ids }}
         run: node moe/scripts/generate-voiceover.mjs "moe/episodes/${{ inputs.episode }}/script.txt" "moe/out/voiceover.mp3"
 
       - name: Generate images (Replicate / Flux)
         id: images
+        if: inputs.steps == 'images' || inputs.steps == 'both'
         continue-on-error: true
         run: node moe/scripts/generate-images.mjs "moe/episodes/${{ inputs.episode }}/images.json" "moe/episodes/${{ inputs.episode }}/stills"
 

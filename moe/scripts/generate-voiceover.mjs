@@ -27,29 +27,60 @@ if (!apiKey) {
   exit(1);
 }
 
-const text = (await readFile(scriptPath, "utf8")).trim();
-if (!text) {
+const full = (await readFile(scriptPath, "utf8")).trim();
+if (!full) {
   console.error(`❌ Script file is empty: ${scriptPath}`);
   exit(1);
 }
-console.log(`Generating voiceover — ${text.length} chars · voice ${voiceId} · model ${modelId}`);
 
-const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
-  method: "POST",
-  headers: { "xi-api-key": apiKey, "content-type": "application/json", accept: "audio/mpeg" },
-  body: JSON.stringify({
-    text,
-    model_id: modelId,
-    voice_settings: { stability: 0.45, similarity_boost: 0.8, style: 0.0, use_speaker_boost: true },
-  }),
-});
+// Character quota is real money. Default to a short sample so that choosing a
+// narrator, or debugging anything unrelated, never costs a full script render.
+const mode = (env.VOICE_MODE || "sample").toLowerCase();
+const text = mode === "full" ? full : full.slice(0, 600);
 
-if (!res.ok) {
-  console.error(`❌ ElevenLabs API error ${res.status}: ${await res.text()}`);
-  exit(1);
+// Optional A/B: pass several voice IDs and get one sample file each.
+const voices = (env.VOICE_IDS || "")
+  .split(",")
+  .map((v) => v.trim())
+  .filter(Boolean);
+const targets = voices.length ? voices : [voiceId];
+
+if (mode !== "full" && voices.length) {
+  console.log(`A/B sample across ${voices.length} voices — ${text.length} chars each`);
+}
+console.log(
+  `Mode: ${mode.toUpperCase()} · ${text.length} of ${full.length} chars · ` +
+    `${targets.length} voice(s) · est. ${text.length * targets.length} characters billed`
+);
+if (mode === "full") {
+  console.log("⚠ FULL mode — this bills the entire script. Only use when the voice is settled.");
 }
 
-const buf = Buffer.from(await res.arrayBuffer());
 await mkdir(dirname(outPath), { recursive: true });
-await writeFile(outPath, buf);
-console.log(`✅ Wrote ${outPath} (${(buf.length / 1024).toFixed(0)} KB)`);
+
+let wrote = 0;
+for (const v of targets) {
+  const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${v}`, {
+    method: "POST",
+    headers: { "xi-api-key": apiKey, "content-type": "application/json", accept: "audio/mpeg" },
+    body: JSON.stringify({
+      text,
+      model_id: modelId,
+      voice_settings: { stability: 0.45, similarity_boost: 0.8, style: 0.0, use_speaker_boost: true },
+    }),
+  });
+
+  if (!res.ok) {
+    console.error(`❌ voice ${v} — ElevenLabs ${res.status}: ${await res.text()}`);
+    continue;
+  }
+
+  // One file per voice when A/B-ing, so they can be compared side by side.
+  const dest = targets.length > 1 ? outPath.replace(/\.mp3$/, `-${v}.mp3`) : outPath;
+  const buf = Buffer.from(await res.arrayBuffer());
+  await writeFile(dest, buf);
+  console.log(`✅ ${dest} (${(buf.length / 1024).toFixed(0)} KB) — voice ${v}`);
+  wrote++;
+}
+
+if (!wrote) exit(1);

@@ -1,13 +1,18 @@
 {
   "_comment": "The channel look, in one place. Every image prompt in every episode gets `base` appended, so all videos stay visually consistent. Change it here and the whole channel changes. This is also where a trained LoRA gets referenced later.",
 
-  "base": "cinematic stylized 3D render, premium CGI visualization with photographic realism in the materials and lighting, volumetric fog and shafts of light, dramatic rim lighting, strong depth separation between distinct foreground midground and background layers, cold desaturated blue-grey and slate palette with one restrained warm accent, sombre and atmospheric, shallow depth of field, fine surface detail, Unreal Engine 5 and Octane render quality, clean 16:9 cinematic composition, unpopulated landscape, no lettering",
+  "base": "cinematic 3D render with photographic realism in materials and lighting, cold flat overcast daylight, soft directional light through cloud, thin mist in the middle distance, strong depth separation between distinct foreground midground and background layers, muted grey-green and slate palette with one restrained warm accent, sombre restrained documentary framing, shallow depth of field, fine surface detail, Unreal Engine 5 and Octane render quality, 16:9 cinematic composition",
 
-  "_why_no_negative_prompt": "Flux is a distilled model and does not accept a negative_prompt input — passing one is rejected, not ignored. Anything we want to avoid has to be phrased positively in `base` above. That's why it says 'photographic realism in the materials' (pushes away from cartoon), 'sombre' (away from cheerful), 'unpopulated' (away from people) and 'no lettering' (away from text artefacts).",
+  "_direction_notes": {
+    "daylight_not_night": "Earlier stills came out dusk-blue and read as horror-movie night. The incident happened at midday in July. Cold OVERCAST DAYLIGHT is both accurate and more unsettling — it looks like an ordinary afternoon, which is the point.",
+    "people_are_allowed": "An earlier version of this file said 'unpopulated landscape, no people'. That was a mistake: it produced four interchangeable landscape wallpapers with no story in them. Scenes need human presence — a distant figure, a tent, gear, a search line.",
+    "faces_are_not": "Figures must stay ANONYMOUS and distant — silhouettes, backs, hands, figures at scale. This is a reconstruction of a real death with a living family; we never render a recognisable likeness of Geraldine Largay or anyone else involved. Standard documentary practice, and the right line.",
+    "no_negative_prompt": "Flux is distilled and rejects a negative_prompt input. Anything to avoid must be phrased positively above — hence 'photographic realism' (away from cartoon) and 'sombre restrained' (away from cheerful/epic)."
+  },
 
   "notes": [
     "3D-rendered stills with clear foreground/midground/background layers parallax far better in the depth-displacement component than flat photos do — the layer separation is what the depth map keys off. Keep 'strong depth separation' in the base prompt.",
-    "'stylized 3D' + 'photographic realism in the materials' is the balance point: reads as premium CGI, not cartoon, not fake documentary photo.",
+    "Vary the SHOT SCALE across an episode: wide establishing, mid, and tight detail. Four wide shots in a row read as screensavers no matter how good each one is.",
     "The single warm accent keeps stills tonally consistent with the orange route line in the diagrams."
   ]
 }

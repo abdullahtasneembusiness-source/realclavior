@@ -1,22 +1,42 @@
 [
   {
-    "name": "spruce-wall",
-    "prompt": "The interior of a dense spruce and fir forest, trunks packed tight in receding layers, branches closing off every sightline, thin mist between the trees"
+    "name": "hiker-on-trail",
+    "shot": "wide · Act 1 — the plan",
+    "prompt": "A lone hiker with a backpack seen from far behind and very small in frame, walking away up a narrow forest path between dense conifers, figure anonymous and unrecognisable, ordinary overcast afternoon"
   },
   {
-    "name": "trail-thread",
-    "prompt": "A single narrow footpath barely visible threading between dense conifers, the path almost swallowed by undergrowth, forest pressing in from both sides"
+    "name": "step-off",
+    "shot": "mid · Act 2 — the divergence",
+    "prompt": "The view from just off a forest path, looking back toward where the trail should be but seeing only identical dense spruce trunks in every direction, no path visible, disorienting sameness"
   },
   {
-    "name": "knoll-camp",
-    "prompt": "A small enclosed clearing on a low forested rise, ringed by tall dark conifers, dim light filtering down through the canopy, quiet and hemmed in"
+    "name": "phone-to-canopy",
+    "shot": "tight · Act 3 — the climb for signal",
+    "prompt": "A single hand holding a mobile phone raised up toward a narrow gap of pale sky in a dense conifer canopy, only the hand and forearm visible, no face, screen dim"
   },
   {
-    "name": "forest-dusk",
-    "prompt": "A northern conifer forest at last light, heavy mist layered between distant trunks, the far trees fading into darkness"
+    "name": "tent-in-trees",
+    "shot": "mid-wide · Act 3/4 — the camp",
+    "prompt": "A small one-person tent pitched on a low forested rise, seen at a distance through spruce trunks, almost swallowed by the surrounding trees, no people visible, quiet and easy to miss"
   },
   {
-    "name": "canopy-signal",
-    "prompt": "Looking steeply upward through a dense conifer canopy toward a pale overcast sky, branches fragmenting the light into narrow gaps"
+    "name": "search-line",
+    "shot": "wide · Act 4 — the search",
+    "prompt": "A widely spaced line of search volunteers in high-visibility vests moving through dense forest, seen from a distance, figures small and anonymous, sweeping between the trunks"
+  },
+  {
+    "name": "dog-handler",
+    "shot": "mid · Act 4 — the dog teams",
+    "prompt": "A search dog and its handler seen from behind at a distance among tall conifer trunks, both small in frame and anonymous, working through thick undergrowth"
+  },
+  {
+    "name": "journal-detail",
+    "shot": "tight · Act 5 — the journal",
+    "prompt": "A weathered small notebook and a pen resting on damp forest floor moss and fallen needles, close detail, pages blank and rain-marked, no legible writing"
+  },
+  {
+    "name": "empty-clearing",
+    "shot": "wide · Act 6 — the find",
+    "prompt": "A small ordinary clearing on a forested rise with flattened undergrowth where something once stood, empty, unremarkable, surrounded by dense spruce"
   }
 ]
