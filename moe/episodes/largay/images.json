@@ -1,0 +1,18 @@
+[
+  {
+    "name": "spruce-wall",
+    "prompt": "Dense dark spruce and fir forest interior, branches packed tight, no sightline beyond a few metres, flat overcast light, cold desaturated green-grey palette, documentary reconstruction still, no people, no text, photographic"
+  },
+  {
+    "name": "trail-thread",
+    "prompt": "A narrow footpath barely twenty inches wide threading through dense conifer forest, seen from standing height, the path almost swallowed by undergrowth, muted natural light, cold desaturated palette, documentary still, no people, no text, photographic"
+  },
+  {
+    "name": "knoll-camp",
+    "prompt": "A small clearing on a low forested knoll in dense Maine spruce woods, dim overcast light filtering through canopy, quiet and enclosed, cold desaturated palette, documentary reconstruction still, no people, no tent, no text, photographic"
+  },
+  {
+    "name": "forest-dusk",
+    "prompt": "Northern conifer forest at last light, mist between trunks, deep blue-grey tones, still and silent, cinematic wide shot, documentary reconstruction still, no people, no text, photographic"
+  }
+]

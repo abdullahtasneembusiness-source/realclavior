@@ -12,7 +12,7 @@ on:
     inputs:
       episode:
         description: "Episode folder under moe/episodes/"
-        default: "blackreef"
+        default: "largay"
         required: true
 
 jobs:
@@ -43,6 +43,10 @@ jobs:
           check ELEVENLABS_API_KEY  "$ELEVENLABS_API_KEY"
           check ELEVENLABS_VOICE_ID "$ELEVENLABS_VOICE_ID"
           check "REPLICATE token"   "${REPLICATE_API_TOKEN}${REPLICATE_API_KEY}"
+
+      # SCRIPT.md is the single source of truth; script.txt is derived from it.
+      - name: Build narration text from SCRIPT.md
+        run: node moe/scripts/strip-script.mjs "${{ inputs.episode }}"
 
       - name: Generate voiceover (ElevenLabs)
         id: voiceover
