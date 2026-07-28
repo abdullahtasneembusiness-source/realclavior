@@ -1,0 +1,54 @@
+name: Generate video
+
+# Manually triggered pipeline for the "Margin of error" channel.
+# Runs on GitHub's machines (open internet), reads API keys from repo secrets,
+# and hands back the generated media as downloadable artifacts.
+#
+# Milestone 1 (this file): confirm secrets are visible + generate a real
+# ElevenLabs voiceover. Image generation and final render are added next.
+
+on:
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: "Episode folder under moe/episodes/"
+        default: "blackreef"
+        required: true
+
+jobs:
+  media:
+    runs-on: ubuntu-latest
+    env:
+      # Map every plausible secret name → the script picks whichever is set.
+      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+      ELEVEN_LABS_API_KEY: ${{ secrets.ELEVEN_LABS_API_KEY }}
+      ELEVENLABS_KEY: ${{ secrets.ELEVENLABS_KEY }}
+      XI_API_KEY: ${{ secrets.XI_API_KEY }}
+      ELEVENLABS_VOICE_ID: ${{ secrets.ELEVENLABS_VOICE_ID }}
+      VOICE_ID: ${{ secrets.VOICE_ID }}
+      REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
+      REPLICATE_API_KEY: ${{ secrets.REPLICATE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Preflight — which secrets are visible (values never printed)
+        run: |
+          check() { if [ -n "$2" ]; then echo "✅ $1 is set"; else echo "❌ $1 is NOT set"; fi; }
+          echo "Checking repo secrets are readable by this job:"
+          check ELEVENLABS_API_KEY  "$ELEVENLABS_API_KEY"
+          check ELEVENLABS_VOICE_ID "$ELEVENLABS_VOICE_ID"
+          check REPLICATE_API_TOKEN "$REPLICATE_API_TOKEN"
+
+      - name: Generate voiceover (ElevenLabs)
+        run: node moe/scripts/generate-voiceover.mjs "moe/episodes/${{ inputs.episode }}/script.txt" "moe/out/voiceover.mp3"
+
+      - name: Upload voiceover
+        uses: actions/upload-artifact@v4
+        with:
+          name: voiceover-${{ inputs.episode }}
+          path: moe/out/voiceover.mp3
+          if-no-files-found: error
