@@ -1,126 +1,127 @@
-# Episode 01 — Geraldine Largay · Narration script
+# Episode 01 — Geraldine Largay · Narration script (v2)
 
-**This is the master script.** Visual cues live inline in `[VISUAL: …]` tags.
-`npm run script:strip` removes the cues and writes `script.txt`, which is what the
-ElevenLabs step actually reads — so there is only ever one source of truth.
+**Master script.** Visual cues inline in `[VISUAL: …]`.
+`node moe/scripts/strip-script.mjs largay` derives `script.txt` for the voiceover,
+so this file stays the single source of truth.
 
-Runtime estimate: ~13:00 at a documentary pace (≈145 wpm) with holds on the diagrams.
-
----
-
-[VISUAL: Black. Text message renders on screen, character by character, as written.]
-
-On the morning of July 22nd, 2013, at 11:01, a sixty-six-year-old woman named Geraldine Largay typed a message to her husband.
-
-"In somm trouble. Got off trail to go to br. Now lost. Can u call AMC to c if a trial maintainer can help me. Somewhere north of woods road."
-
-Read it again. Look at the typos. "Somm trouble." "Trial maintainer." She's typing fast — in a place where she has just understood that she doesn't know which way is back.
-
-That message never sent. There was no signal where she was standing.
-
-[VISUAL: Pull back from the phone to the topo map. Trail line appears. Her position appears. Distance bracket draws between them.]
-
-She was less than two miles from the Appalachian Trail. She would stay alive out there for twenty-six days.
-
-And here's the part I haven't been able to stop thinking about.
-
-[VISUAL: Three dog-team tracks sweep across the map — each passing close, none touching her position.]
-
-Three separate times, search dogs came within about a hundred yards of where she was sitting. A hundred yards. And they walked past.
-
-Not because the dogs were bad. Not because anyone gave up — this became one of the largest searches in the history of the state of Maine.
-
-They walked past her because of something she did *right*. One decision. A good decision — the one that kept her alive as long as it did — is the exact reason nobody found her for more than two years.
-
-I want to show you the map. Because I don't think this story makes any sense until you can see the space it happened in.
-
-[VISUAL: Title card — MARGIN OF ERROR]
+**Structure taken from the benchmark** (see `moe/REFERENCE-ANALYSIS.md` §2):
+present-tense cold open *inside the space* · geography established before story ·
+stop on the movement, not the outcome · explicit rewind · escalating context ·
+"the stage is set" reassembly · the event · **then** the withheld revelation,
+out of order, so foreknowledge turns it into dread · close on consequence, never
+a moral.
 
 ---
 
-## Act 1 — The plan
+## Act 0 — Cold open
+
+[VISUAL: Black. Then the forest, slow push. No text yet.]
+
+It's the morning of the 22nd of July, 2013, in Redington Township, Maine.
+
+A sixty-six-year-old woman named Geraldine Largay is walking north on the Appalachian Trail, about two hundred miles from the end of it.
+
+[VISUAL: Massing model — the trail corridor picked out, everything else grey.]
+
+Out here the trail is not a road. It's a footpath about twenty inches wide, marked by white blazes painted on tree trunks, threading through spruce and fir so dense that in places you cannot see thirty feet in any direction. There are no landmarks. There is no phone signal. The nearest road is hours away.
+
+To the east of the path, though she almost certainly doesn't know it, is the boundary of a United States Navy survival school — a closed training area in the middle of the woods.
+
+[VISUAL: The boundary draws onto the map, quietly. No emphasis yet.]
+
+At some point that morning, Gerry steps off the trail to go to the bathroom.
+
+She walks a short distance for privacy. She does what she came to do.
+
+[VISUAL: Her position drifts off the line. The trail stays visible to us — but not to her. Hold.]
+
+And then she turns around.
+
+[VISUAL: Cut to black. Title.]
+
+---
+
+## Act 1 — The rewind
+
+To understand how a woman vanishes two miles from a trail that thousands of people walk every summer, you have to understand two things: who she was, and what this particular stretch of forest is actually like.
 
 Gerry Largay was a retired nurse from Tennessee. Sixty-six years old. On the trail she went by "Inchworm," because she was slow, and she knew she was slow, and she thought that was funny.
 
-She was section hiking the Appalachian Trail — not all of it in one push, but in pieces, over time, the way a lot of people do it when they have a life to get back to.
+She was section hiking the Appalachian Trail — not the whole thing in one push, but in pieces, over time, the way people do it when they have a life to get back to.
 
-She had a system, and it was a good one. Her husband George drove. She walked. He'd meet her at road crossings with food and a bed, and she'd set off on the next stretch. For part of the trip she also had a hiking partner, a friend named Jane. But Jane left the trail early, for a family emergency back home.
+She had a system, and it was a good one. Her husband George drove. She walked. He'd meet her at road crossings with food and a bed, and she'd set off on the next stretch. For part of the trip she'd had a hiking partner, a friend named Jane, but Jane had left the trail early for a family emergency back home.
 
-So by the third week of July, Gerry was walking alone.
+So by the third week of July, Gerry was walking alone. That is not, in itself, a mistake. Thousands of people do it every year.
 
-That is not, in itself, a mistake. Thousands of people hike this trail alone every year.
+[VISUAL: RouteFlythrough — the planned leg, Poplar Ridge heading north.]
 
-[VISUAL: RouteFlythrough — the planned leg, Poplar Ridge lean-to heading north.]
+And then there's the forest.
 
-This was the plan for July 22nd. She'd left the Poplar Ridge lean-to that morning, heading north toward the next shelter. George would meet her further on.
+Hikers who have walked the entire trail from Georgia will tell you the last hundred miles in Maine are the hardest, and it isn't the mountains. It's the trees. Spruce and fir packed in tight, low branches, wet ground, and no long sightlines in any direction.
 
-Now — this stretch of Maine has a reputation. Hikers who've walked the whole trail from Georgia will tell you the last hundred miles are the hardest, and it isn't the mountains. It's the forest. Spruce and fir packed in tight, low branches, no long sightlines.
+The etiquette when you step off the trail is that you go far enough to be out of sight of it. In an ordinary forest that might be forty or fifty yards.
 
-In places, you cannot see thirty feet in any direction.
+In this one, thirty feet will do it.
 
-Remember that number.
+[VISUAL: Zoom to the trail line. A 30-foot scale bar appears next to it. Hold.]
+
+That's the whole story, really. That number, and the fact that she had no reason to think it mattered.
 
 ---
 
-## Act 2 — The divergence
+## Act 2 — The stage is set
 
-[VISUAL: Zoom hard into the trail line. Scale bar appears: 30 feet.]
+So here is everything in position on the morning of the 22nd.
 
-Sometime that morning, Gerry stepped off the trail to go to the bathroom.
+[VISUAL: The map assembles piece by piece as each is named.]
 
-That's it. That's the decision. That's where the whole thing turns.
+A footpath twenty inches wide. Forest with no sightlines. No cell coverage on the ground. A closed military training area to the east. A husband waiting at a road crossing a day's walk ahead, who will not expect to hear from her until then. And a woman who is about to walk thirty feet in the wrong direction.
 
-And I want to be clear about how completely ordinary that is. Every long-distance hiker does this several times a day. The etiquette is simply that you walk far enough off the trail to be out of sight of it — which in an ordinary forest might be forty or fifty yards.
+Nobody has made a mistake yet. Every one of those things is ordinary.
 
-But go back to that number. In *this* forest, you can lose sight of the trail in thirty feet.
+[VISUAL: Hold on the assembled map.]
 
-So picture it. You step off. You walk a short distance. You turn around — and everything looks identical. Spruce, spruce, spruce. No landmark. No clearing. The trail is a brown line maybe twenty inches wide, somewhere behind you, in a direction you now have to guess.
-
-Most people guess right. It's a coin flip you win almost every time.
-
-She guessed wrong.
-
-[VISUAL: Her position drifts off the trail line. The trail stays fixed and visible to us — but not to her.]
-
-At 11:01 she stopped and typed that message to George. Which tells us something important: within a couple of hours, she already knew she was in real trouble. She wasn't wandering along confidently. She understood.
-
-The message didn't send.
+She turns around, and the trail is gone.
 
 ---
 
 ## Act 3 — The drift
 
-Here's where this stops being a story about bad luck and starts being a story about geometry.
+At 11:01 that morning, she stopped and typed a message to George.
 
-Gerry needed a signal. And she did the thing almost anyone would do — the thing that is genuinely, technically correct.
+[VISUAL: The text renders, character by character, exactly as written.]
 
-To get a better signal, you go up.
+"In somm trouble. Got off trail to go to br. Now lost. Can u call AMC to c if a trial maintainer can help me. Somewhere north of woods road."
 
-Higher ground means fewer obstructions between your phone and a tower. If you've ever held a phone up at a window, you already understand the logic. It isn't a foolish instinct. It's the right one.
+Look at the typos. "Somm trouble." "Trial maintainer." She's typing fast.
 
-So she climbed.
+And look at what it tells us. Within a couple of hours of stepping off the path, she already understood she was in serious trouble. She wasn't wandering along confidently, expecting to bump back into it. She knew.
 
-[VISUAL: ElevationProfile rises alongside the route. Simultaneously, the map shows her track bending away from the trail corridor.]
+The message didn't send. There was no signal where she was standing.
 
-And here's what that did.
+So she did the thing almost anyone would do — the thing that is genuinely, technically correct.
 
-The Appalachian Trail through this country runs along a corridor. When she climbed for signal, she moved away from that corridor — up onto higher, denser ground, further from the line that everybody was about to search.
+To get a signal, you go up.
+
+[VISUAL: ElevationProfile rises. Simultaneously her track bends away from the trail corridor.]
+
+Higher ground means fewer obstructions between a phone and a tower. It isn't a foolish instinct. It's the right one.
+
+And here's what it did.
+
+The trail through this country runs along a corridor. When she climbed for signal, she moved away from that corridor — onto higher, denser ground, further from the line that everyone was about to search.
 
 Every step that improved her chance of getting a signal made her harder to find.
 
-She never got the signal. She sent more messages. None of them were delivered.
+She never got the signal. She sent more messages. None were delivered.
 
-And then she did something else that was correct.
+And then she did something else that was correct. She stopped, and she made camp.
 
-She stopped. She made camp.
+[VISUAL: The track ends. A tent marks the knoll. Everything stops moving.]
 
-Because the standard advice — the advice in every wilderness safety guide, advice that is right far more often than it's wrong — is that when you're lost, you stay put. Don't wander. Let the searchers come to you. A moving target is a harder target.
+Because the standard advice — the advice in every wilderness safety guide, advice that is right far more often than it's wrong — is that when you're lost, you stay put. Don't wander. Let the searchers come to you.
 
-[VISUAL: Her track ends. A tent icon marks the knoll. The route stops moving for the first time.]
-
-So Gerry pitched her tent on that knoll, and she stayed.
-
-Two pieces of good advice. Go high for signal. Stay where you are. She followed both — in that order.
+Two pieces of good advice. Go high for signal. Stay where you are. She followed both, in that order.
 
 And the order is the problem. She moved first and stopped second. So she stayed put in the wrong place.
 
@@ -128,23 +129,23 @@ And the order is the problem. She moved first and stopped second. So she stayed 
 
 ## Act 4 — The search
 
-George reported her missing when she didn't appear at the road crossing.
+George reported her missing when she didn't reach the road crossing.
+
+[VISUAL: TimelineStrip — the first 24 hours.]
 
 The Warden Service's own figures are stark: ninety-two percent of people reported missing in the wilderness are found within twelve hours.
 
 They didn't begin searching in earnest for about eighteen.
 
-[VISUAL: TimelineStrip — the first 24 hours. The 12-hour and 18-hour marks land.]
-
-I want to be careful here, because it's easy to turn that into an accusation — and the wardens have been more honest about this than most agencies would be. There were real reasons. The report came in late, in remote country, with genuine uncertainty about where she'd even entered the woods.
+I want to be careful here, because it's easy to turn that into an accusation, and the wardens have been more honest about this than most agencies would be. There were real reasons — a late report, remote country, genuine uncertainty about where she'd even entered the woods.
 
 But the window closed.
 
-And the search that followed was enormous. Hundreds of people. Helicopters. Dog teams. It ran for weeks. It became one of the largest searches this state has ever mounted.
+And the search that followed was enormous. Hundreds of people. Helicopters. Dog teams. It ran for weeks.
 
 They got close. Repeatedly.
 
-[VISUAL: SearchProximity — the three cadaver-dog tracks animate past her camp. Distance rings measure each closest approach. Hold on 100 YDS.]
+[VISUAL: SearchProximity — three dog-team tracks pass her camp. Rings measure each approach. Hold on 100 YDS.]
 
 Three cadaver dog teams passed within roughly a hundred yards of her tent.
 
@@ -152,27 +153,25 @@ A hundred yards. That's a football field. That's a distance you could shout acro
 
 So why didn't the dogs alert?
 
-Here's the answer. It's the reason I wanted to make this video at all.
+[VISUAL: Hold. Nothing moves.]
 
-A cadaver dog doesn't find a body. It finds *scent* — molecules moving through air.
+Because a cadaver dog doesn't find a body. It finds scent — molecules moving through air.
 
 And Gerry was inside her tent.
 
-[VISUAL: Hold. Nothing moves.]
-
 The tent held the scent in.
 
-The shelter that kept her warm, that kept her dry, that kept her alive out there for weeks — that same thin wall is what stopped her scent from reaching the animals sent to find her.
+The shelter that kept her warm, that kept her dry, that kept her alive out there for weeks — that same thin wall is what stopped her scent reaching the animals sent to find her.
 
 She did what a lost person is supposed to do. She sheltered. She stayed put. She waited.
 
 And the shelter is what hid her.
 
-[VISUAL: Navy SERE School boundary draws onto the map. Her camp sits just inside it.]
+[VISUAL: The Navy boundary draws in. Her camp sits just inside it.]
 
-There's one more layer to this. Where she'd stopped turned out to be inside the boundary of a US Navy survival training facility — which added its own complications to who could search that ground, and how.
+There's one more layer. Where she'd stopped turned out to be inside the boundary of that Navy training area — which added its own complications to who could search that ground, and how.
 
-And the terrain didn't help. Afterward, wardens said that behind the dog teams they struggled to run proper grid searches at all. They didn't have enough trained, physically fit searchers for country like that.
+Afterward, wardens said that behind the dog teams they struggled to run proper grid searches at all. They didn't have enough trained, physically fit searchers for country like that.
 
 Eventually the search wound down.
 
@@ -182,19 +181,19 @@ Eventually the search wound down.
 
 We know what happened next because Gerry wrote it down.
 
-[VISUAL: TimelineStrip expands to the full 27 days. Journal entries appear as marks.]
+[VISUAL: TimelineStrip expands to 27 days. Journal entries appear as marks.]
 
-She kept a journal. And the thing about the journal — the thing that makes it hard to read — is how calm it is.
+She kept a journal. And the thing that makes it hard to read is how calm it is.
 
 On August 6th, about two weeks after she got lost, she wrote this:
 
-[VISUAL: The entry, set plainly in type. No motion. Let it sit.]
+[VISUAL: The entry, plainly set. No motion. Let it sit.]
 
 "When you find my body, please call my husband George and my daughter Kerry. It will be the greatest kindness for them to know that I am dead and where you found me — no matter how many years from now."
 
 No matter how many years from now.
 
-She had worked out by then what was likely to happen. And what she was thinking about wasn't herself. It was the not-knowing that her family would be left with. She was doing the last piece of care she could still do for the people she loved.
+She had worked out by then what was likely to happen. And what she was thinking about wasn't herself. It was the not-knowing her family would be left with. She was doing the last piece of care she could still do for the people she loved.
 
 She kept writing. The entries continue through August 10th.
 
@@ -204,63 +203,49 @@ There's one more entry, on August 18th. Twenty-seven days after she stepped off 
 
 And then nothing.
 
----
-
-## Act 6 — What the map shows
-
-She was found in 2015. Two years later.
-
-Not by a search team. Not by a dog. By a contractor doing a forestry survey for the Navy — someone walking that ground for an entirely unrelated reason, who came across the remains of a tent.
-
-About a hundred yards inside the Navy property line. Less than two miles from the Appalachian Trail.
-
-[VISUAL: Final assembly. Every layer draws on in sequence — trail, step-off point, the climb, the camp, the dog tracks, the boundary. Then a slow pull back to reveal the total area.]
-
-So here it is, all at once. The trail she was trying to get back to. The point where she stepped off it. The climb she made for a signal, which took her further away. The camp where she stopped, exactly as she was supposed to. The three tracks, sliding past.
-
-Look how small it is.
-
-Everything that happened, happened inside an area you could walk across in under an hour — if you knew where you were going.
+She was found in 2015, two years later — not by a search team, not by a dog, but by a contractor doing a forestry survey for the Navy. Someone walking that ground for an entirely unrelated reason, who came across the remains of a tent.
 
 ---
 
-## Act 7 — The thing in the motel room
+## Act 6 — The thing in the motel room
 
-There's one more detail, and I've been holding it back, because I think it belongs at the end.
+There's one more detail, and I've held it back, because I think it belongs here rather than where it happened.
 
-Gerry Largay owned a device that could have sent an emergency signal with her location on it. A beacon. The kind of thing that doesn't care about cell towers, because it talks to satellites instead.
+[VISUAL: Black. Then a single object, small in frame.]
 
-[VISUAL: The map again — but this time a single point resolves instantly, no search pattern, no tracks. One ping. Hold.]
+Gerry Largay owned a device that could send an emergency signal with her position attached. A beacon. The kind that doesn't care about cell towers, because it talks to satellites instead.
 
 She wasn't carrying it.
 
-It was back in a motel room, with the rest of the gear she'd decided she didn't need for this section.
+It was in a motel room, with the gear she'd decided she didn't need for this section.
 
-That's not a stupid decision either, and I want to be careful about that. It was 2013. Beacons were heavier, more expensive, and widely treated as mountaineering equipment — for glaciers and expeditions, not for a well-marked footpath in Maine that thousands of people walk every summer. She was two days from a road crossing where her husband would be waiting. She had a phone.
+[VISUAL: The full map returns — three dog tracks, the search grids. Then a single point resolves. One ping. Hold.]
+
+Twenty-six days. Hundreds of searchers. Helicopters, dog teams, weeks of grid work across country that defeated all of it.
+
+Against one signal, a set of coordinates, and a helicopter that would have known exactly where to land.
+
+And I want to be careful with this too, because it's easy to hear that as stupidity, and it isn't. It was 2013. Beacons were heavier, more expensive, and widely thought of as mountaineering equipment — for glaciers and expeditions, not for a marked footpath in Maine that thousands of people walk every summer. She was a day from a road crossing where her husband would be waiting. She had a phone.
 
 She left behind the one object that would have made the search unnecessary.
 
-[VISUAL: Return to the full map. The three dog tracks. Then the single beacon point, overlaid.]
-
-Twenty-six days of searching. Hundreds of people. Helicopters, dog teams, weeks of grid work across country that defeated all of it.
-
-Against one signal, and a set of coordinates, and a helicopter that would have known exactly where to land.
-
 ---
 
-## Act 8 — What changed
+## Act 7 — What changed
 
-So what came out of it.
+So what came of it.
 
-Not much, officially. As of the release of the case files in 2016, no internal review of how the search was run had been carried out. The Warden Service was candid about the difficulties — the delay, the terrain, the shortage of trained searchers — but there was no formal reckoning, and her family chose not to pursue one.
+Not much, officially. As of the release of the case files in 2016, no internal review of how the search was run had been carried out. The Warden Service was candid about the difficulties — the delay, the terrain, the shortage of searchers — but there was no formal reckoning, and her family chose not to push for one.
 
-What changed instead was the equipment.
+What changed was the equipment.
 
-[VISUAL: A modern beacon, small in frame. Plain. Unremarkable.]
+[VISUAL: A modern beacon. Small. Unremarkable.]
 
-Personal locator beacons and satellite messengers got smaller, cheaper, and lighter, and in the years after this case they moved from specialist kit to standard advice for anyone walking remote trail. Not because of Gerry Largay alone — but her case is one of the ones that gets cited when people explain why. It is now routine guidance on the Appalachian Trail that a phone is not a safety device, because a phone requires a tower, and a tower is a thing that either exists where you are standing or does not.
+Personal locator beacons and satellite messengers got smaller, cheaper and lighter, and in the years after this they moved from specialist kit to standard advice for anyone walking remote trail. Not because of Gerry Largay alone — but hers is one of the cases people cite when they explain why.
 
-She spent twenty-six days trying to solve that exact problem, by climbing.
+It is now routine guidance on the Appalachian Trail that a phone is not a safety device. Because a phone needs a tower, and a tower either exists where you're standing or it doesn't.
+
+She spent twenty-six days trying to solve that exact problem. By climbing.
 
 [VISUAL: Final hold — the 30-foot scale bar, alone against the trail line.]
 
