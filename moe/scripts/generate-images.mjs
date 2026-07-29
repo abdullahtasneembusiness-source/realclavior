@@ -122,10 +122,15 @@ async function generate(p) {
       body: JSON.stringify({
         input: {
           prompt: fullPrompt,
+          // Explicit dimensions. `megapixels` is ignored by flux-1.1-pro, which
+          // is why stills came back at 1344x768 — under 1080p, so every camera
+          // push softened. 1920x1088 is the nearest 16-multiple to 1080p and
+          // gives real resolution to move inside.
+          width: Number(env.IMG_WIDTH || 1920),
+          height: Number(env.IMG_HEIGHT || 1088),
           aspect_ratio: "16:9",
           output_format: "jpg",
           output_quality: 92, // default compression was leaving stills at ~40KB
-          megapixels: env.MEGAPIXELS || "2",
           ...(p.input || {}),
         },
       }),
