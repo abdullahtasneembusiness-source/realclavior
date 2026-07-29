@@ -56,7 +56,10 @@ if (!full) {
 // Character quota is real money. Default to a short sample so that choosing a
 // narrator, or debugging anything unrelated, never costs a full script render.
 const mode = (env.VOICE_MODE || "sample").toLowerCase();
-const text = mode === "full" ? full : full.slice(0, 600);
+// Sample length is configurable so confirming pacing costs a few seconds of
+// audio rather than half a minute. Default ~320 chars ≈ 20 seconds.
+const sampleChars = Number(env.SAMPLE_CHARS || 320);
+const text = mode === "full" ? full : full.slice(0, sampleChars);
 
 // Optional A/B: pass several voice IDs and get one sample file each.
 const voices = (env.VOICE_IDS || "")
@@ -103,7 +106,14 @@ for (const v of targets) {
     body: JSON.stringify({
       text,
       model_id: modelId,
-      voice_settings: { stability: 0.45, similarity_boost: 0.8, style: 0.0, use_speaker_boost: true },
+      // §2.5 — stability high, style low. A documentary read that states
+      // rather than performs. Style above 0 makes it act; it must not act.
+      voice_settings: {
+        stability: Number(env.VOICE_STABILITY || 0.7),
+        similarity_boost: 0.8,
+        style: Number(env.VOICE_STYLE || 0.0),
+        use_speaker_boost: true,
+      },
     }),
   });
 

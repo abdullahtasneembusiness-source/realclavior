@@ -27,6 +27,9 @@ on:
       voice_ids:
         description: "Optional comma-separated ElevenLabs voice IDs to A/B against the sample"
         default: ""
+      sample_chars: 
+        description: "voice sample length in characters (~20s per 320)"
+        default: "320"
       only:
         description: "images: generate ONLY this scene name (§1.3 one-before-many). Blank = whole set."
         default: ""
@@ -81,6 +84,7 @@ jobs:
         env:
           VOICE_MODE: ${{ inputs.voice_mode }}
           VOICE_IDS: ${{ inputs.voice_ids }}
+          SAMPLE_CHARS: ${{ inputs.sample_chars }}
         run: node moe/scripts/generate-voiceover.mjs "moe/episodes/${{ inputs.episode }}/script.txt" "moe/out/voiceover.mp3"
 
       - name: Generate images (Replicate / Flux)
