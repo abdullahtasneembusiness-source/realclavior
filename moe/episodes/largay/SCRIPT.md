@@ -222,16 +222,48 @@ Look how small it is.
 
 Everything that happened, happened inside an area you could walk across in under an hour — if you knew where you were going.
 
-That's what I find difficult about this one. There's no villain in it. There's no single stupid decision you can point to and tell yourself you'd never make.
+---
 
-She stepped off the trail, like everyone does. She went uphill for a signal, like you would. She stayed put, like the guidance says. She pitched her tent, because that's how you survive a cold night in Maine.
+## Act 7 — The thing in the motel room
 
-Every one of those was a reasonable call.
+There's one more detail, and I've been holding it back, because I think it belongs at the end.
 
-Stack them on a map, and they close around her.
+Gerry Largay owned a device that could have sent an emergency signal with her location on it. A beacon. The kind of thing that doesn't care about cell towers, because it talks to satellites instead.
+
+[VISUAL: The map again — but this time a single point resolves instantly, no search pattern, no tracks. One ping. Hold.]
+
+She wasn't carrying it.
+
+It was back in a motel room, with the rest of the gear she'd decided she didn't need for this section.
+
+That's not a stupid decision either, and I want to be careful about that. It was 2013. Beacons were heavier, more expensive, and widely treated as mountaineering equipment — for glaciers and expeditions, not for a well-marked footpath in Maine that thousands of people walk every summer. She was two days from a road crossing where her husband would be waiting. She had a phone.
+
+She left behind the one object that would have made the search unnecessary.
+
+[VISUAL: Return to the full map. The three dog tracks. Then the single beacon point, overlaid.]
+
+Twenty-six days of searching. Hundreds of people. Helicopters, dog teams, weeks of grid work across country that defeated all of it.
+
+Against one signal, and a set of coordinates, and a helicopter that would have known exactly where to land.
+
+---
+
+## Act 8 — What changed
+
+So what came out of it.
+
+Not much, officially. As of the release of the case files in 2016, no internal review of how the search was run had been carried out. The Warden Service was candid about the difficulties — the delay, the terrain, the shortage of trained searchers — but there was no formal reckoning, and her family chose not to pursue one.
+
+What changed instead was the equipment.
+
+[VISUAL: A modern beacon, small in frame. Plain. Unremarkable.]
+
+Personal locator beacons and satellite messengers got smaller, cheaper, and lighter, and in the years after this case they moved from specialist kit to standard advice for anyone walking remote trail. Not because of Gerry Largay alone — but her case is one of the ones that gets cited when people explain why. It is now routine guidance on the Appalachian Trail that a phone is not a safety device, because a phone requires a tower, and a tower is a thing that either exists where you are standing or does not.
+
+She spent twenty-six days trying to solve that exact problem, by climbing.
 
 [VISUAL: Final hold — the 30-foot scale bar, alone against the trail line.]
 
-The margin between finding your way back and never being found at all was about thirty feet of spruce.
+The distance between the trail and the rest of her life was about thirty feet of spruce.
 
-And she came out on the wrong side of it.
+She stepped off, and turned around, and it was already gone.

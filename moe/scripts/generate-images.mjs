@@ -58,9 +58,10 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // connection open, so the per-request budget has to sit well above that.
 const REQ_TIMEOUT_MS = 150_000;
 const MAX_POLL_MS = 180_000;
-// Replicate occasionally returns a transient 404 ("No adapter found for model")
-// on a cold model, so each image gets a few attempts before we give up on it.
-const ATTEMPTS = 3;
+// §1.2 — paid calls are NEVER retried automatically, even when the failure
+// looks transient. Silent retries are how credit got burned before. A failure
+// is reported and the operator decides.
+const ATTEMPTS = 1;
 
 const fetchWithTimeout = (url, opts = {}) =>
   fetch(url, { ...opts, signal: AbortSignal.timeout(REQ_TIMEOUT_MS) });
@@ -129,10 +130,10 @@ for (const p of prompts) {
       ok++;
       done = true;
     } catch (e) {
-      const last = attempt === ATTEMPTS;
-      console.error(`${last ? "❌" : "↻"} ${p.name} (attempt ${attempt}/${ATTEMPTS}): ${e.message}`);
-      if (last) failed.push(p.name);
-      else await sleep(3000 * attempt); // back off before retrying
+      // No retry, by rule. Report and move on; the operator decides what to redo.
+      console.error(`❌ ${p.name}: ${e.message}`);
+      console.error("   Not retried (§1.2). Re-run this one deliberately if you want it.");
+      failed.push(p.name);
     }
   }
 }
