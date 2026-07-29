@@ -12,13 +12,19 @@ made it possible · the stage set · the drift · the search · the journal ·
 **then** the withheld revelation, out of order so foreknowledge turns it into
 dread · close on consequence, never a moral.
 
+**Pause convention.** `...` is a short breath inside a thought — it slows the
+line without stopping it. `<break time="Xs" />` is a hard stop between beats,
+used only where silence is doing work. Both are honoured by ElevenLabs;
+overusing break tags makes the read stilted, so they are reserved for the
+places where a viewer needs a moment to absorb something.
+
 ---
 
 ## Act 0 — Cold open
 
 [VISUAL: Black. One line of the map — the trail — draws in. Nothing else.]
 
-In 2013, a woman got lost in the woods in Maine, about two miles from a footpath that thousands of people walk every summer.
+In 2013, a woman got lost in the woods in Maine... about two miles from a footpath that thousands of people walk every summer.
 
 [VISUAL: Search grids bloom across the map. Fast. Then dog tracks.]
 
@@ -28,15 +34,21 @@ Hundreds of people looked for her. Helicopters. Dog teams. It ran for weeks — 
 
 Three separate times, search teams came within about a hundred yards of where she was sitting.
 
-A hundred yards. You could shout that far.
+A hundred yards... You could shout that far.
+
+<break time="0.8s" />
 
 They walked past her every time.
 
+<break time="1.2s" />
+
 [VISUAL: Hold. Everything else drops away.]
 
-She was alive out there for twenty-six days. Nobody found her for two years.
+She was alive out there for twenty-six days... Nobody found her for two years.
 
-And the reason they missed her isn't carelessness, and it isn't bad luck. It's that she did something *right*. One decision — a good decision, the one that kept her alive as long as it did — is the exact reason nobody could find her.
+<break time="1.0s" />
+
+And the reason they missed her isn't carelessness, and it isn't bad luck. It's that she did something *right*... One decision — a good decision, the one that kept her alive as long as it did — is the exact reason nobody could find her.
 
 [VISUAL: Cut to black. Title.]
 
@@ -58,13 +70,17 @@ And to the east of the path, though she almost certainly doesn't know it, is the
 
 Remember that it's there.
 
+<break time="0.8s" />
+
 [VISUAL: Her position on the trail. Nothing else changes.]
 
 At some point that morning, Gerry steps off the trail to go to the bathroom. She walks a short distance for privacy — the ordinary thing, the thing every hiker does several times a day.
 
 [VISUAL: Her position drifts off the line. The trail stays visible to us — but not to her.]
 
-And then she turns around, and the path is gone.
+And then she turns around... and the path is gone.
+
+<break time="1.2s" />
 
 ---
 
@@ -84,7 +100,9 @@ Hikers who have walked the entire trail from Georgia will tell you the last hund
 
 The etiquette when you step off the trail is that you go far enough to be out of sight of it. In an ordinary forest that might be forty or fifty yards.
 
-In this one, thirty feet will do it.
+In this one... thirty feet will do it.
+
+<break time="1.0s" />
 
 [VISUAL: Zoom to the trail line. A 30-foot scale bar appears next to it. Hold.]
 
@@ -104,6 +122,8 @@ Nobody has made a mistake yet. Every one of those things is ordinary.
 
 [VISUAL: Hold on the assembled map. Then everything but her position fades.]
 
+<break time="0.8s" />
+
 And then one of them stops being ordinary.
 
 ---
@@ -111,6 +131,8 @@ And then one of them stops being ordinary.
 ## Act 4 — The drift
 
 At 11:01 that morning, she stopped and typed a message to George.
+
+<break time="0.9s" />
 
 [VISUAL: The text renders, character by character, exactly as written.]
 
@@ -120,7 +142,9 @@ Look at the typos. "Somm trouble." "Trial maintainer." She's typing fast.
 
 And look at what it tells us. Within a couple of hours of stepping off the path, she already understood she was in serious trouble. She wasn't wandering along confidently, expecting to bump back into it. She knew.
 
-The message didn't send. There was no signal where she was standing.
+The message didn't send... There was no signal where she was standing.
+
+<break time="1.0s" />
 
 So she did the thing almost anyone would do — the thing that is genuinely, technically correct.
 
@@ -146,7 +170,9 @@ Because the standard advice — the advice in every wilderness safety guide, adv
 
 Two pieces of good advice. Go high for signal. Stay where you are. She followed both, in that order.
 
-And the order is the problem. She moved first and stopped second. So she stayed put in the wrong place.
+And the order is the problem. She moved first and stopped second... So she stayed put in the wrong place.
+
+<break time="1.2s" />
 
 ---
 
@@ -172,9 +198,11 @@ They got close. Repeatedly.
 
 Three cadaver dog teams passed within roughly a hundred yards of her tent.
 
-A hundred yards. That's a football field. That's a distance you could shout across.
+A hundred yards. That's a football field... That's a distance you could shout across.
 
 So why didn't the dogs alert?
+
+<break time="1.4s" />
 
 [VISUAL: Hold. Nothing moves.]
 
@@ -182,13 +210,19 @@ Because a cadaver dog doesn't find a body. It finds scent — molecules moving t
 
 And Gerry was inside her tent.
 
+<break time="1.5s" />
+
 The tent held the scent in.
+
+<break time="1.2s" />
 
 The shelter that kept her warm, that kept her dry, that kept her alive out there for weeks — that same thin wall is what stopped her scent reaching the animals sent to find her.
 
 She did what a lost person is supposed to do. She sheltered. She stayed put. She waited.
 
 And the shelter is what hid her.
+
+<break time="1.5s" />
 
 [VISUAL: The Navy boundary draws in. Her camp sits just inside it.]
 
@@ -216,15 +250,21 @@ On August 6th, about two weeks after she got lost, she wrote this:
 
 No matter how many years from now.
 
+<break time="1.4s" />
+
 She had worked out by then what was likely to happen. And what she was thinking about wasn't herself. It was the not-knowing her family would be left with. She was doing the last piece of care she could still do for the people she loved.
 
 She kept writing. The entries continue through August 10th.
 
 Then the journal goes quiet.
 
-There's one more entry, on August 18th. Twenty-seven days after she stepped off the trail.
+There's one more entry, on August 18th... Twenty-seven days after she stepped off the trail.
+
+<break time="1.0s" />
 
 And then nothing.
+
+<break time="1.5s" />
 
 She was found in 2015, two years later — not by a search team, not by a dog, but by a contractor doing a forestry survey for the Navy. Someone walking that ground for an entirely unrelated reason, who came across the remains of a tent.
 
@@ -240,6 +280,8 @@ There is a device that does what Gerry spent twenty-six days trying to do. It's 
 
 She didn't have one.
 
+<break time="1.4s" />
+
 [VISUAL: The full map returns — three dog tracks, the search grids. Then a single point resolves. One ping. Hold.]
 
 Twenty-six days. Hundreds of searchers. Helicopters, dog teams, weeks of grid work across country that defeated all of it.
@@ -248,7 +290,9 @@ Against one signal, a set of coordinates, and a helicopter that would have known
 
 And I want to be careful with this, because it's easy to hear it as stupidity, and it isn't. It was 2013. Beacons were heavier, more expensive, and widely thought of as mountaineering equipment — for glaciers and expeditions, not for a marked footpath in Maine that thousands of people walk every summer. Almost nobody on that trail was carrying one. She was a day from a road crossing where her husband would be waiting. She had a phone.
 
-The phone was the plan. The phone was always going to fail.
+The phone was the plan... The phone was always going to fail.
+
+<break time="1.2s" />
 
 ---
 
@@ -266,10 +310,14 @@ Personal locator beacons and satellite messengers got smaller, cheaper and light
 
 It is now routine guidance on the Appalachian Trail that a phone is not a safety device. Because a phone needs a tower, and a tower either exists where you're standing or it doesn't.
 
-She spent twenty-six days trying to solve that exact problem. By climbing.
+She spent twenty-six days trying to solve that exact problem... By climbing.
+
+<break time="1.4s" />
 
 [VISUAL: Final hold — the 30-foot scale bar, alone against the trail line.]
 
 The distance between the trail and the rest of her life was about thirty feet of spruce.
+
+<break time="1.2s" />
 
 She stepped off, and turned around, and it was already gone.
