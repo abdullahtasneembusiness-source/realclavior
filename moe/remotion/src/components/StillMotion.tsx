@@ -121,7 +121,7 @@ export const PortraitCard: React.FC<{
   face?: { x: number; y: number; r: number };
   appearSec?: number;
   width?: number;
-}> = ({ image, name, face = { x: 0.5, y: 0.34, r: 0.17 }, appearSec = 0, width = 460 }) => {
+}> = ({ image, name, face = { x: 0.5, y: 0.34, r: 0.17 }, appearSec = 0, width = 400 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -131,7 +131,7 @@ export const PortraitCard: React.FC<{
     [0, 1],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.cubic) }
   );
-  const h = width * 1.28;
+  const h = width * 1.2;
 
   return (
     <div style={{ opacity: enter, transform: `translateY(${(1 - enter) * 18}px)` }}>
@@ -173,7 +173,8 @@ export const PortraitCard: React.FC<{
           fontWeight: theme.font.weight.bold,
           letterSpacing: 2,
           textTransform: "uppercase",
-          color: theme.color.snow,
+          color: theme.color.red,
+          lineHeight: 1.1,
         }}
       >
         {name}
@@ -184,7 +185,7 @@ export const PortraitCard: React.FC<{
           textAlign: "center",
           fontFamily: theme.font.mono,
           fontSize: theme.minBodyPx,
-          color: theme.color.snowFaint,
+          color: theme.color.snowMuted,
           letterSpacing: 1,
         }}
       >

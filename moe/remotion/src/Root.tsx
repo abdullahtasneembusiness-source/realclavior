@@ -4,7 +4,9 @@ import { AbsoluteFill, Composition } from "remotion";
 import { TerrainMassing } from "./scenes/TerrainMassing";
 import { ForestTrail } from "./scenes/ForestTrail";
 import { largayRoute } from "./data/largay";
-import { StillMotion, PortraitCard, CrossFade } from "./components/StillMotion";
+import { StillMotion, PortraitCard } from "./components/StillMotion";
+import { BandWipe, PushThrough, CardIn } from "./components/Transitions";
+import { theme } from "./theme";
 
 const FPS = 30;
 
@@ -22,23 +24,45 @@ const LargayMassing: React.FC = () => (
   </AbsoluteFill>
 );
 
-/** A still, given life: slow push, grain, vignette, then a card resolves in. */
+/** Photo cards arriving on a dark ground — the reference's register. */
+const CardScene: React.FC = () => (
+  <AbsoluteFill
+    style={{
+      backgroundColor: "#0A0C0E",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 64,
+      flexDirection: "row",
+    }}
+  >
+    <CardIn atSec={0.2} delayIndex={0}>
+      <PortraitCard image="stills/01-trail-wide.jpg" name="Geraldine Largay" />
+    </CardIn>
+    <CardIn atSec={0.2} delayIndex={1}>
+      <PortraitCard
+        image="stills/01-trail-wide.jpg"
+        name="The trail"
+        face={{ x: 0.5, y: 0.5, r: 0.0 }}
+      />
+    </CardIn>
+  </AbsoluteFill>
+);
+
+/** A still, given life, handed on with transitions that actually move. */
 const StillShot: React.FC = () => (
-  <CrossFade
-    atSec={2.6}
-    durSec={1.0}
-    from={<StillMotion image="stills/01-trail-wide.jpg" direction="in" zoom={1.14} />}
-    to={
-      <StillMotion image="stills/01-trail-wide.jpg" direction="left" zoom={1.2} vignette={0.7}>
-        <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
-          <PortraitCard
-            image="stills/01-trail-wide.jpg"
-            name="Geraldine Largay"
-            appearSec={3.4}
-          />
-        </AbsoluteFill>
-      </StillMotion>
+  <PushThrough
+    atSec={4.6}
+    durSec={0.7}
+    from={
+      <BandWipe
+        atSec={2.4}
+        durSec={0.7}
+        direction="right"
+        from={<StillMotion image="stills/01-trail-wide.jpg" direction="in" zoom={1.14} />}
+        to={<StillMotion image="stills/01-trail-wide.jpg" direction="left" zoom={1.22} vignette={0.72} />}
+      />
     }
+    to={<CardScene />}
   />
 );
 
@@ -47,7 +71,7 @@ export const RemotionRoot: React.FC = () => (
     <Composition
       id="StillShot"
       component={StillShot}
-      durationInFrames={FPS * 7}
+      durationInFrames={FPS * 8}
       fps={FPS}
       width={1920}
       height={1080}

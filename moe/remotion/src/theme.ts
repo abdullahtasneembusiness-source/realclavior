@@ -30,7 +30,19 @@ export const theme = {
     amber: "#E9A23B",
     amberGlow: "rgba(233, 162, 59, 0.45)",
 
-    /** Desaturated red — the moment of divergence, and nothing else. */
+    /**
+     * Bright red — the channel's typographic accent. Operator direction
+     * (amendment A6): titles and emphasis are bright red and white, which is
+     * the register the reference uses. This supersedes the "desaturated red,
+     * never decorative" half of §4.3 for TEXT.
+     *
+     * The rule that survives: red on the MAP still means the moment things
+     * went wrong. Type may use it freely; geometry may not.
+     */
+    red: "#F01E2C",
+    redDim: "#C4151F",
+
+    /** Desaturated red — divergence markers in 3D geometry only. */
     alarm: "#B84A42",
   },
 
