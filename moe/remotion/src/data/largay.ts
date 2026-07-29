@@ -62,6 +62,6 @@ export const largayRoute: RouteData = {
 
   cameraStartAngle: -0.7,
   cameraSweep: 0.5,
-  cameraRadius: 21,
-  cameraHeight: 13,
+  cameraRadius: 24,
+  cameraHeight: 19,
 };

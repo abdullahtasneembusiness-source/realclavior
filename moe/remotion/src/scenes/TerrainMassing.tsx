@@ -46,8 +46,8 @@ function makeHeightField(seed: number) {
   const peaks = Array.from({ length: 7 }, () => ({
     x: (rnd() - 0.5) * SIZE * 1.1,
     z: (rnd() - 0.5) * SIZE * 1.1,
-    amp: 0.7 + rnd() * 1.9,
-    sig: 1.6 + rnd() * 3.4,
+    amp: 1.4 + rnd() * 3.2,
+    sig: 1.2 + rnd() * 2.4,
   }));
   return (x: number, z: number) => {
     let h = 0;
@@ -80,13 +80,19 @@ const Terrain: React.FC<{ heightAt: (x: number, z: number) => number }> = ({ hei
 
   return (
     <>
-      {/* Solid massing — inert granite, matte, no specular distraction */}
+      {/* Solid massing — inert granite, matte, no specular distraction.
+          Flat shading is deliberate: facets read as a survey model, not scenery. */}
       <mesh geometry={geometry} receiveShadow>
-        <meshStandardMaterial color={theme.color.granite} roughness={1} metalness={0} flatShading />
+        <meshStandardMaterial
+          color={theme.color.graniteLight}
+          roughness={0.95}
+          metalness={0}
+          flatShading
+        />
       </mesh>
       {/* Wireframe overlay reads as survey contour without needing real contours */}
       <mesh geometry={geometry}>
-        <meshBasicMaterial color={theme.color.sage} wireframe transparent opacity={0.14} />
+        <meshBasicMaterial color={theme.color.sage} wireframe transparent opacity={0.22} />
       </mesh>
     </>
   );
@@ -169,6 +175,10 @@ export const TerrainMassing: React.FC<{ data: RouteData }> = ({ data }) => {
     const c = new THREE.PerspectiveCamera(38, width / height, 0.1, 200);
     c.position.set(Math.cos(angle) * radius, camY, Math.sin(angle) * radius);
     c.lookAt(0, 0, 0);
+    // Required before Vector3.project() — without it the view matrix is stale
+    // and every projected label lands in the wrong place (or off-screen).
+    c.updateMatrixWorld(true);
+    c.updateProjectionMatrix();
     return c;
   }, [angle, radius, camY, width, height]);
 
@@ -177,10 +187,11 @@ export const TerrainMassing: React.FC<{ data: RouteData }> = ({ data }) => {
   return (
     <AbsoluteFill style={{ backgroundColor: theme.color.ground }}>
       <ThreeCanvas width={width} height={height} camera={camera} style={{ opacity: fadeIn }}>
-        {/* Flat, directional, unromantic light. This is a model, not a landscape. */}
-        <ambientLight intensity={0.55} />
-        <directionalLight position={[6, 12, 4]} intensity={1.15} />
-        <directionalLight position={[-8, 4, -6]} intensity={0.25} color={theme.color.sage} />
+        {/* Flat, directional, unromantic light. This is a model, not a landscape.
+            Raked low so relief reads as form rather than a smooth blob. */}
+        <ambientLight intensity={0.75} />
+        <directionalLight position={[9, 7, 5]} intensity={2.1} />
+        <directionalLight position={[-8, 5, -6]} intensity={0.5} color={theme.color.sage} />
 
         <Terrain heightAt={heightAt} />
         <Route points={routePoints} progress={routeProgress} color={theme.color.amber} />
@@ -200,6 +211,71 @@ export const TerrainMassing: React.FC<{ data: RouteData }> = ({ data }) => {
           );
         })}
       </ThreeCanvas>
+
+      {/* Labels are projected from the actual 3D marker positions, so each one
+          names a thing that is visibly on screen and moves with it.
+          A label that isn't pointing at something does not get to exist —
+          that rule is what separates information from decoration. */}
+      {data.markers.map((m, i) => {
+        if (routeProgress < m.at) return null;
+        const idx = Math.min(routePoints.length - 1, Math.round(m.at * (routePoints.length - 1)));
+        const world = routePoints[idx].clone();
+        world.y += m.kind === "divergence" ? 1.6 : 1.0;
+
+        const ndc = world.project(camera);
+        if (ndc.z > 1) return null; // behind camera
+        const sx = (ndc.x * 0.5 + 0.5) * width;
+        const sy = (-ndc.y * 0.5 + 0.5) * height;
+        if (sx < 0 || sx > width || sy < 0 || sy > height) return null;
+
+        const appear = interpolate(
+          frame,
+          [m.at * durationInFrames * 0.75, m.at * durationInFrames * 0.75 + fps * 0.4],
+          [0, 1],
+          { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+        );
+        const isAlarm = m.kind === "divergence";
+
+        return (
+          <div
+            key={i}
+            style={{
+              position: "absolute",
+              left: sx,
+              top: sy,
+              transform: "translate(10px, -100%)",
+              opacity: appear,
+              whiteSpace: "nowrap",
+            }}
+          >
+            <div
+              style={{
+                fontFamily: theme.font.display,
+                // §4.6 floor. Small and quiet — the geometry is the subject.
+                fontSize: theme.minBodyPx + 2,
+                fontWeight: theme.font.weight.semibold,
+                color: isAlarm ? theme.color.alarm : theme.color.snow,
+                textShadow: "0 1px 6px rgba(0,0,0,0.9)",
+                lineHeight: 1.15,
+              }}
+            >
+              {m.label}
+            </div>
+            {m.sublabel && (
+              <div
+                style={{
+                  fontFamily: theme.font.mono,
+                  fontSize: theme.font.size.micro,
+                  color: theme.color.snowMuted,
+                  textShadow: "0 1px 6px rgba(0,0,0,0.9)",
+                }}
+              >
+                {m.sublabel}
+              </div>
+            )}
+          </div>
+        );
+      })}
 
       {/* Tilt-shift + vignette: what makes this read as a MODEL of the event
           rather than a photograph of a place. Reference §1.6. */}
