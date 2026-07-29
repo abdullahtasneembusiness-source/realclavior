@@ -4,68 +4,71 @@
 `node moe/scripts/strip-script.mjs largay` derives `script.txt` for the voiceover,
 so this file stays the single source of truth.
 
-**Structure taken from the benchmark** (see `moe/REFERENCE-ANALYSIS.md` §2):
-present-tense cold open *inside the space* · geography established before story ·
-stop on the movement, not the outcome · explicit rewind · escalating context ·
-"the stage is set" reassembly · the event · **then** the withheld revelation,
-out of order, so foreknowledge turns it into dread · close on consequence, never
-a moral.
+**Structure.** The benchmark opens slowly because its audience already knows the
+Caesar assassination matters — the name does the work before a word is spoken.
+Nobody has heard of Geraldine Largay, so this one **leads with the impossible
+fact** and earns the atmosphere afterwards. Then: the scene · why the geography
+made it possible · the stage set · the drift · the search · the journal ·
+**then** the withheld revelation, out of order so foreknowledge turns it into
+dread · close on consequence, never a moral.
 
 ---
 
 ## Act 0 — Cold open
 
-[VISUAL: Black. Then the forest, slow push. No text yet.]
+[VISUAL: Black. One line of the map — the trail — draws in. Nothing else.]
 
-It's the morning of the 22nd of July, 2013, in Redington Township, Maine.
+In 2013, a woman got lost in the woods in Maine, about two miles from a footpath that thousands of people walk every summer.
 
-A sixty-six-year-old woman named Geraldine Largay is walking north on the Appalachian Trail, about two hundred miles from the end of it.
+[VISUAL: Search grids bloom across the map. Fast. Then dog tracks.]
 
-[VISUAL: Massing model — the trail corridor picked out, everything else grey.]
+Hundreds of people looked for her. Helicopters. Dog teams. It ran for weeks — one of the largest searches this state has ever mounted.
 
-Out here the trail is not a road. It's a footpath about twenty inches wide, marked by white blazes painted on tree trunks, threading through spruce and fir so dense that in places you cannot see thirty feet in any direction. There are no landmarks. There is no phone signal. The nearest road is hours away.
+[VISUAL: Three tracks sweep past a single fixed point. A bracket snaps in. 100 YDS.]
 
-To the east of the path, though she almost certainly doesn't know it, is the boundary of a United States Navy survival school — a closed training area in the middle of the woods.
-
-[VISUAL: The boundary draws onto the map, quietly. No emphasis yet.]
-
-At some point that morning, Gerry steps off the trail to go to the bathroom.
-
-She walks a short distance for privacy. She does what she came to do.
-
-[VISUAL: Her position drifts off the line. The trail stays visible to us — but not to her. Hold.]
-
-And then she turns around, and she cannot find the path.
-
-[VISUAL: Beat. Then the map pulls back — hard — and everything appears at once: the search grids, the dog tracks, the boundary, the camp.]
-
-She will still be alive twenty-six days later.
-
-Nobody will find her for two years.
-
-[VISUAL: The three dog tracks sweep past her camp. A bracket measures the gap. 100 YDS.]
-
-And this is the part I have not been able to get out of my head. During those weeks, search teams with cadaver dogs came within about a hundred yards of where she was sitting. Not once. Three separate times.
+Three separate times, search teams came within about a hundred yards of where she was sitting.
 
 A hundred yards. You could shout that far.
 
-They walked past her anyway — and not because they were careless, and not because the dogs were bad. They walked past her because of something Gerry did *right*. One decision. A good decision. The decision that kept her alive out there as long as it did is the exact reason nobody found her body until 2015.
+They walked past her every time.
 
-[VISUAL: Everything fades but the trail line and her camp.]
+[VISUAL: Hold. Everything else drops away.]
 
-So there are three things I want to work out here. How somebody vanishes two miles from a footpath thousands of people walk every summer. Why the search — one of the largest this state has ever run — failed with her almost within earshot. And what she was doing during those twenty-six days, which we know, because she wrote it down.
+She was alive out there for twenty-six days. Nobody found her for two years.
 
-I want to show you the map first. Because I don't think any of this makes sense until you can see the space it happened in.
+And the reason they missed her isn't carelessness, and it isn't bad luck. It's that she did something *right*. One decision — a good decision, the one that kept her alive as long as it did — is the exact reason nobody could find her.
 
 [VISUAL: Cut to black. Title.]
 
 ---
 
-## Act 1 — The rewind
+## Act 1 — The morning
 
-To understand how a woman vanishes two miles from a trail that thousands of people walk every summer, you have to understand two things: who she was, and what this particular stretch of forest is actually like.
+[VISUAL: The forest. Slow push. Then the massing model, trail corridor picked out.]
 
-Gerry Largay was a retired nurse from Tennessee. Sixty-six years old. On the trail she went by "Inchworm," because she was slow, and she knew she was slow, and she thought that was funny.
+Her name was Geraldine Largay. Sixty-six years old, a retired nurse from Tennessee. On the trail she went by "Inchworm," because she was slow, and she knew she was slow, and she thought that was funny.
+
+It's the morning of the 22nd of July, 2013, in Redington Township, Maine, and she is walking north on the Appalachian Trail, about two hundred miles from the end of it.
+
+Out here the trail is not a road. It's a footpath about twenty inches wide, marked by white blazes painted on tree trunks, threading through spruce and fir so dense that in places you cannot see thirty feet in any direction. No landmarks. No phone signal. The nearest road is hours away.
+
+[VISUAL: The Navy boundary draws onto the map, quietly. No emphasis yet.]
+
+And to the east of the path, though she almost certainly doesn't know it, is the boundary of a United States Navy survival school — a closed training area in the middle of the woods.
+
+Remember that it's there.
+
+[VISUAL: Her position on the trail. Nothing else changes.]
+
+At some point that morning, Gerry steps off the trail to go to the bathroom. She walks a short distance for privacy — the ordinary thing, the thing every hiker does several times a day.
+
+[VISUAL: Her position drifts off the line. The trail stays visible to us — but not to her.]
+
+And then she turns around, and the path is gone.
+
+---
+
+## Act 2 — Why thirty feet was enough
 
 She was section hiking the Appalachian Trail — not the whole thing in one push, but in pieces, over time, the way people do it when they have a life to get back to.
 
@@ -89,7 +92,7 @@ That's the whole story, really. That number, and the fact that she had no reason
 
 ---
 
-## Act 2 — The stage is set
+## Act 3 — The stage is set
 
 So here is everything in position on the morning of the 22nd.
 
@@ -99,13 +102,13 @@ A footpath twenty inches wide. Forest with no sightlines. No cell coverage on th
 
 Nobody has made a mistake yet. Every one of those things is ordinary.
 
-[VISUAL: Hold on the assembled map.]
+[VISUAL: Hold on the assembled map. Then everything but her position fades.]
 
-She turns around, and the trail is gone.
+And then one of them stops being ordinary.
 
 ---
 
-## Act 3 — The drift
+## Act 4 — The drift
 
 At 11:01 that morning, she stopped and typed a message to George.
 
@@ -147,7 +150,7 @@ And the order is the problem. She moved first and stopped second. So she stayed 
 
 ---
 
-## Act 4 — The search
+## Act 5 — The search
 
 George reported her missing when she didn't reach the road crossing.
 
@@ -197,7 +200,7 @@ Eventually the search wound down.
 
 ---
 
-## Act 5 — Twenty-six days
+## Act 6 — Twenty-six days
 
 We know what happened next because Gerry wrote it down.
 
@@ -227,7 +230,7 @@ She was found in 2015, two years later — not by a search team, not by a dog, b
 
 ---
 
-## Act 6 — The thing she wasn't carrying
+## Act 7 — The thing she wasn't carrying
 
 There's one more detail, and I've held it back, because I think it belongs here rather than where it happened.
 
@@ -249,7 +252,7 @@ The phone was the plan. The phone was always going to fail.
 
 ---
 
-## Act 7 — What changed
+## Act 8 — What changed
 
 So what came of it.
 
