@@ -35,7 +35,27 @@ She walks a short distance for privacy. She does what she came to do.
 
 [VISUAL: Her position drifts off the line. The trail stays visible to us — but not to her. Hold.]
 
-And then she turns around.
+And then she turns around, and she cannot find the path.
+
+[VISUAL: Beat. Then the map pulls back — hard — and everything appears at once: the search grids, the dog tracks, the boundary, the camp.]
+
+She will still be alive twenty-six days later.
+
+Nobody will find her for two years.
+
+[VISUAL: The three dog tracks sweep past her camp. A bracket measures the gap. 100 YDS.]
+
+And this is the part I have not been able to get out of my head. During those weeks, search teams with cadaver dogs came within about a hundred yards of where she was sitting. Not once. Three separate times.
+
+A hundred yards. You could shout that far.
+
+They walked past her anyway — and not because they were careless, and not because the dogs were bad. They walked past her because of something Gerry did *right*. One decision. A good decision. The decision that kept her alive out there as long as it did is the exact reason nobody found her body until 2015.
+
+[VISUAL: Everything fades but the trail line and her camp.]
+
+So there are three things I want to work out here. How somebody vanishes two miles from a footpath thousands of people walk every summer. Why the search — one of the largest this state has ever run — failed with her almost within earshot. And what she was doing during those twenty-six days, which we know, because she wrote it down.
+
+I want to show you the map first. Because I don't think any of this makes sense until you can see the space it happened in.
 
 [VISUAL: Cut to black. Title.]
 

@@ -13,7 +13,13 @@ const episode = argv[2] || "largay";
 const inPath = `moe/episodes/${episode}/SCRIPT.md`;
 const outPath = `moe/episodes/${episode}/script.txt`;
 
-const md = await readFile(inPath, "utf8");
+const raw = await readFile(inPath, "utf8");
+
+// Everything above the first horizontal rule is front matter describing the
+// script — not narration. Dropping it by line-pattern was fragile and let the
+// preamble leak into the voiceover, so cut at the separator instead.
+const firstRule = raw.indexOf("\n---");
+const md = firstRule === -1 ? raw : raw.slice(firstRule + 4);
 
 const narration = md
   .split("\n")

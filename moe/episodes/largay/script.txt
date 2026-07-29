@@ -1,14 +1,3 @@
-Master script. Visual cues inline in `[VISUAL: …]`.
-`node moe/scripts/strip-script.mjs largay` derives `script.txt` for the voiceover,
-so this file stays the single source of truth.
-
-Structure taken from the benchmark (see `moe/REFERENCE-ANALYSIS.md` §2):
-present-tense cold open inside the space · geography established before story ·
-stop on the movement, not the outcome · explicit rewind · escalating context ·
-"the stage is set" reassembly · the event · then the withheld revelation,
-out of order, so foreknowledge turns it into dread · close on consequence, never
-a moral.
-
 It's the morning of the 22nd of July, 2013, in Redington Township, Maine.
 
 A sixty-six-year-old woman named Geraldine Largay is walking north on the Appalachian Trail, about two hundred miles from the end of it.
@@ -21,7 +10,21 @@ At some point that morning, Gerry steps off the trail to go to the bathroom.
 
 She walks a short distance for privacy. She does what she came to do.
 
-And then she turns around.
+And then she turns around, and she cannot find the path.
+
+She will still be alive twenty-six days later.
+
+Nobody will find her for two years.
+
+And this is the part I have not been able to get out of my head. During those weeks, search teams with cadaver dogs came within about a hundred yards of where she was sitting. Not once. Three separate times.
+
+A hundred yards. You could shout that far.
+
+They walked past her anyway — and not because they were careless, and not because the dogs were bad. They walked past her because of something Gerry did right. One decision. A good decision. The decision that kept her alive out there as long as it did is the exact reason nobody found her body until 2015.
+
+So there are three things I want to work out here. How somebody vanishes two miles from a footpath thousands of people walk every summer. Why the search — one of the largest this state has ever run — failed with her almost within earshot. And what she was doing during those twenty-six days, which we know, because she wrote it down.
+
+I want to show you the map first. Because I don't think any of this makes sense until you can see the space it happened in.
 
 To understand how a woman vanishes two miles from a trail that thousands of people walk every summer, you have to understand two things: who she was, and what this particular stretch of forest is actually like.
 
