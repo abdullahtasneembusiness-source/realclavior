@@ -74,6 +74,18 @@ try {
   ];
 }
 
+// §1.3 one-before-many: ONLY=<name> generates exactly that scene and nothing
+// else, so a batch can never run before a sample has been approved.
+const only = (env.ONLY || "").trim();
+if (only) {
+  prompts = prompts.filter((p) => p.name === only);
+  if (!prompts.length) {
+    console.error(`❌ ONLY="${only}" matched no scene in ${promptsPath}.`);
+    exit(1);
+  }
+  console.log(`§1.3 sample mode — generating only "${only}".`);
+}
+
 await mkdir(outDir, { recursive: true });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -113,7 +125,7 @@ async function generate(p) {
           aspect_ratio: "16:9",
           output_format: "jpg",
           output_quality: 92, // default compression was leaving stills at ~40KB
-          megapixels: "1",
+          megapixels: env.MEGAPIXELS || "2",
           ...(p.input || {}),
         },
       }),
