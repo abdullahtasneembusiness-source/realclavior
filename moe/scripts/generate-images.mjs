@@ -6,8 +6,33 @@
 // promptsJson: a JSON array of { name, prompt, input? } — `input` lets a prompt
 // override model params (e.g. a LoRA weights URL, aspect ratio).
 
-import { readFile, mkdir, writeFile } from "node:fs/promises";
+import { readFile, mkdir, writeFile, appendFile } from "node:fs/promises";
 import { argv, env, exit } from "node:process";
+
+/* §1.4 ledger + §1.5 session ceiling ------------------------------------- */
+
+/** Rough per-image cost by model, so the ledger and ceiling mean something. */
+const UNIT_COST = {
+  "black-forest-labs/flux-schnell": 0.003,
+  "black-forest-labs/flux-dev": 0.025,
+  "black-forest-labs/flux-1.1-pro": 0.04,
+};
+
+const CEILING_USD = Number(env.SESSION_CEILING_USD || 5); // §1.5 default
+let spent = 0;
+
+async function logCost(provider, op, units, usd, note) {
+  spent += usd;
+  const line = JSON.stringify({
+    ts: new Date().toISOString(),
+    provider,
+    op,
+    units,
+    usd: Number(usd.toFixed(4)),
+    note,
+  });
+  await appendFile("costs.jsonl", line + "\n");
+}
 
 const pick = (...names) => {
   for (const n of names) if (env[n] && env[n].trim()) return env[n].trim();
@@ -120,13 +145,28 @@ async function generate(p) {
   console.log(`✅ ${out} (${(buf.length / 1024).toFixed(0)} KB)`);
 }
 
+// §1.6 — never regenerate an asset that already exists on disk.
+const { existsSync } = await import("node:fs");
+
 let ok = 0;
 const failed = [];
 for (const p of prompts) {
+  const dest = `${outDir}/${p.name}.jpg`;
+  if (existsSync(dest)) {
+    console.log(`↩ ${p.name}: already on disk, skipping (§1.6)`);
+    ok++;
+    continue;
+  }
+  const unit = UNIT_COST[model] ?? 0.04;
+  if (spent + unit > CEILING_USD) {
+    console.error(`⛔ Session ceiling $${CEILING_USD} reached (spent $${spent.toFixed(2)}). Stopping (§1.5).`);
+    break;
+  }
   let done = false;
   for (let attempt = 1; attempt <= ATTEMPTS && !done; attempt++) {
     try {
       await generate(p);
+      await logCost("replicate", model, 1, UNIT_COST[model] ?? 0.04, p.name);
       ok++;
       done = true;
     } catch (e) {
@@ -139,6 +179,7 @@ for (const p of prompts) {
 }
 
 console.log(`Done: ${ok} generated, ${failed.length} failed.`);
+console.log(`Spend this run: $${spent.toFixed(3)} (ceiling $${CEILING_USD}) — logged to costs.jsonl`);
 if (failed.length) console.log(`Failed after ${ATTEMPTS} attempts: ${failed.join(", ")}`);
 // Only hard-fail if nothing at all came back; a partial set is still usable.
 if (ok === 0) exit(1);

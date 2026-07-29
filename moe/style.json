@@ -1,18 +1,19 @@
 {
-  "_comment": "The channel look, in one place. Every image prompt in every episode gets `base` appended, so all videos stay visually consistent. Change it here and the whole channel changes. This is also where a trained LoRA gets referenced later.",
+  "_comment": "The channel look, in one place. Appended to every episode prompt so all videos match. Change it here and the whole channel changes. This is where a trained LoRA's trigger word goes when it exists.",
 
-  "base": "cinematic 3D render with photographic realism in materials and lighting, cold flat overcast daylight, soft directional light through cloud, thin mist in the middle distance, strong depth separation between distinct foreground midground and background layers, muted grey-green and slate palette with one restrained warm accent, sombre restrained documentary framing, shallow depth of field, fine surface detail, Unreal Engine 5 and Octane render quality, 16:9 cinematic composition",
+  "base": "stylised 3D rendered scene in the style of a high-end historical documentary reconstruction, matte non-reflective surfaces with soft subsurface-free shading, soft flat overcast daylight from a broad white sky with no visible sun and no hard shadows, gentle ground haze separating each layer of depth, subtle tilt-shift focus falloff so the near foreground and far distance sit slightly out of focus and the midground is sharp, muted desaturated palette of slate grey, cold green and wet brown with one restrained warm accent, calm restrained composition with generous negative space, rendered in Blender Cycles with soft global illumination and light ambient occlusion, fine even film grain, 16:9",
 
-  "_direction_notes": {
-    "daylight_not_night": "Earlier stills came out dusk-blue and read as horror-movie night. The incident happened at midday in July. Cold OVERCAST DAYLIGHT is both accurate and more unsettling — it looks like an ordinary afternoon, which is the point.",
-    "people_are_allowed": "An earlier version of this file said 'unpopulated landscape, no people'. That was a mistake: it produced four interchangeable landscape wallpapers with no story in them. Scenes need human presence — a distant figure, a tent, gear, a search line.",
-    "faces_are_not": "Figures must stay ANONYMOUS and distant — silhouettes, backs, hands, figures at scale. This is a reconstruction of a real death with a living family; we never render a recognisable likeness of Geraldine Largay or anyone else involved. Standard documentary practice, and the right line.",
-    "no_negative_prompt": "Flux is distilled and rejects a negative_prompt input. Anything to avoid must be phrased positively above — hence 'photographic realism' (away from cartoon) and 'sombre restrained' (away from cheerful/epic)."
+  "_direction": {
+    "target": "The reference is a rendered scene, not a photograph and not an illustration. It reads as authored — a designer depicting a real place — which is exactly what we want. 'Stylised 3D rendered scene' plus a named render engine is what pulls Flux toward that register.",
+    "why_overcast": "Flat overcast light is both accurate to a July midday in Maine and the thing that stops the image reading as a dramatic movie still. No golden hour, no sun shafts, no hero lighting.",
+    "why_tilt_shift": "Focus falloff is what makes a frame read as a model of an event rather than a photo of a place. It is the single strongest cue for the 'designed, not real' quality.",
+    "faces": "Figures stay distant, small in frame, and anonymous — backs, silhouettes, figures at scale. This is a real death with a living family; no recognisable likeness of anyone involved is ever rendered.",
+    "no_negative_prompt": "Flux is distilled and rejects negative_prompt. Everything to avoid is phrased positively above."
   },
 
   "notes": [
-    "3D-rendered stills with clear foreground/midground/background layers parallax far better in the depth-displacement component than flat photos do — the layer separation is what the depth map keys off. Keep 'strong depth separation' in the base prompt.",
-    "Vary the SHOT SCALE across an episode: wide establishing, mid, and tight detail. Four wide shots in a row read as screensavers no matter how good each one is.",
-    "The single warm accent keeps stills tonally consistent with the orange route line in the diagrams."
+    "Vary SHOT SCALE across an episode — wide establishing, mid, tight detail. Four wides in a row read as screensavers however good each one is.",
+    "Clear foreground / midground / background separation is required: it is what the depth-parallax pass in Remotion keys off to create motion.",
+    "The single warm accent ties the stills to the amber route line in the diagrams."
   ]
 }

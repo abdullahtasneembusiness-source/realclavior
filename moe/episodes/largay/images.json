@@ -1,42 +1,42 @@
 [
   {
-    "name": "hiker-on-trail",
-    "shot": "wide · Act 1 — the plan",
-    "prompt": "A lone hiker with a backpack seen from far behind and very small in frame, walking away up a narrow forest path between dense conifers, figure anonymous and unrecognisable, ordinary overcast afternoon"
+    "name": "01-trail-wide",
+    "shot": "wide · Act 1 — the plan. THE TEST IMAGE.",
+    "prompt": "A high three-quarter view looking down a narrow worn dirt footpath threading through dense spruce and fir forest in Maine, a single small hiker with a pack walking away from camera far down the trail and turned away so no face is visible, dark conifer trunks crowding both sides of the path, low ferns and fallen needles on the forest floor, thin mist hanging between the trunks in the middle distance, mid-morning under a flat white overcast sky"
   },
   {
-    "name": "step-off",
+    "name": "02-step-off",
     "shot": "mid · Act 2 — the divergence",
-    "prompt": "The view from just off a forest path, looking back toward where the trail should be but seeing only identical dense spruce trunks in every direction, no path visible, disorienting sameness"
+    "prompt": "A view from a few paces off a forest path looking back toward where the trail should be, seeing only identical dense spruce trunks receding in every direction with no path visible anywhere in frame, disorienting repetition of near-identical trees, low green undergrowth, flat grey daylight filtering through the canopy"
   },
   {
-    "name": "phone-to-canopy",
+    "name": "03-phone-canopy",
     "shot": "tight · Act 3 — the climb for signal",
-    "prompt": "A single hand holding a mobile phone raised up toward a narrow gap of pale sky in a dense conifer canopy, only the hand and forearm visible, no face, screen dim"
+    "prompt": "Looking steeply upward through a dense conifer canopy toward a narrow ragged opening of pale overcast sky, black silhouetted branches fragmenting the light into thin gaps, a single hand and forearm entering the lower frame holding a small phone up toward the opening, no face and no figure visible"
   },
   {
-    "name": "tent-in-trees",
-    "shot": "mid-wide · Act 3/4 — the camp",
-    "prompt": "A small one-person tent pitched on a low forested rise, seen at a distance through spruce trunks, almost swallowed by the surrounding trees, no people visible, quiet and easy to miss"
+    "name": "04-tent-knoll",
+    "shot": "mid-wide · Act 4 — the camp",
+    "prompt": "A small single-person tent pitched in a shallow clearing on a low forested rise, seen from a distance and partly obscured behind spruce trunks so it is easy to miss, the tent the only man-made object in frame, dense dark forest closing in on all sides, still grey afternoon light, no people"
   },
   {
-    "name": "search-line",
+    "name": "05-search-line",
     "shot": "wide · Act 4 — the search",
-    "prompt": "A widely spaced line of search volunteers in high-visibility vests moving through dense forest, seen from a distance, figures small and anonymous, sweeping between the trunks"
+    "prompt": "A widely spaced line of search volunteers in high-visibility vests moving through dense conifer forest, seen from a distance and from behind so all figures are small and anonymous, spread far apart with dark trunks between them, sweeping across a slope of low undergrowth, flat overcast daylight"
   },
   {
-    "name": "dog-handler",
+    "name": "06-dog-handler",
     "shot": "mid · Act 4 — the dog teams",
-    "prompt": "A search dog and its handler seen from behind at a distance among tall conifer trunks, both small in frame and anonymous, working through thick undergrowth"
+    "prompt": "A search dog and its handler seen from behind at a distance among tall conifer trunks, both small in frame and anonymous, the dog casting ahead through thick low undergrowth, the handler in a dark jacket, dim green forest light"
   },
   {
-    "name": "journal-detail",
+    "name": "07-notebook",
     "shot": "tight · Act 5 — the journal",
-    "prompt": "A weathered small notebook and a pen resting on damp forest floor moss and fallen needles, close detail, pages blank and rain-marked, no legible writing"
+    "prompt": "A small weathered notebook lying closed on damp forest floor moss and fallen conifer needles, rain-marked cover, close overhead detail, a few wet leaves across one corner, soft even shadowless light"
   },
   {
-    "name": "empty-clearing",
+    "name": "08-empty-clearing",
     "shot": "wide · Act 6 — the find",
-    "prompt": "A small ordinary clearing on a forested rise with flattened undergrowth where something once stood, empty, unremarkable, surrounded by dense spruce"
+    "prompt": "A small ordinary clearing on a low forested rise with a patch of flattened undergrowth where something once stood, entirely empty and unremarkable, ringed by dense dark spruce, still grey light, nothing to mark the place"
   }
 ]
