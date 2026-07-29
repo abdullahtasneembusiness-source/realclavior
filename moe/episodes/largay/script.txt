@@ -1,20 +1,14 @@
-In 2013, a woman got lost in the woods in Maine... about two miles from a footpath that thousands of people walk every summer.
+In 2013, a woman got lost in the woods in Maine — about two miles from a footpath that thousands of people walk every summer.
 
 Hundreds of people looked for her. Helicopters. Dog teams. It ran for weeks — one of the largest searches this state has ever mounted.
 
 Three separate times, search teams came within about a hundred yards of where she was sitting.
 
-A hundred yards... You could shout that far.
-
-<break time="0.8s" />
+A hundred yards. You could shout that far.
 
 They walked past her every time.
 
-<break time="1.2s" />
-
-She was alive out there for twenty-six days... Nobody found her for two years.
-
-<break time="1.0s" />
+She was alive out there for twenty-six days. Nobody found her for two years.
 
 And here's the thing. They didn't walk past her because anyone messed up. They walked past her because of something she did right. One decision. A good one — genuinely, the decision that kept her alive out there — and it's the exact reason nobody could find her.
 
@@ -28,13 +22,9 @@ And to the east of the path, though she almost certainly doesn't know it, is the
 
 Remember that it's there.
 
-<break time="0.8s" />
-
 And at some point that morning, Gerry steps off the trail to go to the bathroom. Walks a little way off for privacy. Completely ordinary — every hiker does it a few times a day.
 
-And then she turns around... and the path is gone.
-
-<break time="1.2s" />
+And then she turns around, and the path is gone.
 
 She was section hiking the Appalachian Trail — not the whole thing in one push, but in pieces, over time, the way people do it when they have a life to get back to.
 
@@ -48,9 +38,7 @@ Ask anyone who's walked the whole trail up from Georgia and they'll tell you the
 
 The etiquette, when you step off to go to the bathroom, is that you get far enough away to be out of sight. In a normal forest that's maybe forty, fifty yards.
 
-In this one... thirty feet will do it.
-
-<break time="1.0s" />
+In this one, thirty feet will do it.
 
 And that's it. That's the whole thing, really — that number, and the fact that she had absolutely no reason to think it mattered.
 
@@ -60,13 +48,9 @@ A footpath twenty inches wide. Forest with no sightlines. No cell coverage on th
 
 Nobody has made a mistake yet. Every one of those things is ordinary.
 
-<break time="0.8s" />
-
 And then one of them stops being ordinary.
 
 At 11:01 that morning, she stopped and typed a message to George.
-
-<break time="0.9s" />
 
 "In somm trouble. Got off trail to go to br. Now lost. Can u call AMC to c if a trial maintainer can help me. Somewhere north of woods road."
 
@@ -74,9 +58,7 @@ Look at the typos. "Somm trouble." "Trial maintainer." She's typing fast.
 
 And look at what that tells you. Within a couple of hours of stepping off the path, she already knew she was in real trouble. She's not wandering around confident she'll bump back into it. She knows.
 
-The message didn't send... There was no signal where she was standing.
-
-<break time="1.0s" />
+The message didn't send. There was no signal where she was standing.
 
 So she does what pretty much anyone would do. And I want to be clear, it's the correct thing.
 
@@ -98,9 +80,7 @@ Because the standard advice — it's in every wilderness safety guide, and it's 
 
 So: go high to get signal. Stay where you are when you're lost. Two pieces of perfectly good advice. She followed both of them. In that order.
 
-And the order is the problem. She moved first and stopped second... So she stayed put in the wrong place.
-
-<break time="1.2s" />
+And the order is the problem. She moved first and stopped second. So she stayed put in the wrong place.
 
 George reported her missing when she didn't reach the road crossing.
 
@@ -118,29 +98,21 @@ They got close. Repeatedly.
 
 Three cadaver dog teams passed within roughly a hundred yards of her tent.
 
-A hundred yards. That's a football field... That's a distance you could shout across.
+A hundred yards. That's a football field. That's a distance you could shout across.
 
 So why didn't the dogs alert?
-
-<break time="1.4s" />
 
 Because a cadaver dog doesn't actually find a body. It finds scent. Molecules, moving through air.
 
 And Gerry was inside her tent.
 
-<break time="1.5s" />
-
 The tent held the scent in.
-
-<break time="1.2s" />
 
 The shelter that kept her warm, that kept her dry, that kept her alive out there for weeks — that same thin wall is what stopped her scent reaching the animals sent to find her.
 
 She did what a lost person is supposed to do. She sheltered. She stayed put. She waited.
 
 And the shelter is what hid her.
-
-<break time="1.5s" />
 
 There's one more layer. Where she'd stopped turned out to be inside the boundary of that Navy training area — which added its own complications to who could search that ground, and how.
 
@@ -158,21 +130,15 @@ On August 6th, about two weeks after she got lost, she wrote this:
 
 No matter how many years from now.
 
-<break time="1.4s" />
-
 She'd worked out by then what was probably going to happen. And what she's thinking about isn't herself. It's the not-knowing that her family would be stuck with. She's doing the last bit of looking-after she can still do for them.
 
 She kept writing. The entries continue through August 10th.
 
 Then the journal goes quiet.
 
-There's one more entry, on August 18th... Twenty-seven days after she stepped off the trail.
-
-<break time="1.0s" />
+There's one more entry, on August 18th. Twenty-seven days after she stepped off the trail.
 
 And then nothing.
-
-<break time="1.5s" />
 
 She was found in 2015, two years later — not by a search team, not by a dog, but by a contractor doing a forestry survey for the Navy. Someone walking that ground for an entirely unrelated reason, who came across the remains of a tent.
 
@@ -182,17 +148,13 @@ There is a device that does what Gerry spent twenty-six days trying to do. It's 
 
 She didn't have one.
 
-<break time="1.4s" />
-
 Twenty-six days. Hundreds of searchers. Helicopters, dog teams, weeks of grid work across country that defeated all of it.
 
 Against one signal, a set of coordinates, and a helicopter that would have known exactly where to land.
 
 And again — this isn't stupidity, and I don't want it to land that way. This was 2013. Beacons were heavier, they cost more, and people thought of them as mountaineering kit. Glaciers, expeditions. Not a marked footpath in Maine that thousands of people walk every summer. Almost nobody out there was carrying one. She was a day from a road crossing where her husband was waiting. She had a phone.
 
-The phone was the plan... The phone was always going to fail.
-
-<break time="1.2s" />
+The phone was the plan. The phone was always going to fail.
 
 So what came of it.
 
@@ -204,12 +166,8 @@ Personal locator beacons and satellite messengers got smaller, cheaper and light
 
 It is now routine guidance on the Appalachian Trail that a phone is not a safety device. Because a phone needs a tower, and a tower either exists where you're standing or it doesn't.
 
-She spent twenty-six days trying to solve that exact problem... By climbing.
-
-<break time="1.4s" />
+She spent twenty-six days trying to solve that exact problem. By climbing.
 
 The distance between the trail and the rest of her life was about thirty feet of spruce.
-
-<break time="1.2s" />
 
 She stepped off, and turned around, and it was already gone.
