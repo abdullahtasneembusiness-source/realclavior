@@ -15,7 +15,11 @@ import { theme } from "../theme";
 
 type Kids = React.ReactNode;
 
-const ease = Easing.bezier(0.65, 0, 0.2, 1); // firm, no overshoot (§4.4)
+// Long, gentle ease. Slow to leave, slow to arrive, no overshoot (§4.4).
+// The previous curve was firm and read as snappy; this one glides.
+const ease = Easing.bezier(0.4, 0.0, 0.15, 1.0);
+/** Even softer, for anything that should feel like it settles rather than moves. */
+const easeSoft = Easing.inOut(Easing.ease);
 
 /**
  * A hard band sweeps across and the new shot is revealed behind it. The band
@@ -28,7 +32,7 @@ export const BandWipe: React.FC<{
   durSec?: number;
   direction?: "left" | "right";
   bandColor?: string;
-}> = ({ from, to, atSec, durSec = 0.7, direction = "right", bandColor = theme.color.red }) => {
+}> = ({ from, to, atSec, durSec = 1.4, direction = "right", bandColor = theme.color.red }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const p = interpolate(frame, [atSec * fps, (atSec + durSec) * fps], [0, 1], {
@@ -55,7 +59,7 @@ export const BandWipe: React.FC<{
             top: 0,
             bottom: 0,
             [rev ? "left" : "right"]: `${edge}%`,
-            width: 6,
+            width: 4,
             background: bandColor,
             transform: "translateX(-50%)",
           }}
@@ -74,7 +78,7 @@ export const PushThrough: React.FC<{
   to: Kids;
   atSec: number;
   durSec?: number;
-}> = ({ from, to, atSec, durSec = 0.65 }) => {
+}> = ({ from, to, atSec, durSec = 1.3 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const p = interpolate(frame, [atSec * fps, (atSec + durSec) * fps], [0, 1], {
@@ -116,7 +120,7 @@ export const SplitOpen: React.FC<{
   to: Kids;
   atSec: number;
   durSec?: number;
-}> = ({ from, to, atSec, durSec = 0.8 }) => {
+}> = ({ from, to, atSec, durSec = 1.5 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const p = interpolate(frame, [atSec * fps, (atSec + durSec) * fps], [0, 1], {
@@ -159,26 +163,70 @@ export const CardIn: React.FC<{
   durSec?: number;
   children: Kids;
   delayIndex?: number;
-}> = ({ atSec, durSec = 0.7, children, delayIndex = 0 }) => {
+}> = ({ atSec, durSec = 1.3, children, delayIndex = 0 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const start = (atSec + delayIndex * 0.14) * fps;
+  const start = (atSec + delayIndex * 0.32) * fps;
   const p = interpolate(frame, [start, start + durSec * fps], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
-    easing: ease,
+    easing: easeSoft,
   });
 
   return (
     <div
       style={{
-        opacity: interpolate(p, [0, 0.35], [0, 1], { extrapolateRight: "clamp" }),
-        transform: `scale(${0.93 + p * 0.07}) translateY(${(1 - p) * 26}px)`,
+        opacity: interpolate(p, [0, 0.55], [0, 1], { extrapolateRight: "clamp" }),
+        transform: `scale(${0.96 + p * 0.04}) translateY(${(1 - p) * 44}px)`,
         clipPath: `inset(${(1 - p) * 100}% 0 0 0)`,
         WebkitClipPath: `inset(${(1 - p) * 100}% 0 0 0)`,
       }}
     >
       {children}
     </div>
+  );
+};
+
+
+/**
+ * Rise and fade — the incoming shot lifts gently into place while the outgoing
+ * settles down and away. The softest transition in the set; use it where the
+ * narration is quiet and a cut would feel like an interruption.
+ */
+export const RiseIn: React.FC<{
+  from: Kids;
+  to: Kids;
+  atSec: number;
+  durSec?: number;
+  /** How far the incoming shot travels, in percent of frame height. */
+  travel?: number;
+}> = ({ from, to, atSec, durSec = 1.6, travel = 6 }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const p = interpolate(frame, [atSec * fps, (atSec + durSec) * fps], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: easeSoft,
+  });
+
+  return (
+    <AbsoluteFill style={{ backgroundColor: theme.color.ground, overflow: "hidden" }}>
+      <AbsoluteFill
+        style={{
+          opacity: 1 - p,
+          transform: `translateY(${p * travel * 0.4}%) scale(${1 - p * 0.02})`,
+        }}
+      >
+        {from}
+      </AbsoluteFill>
+      <AbsoluteFill
+        style={{
+          opacity: p,
+          transform: `translateY(${(1 - p) * travel}%) scale(${1.02 - p * 0.02})`,
+        }}
+      >
+        {to}
+      </AbsoluteFill>
+    </AbsoluteFill>
   );
 };
