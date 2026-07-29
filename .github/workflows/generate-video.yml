@@ -85,7 +85,13 @@ jobs:
           VOICE_MODE: ${{ inputs.voice_mode }}
           VOICE_IDS: ${{ inputs.voice_ids }}
           SAMPLE_CHARS: ${{ inputs.sample_chars }}
-        run: node moe/scripts/generate-voiceover.mjs "moe/episodes/${{ inputs.episode }}/script.txt" "moe/out/voiceover.mp3"
+        run: |
+          if [ "${{ inputs.voice_mode }}" = "sample" ]; then
+            OUT="moe/episodes/${{ inputs.episode }}/voice/sample.mp3"
+          else
+            OUT="moe/out/voiceover.mp3"
+          fi
+          node moe/scripts/generate-voiceover.mjs "moe/episodes/${{ inputs.episode }}/script.txt" "$OUT"
 
       - name: Generate images (Replicate / Flux)
         id: images
@@ -99,16 +105,16 @@ jobs:
       # Stills are committed so they're versioned, reviewable in the repo, and
       # available to the Remotion render as ordinary files. The voiceover stays
       # artifact-only — it's large and regenerated from SCRIPT.md on demand.
-      - name: Commit generated stills
+      - name: Commit generated stills and voice samples
         if: always()
         run: |
           git config user.name "Claude"
           git config user.email "noreply@anthropic.com"
-          git add "moe/episodes/${{ inputs.episode }}/stills" costs.jsonl || true
+          git add "moe/episodes/${{ inputs.episode }}/stills" "moe/episodes/${{ inputs.episode }}/voice" costs.jsonl || true
           if git diff --cached --quiet; then
             echo "No new stills to commit."
           else
-            git commit -m "Add generated stills for ${{ inputs.episode }} [skip ci]"
+            git commit -m "Add generated media for ${{ inputs.episode }} [skip ci]"
             git pull --rebase origin "${GITHUB_REF_NAME}" || true
             git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
@@ -121,6 +127,7 @@ jobs:
           path: |
             moe/out/**
             moe/episodes/${{ inputs.episode }}/stills/**
+            moe/episodes/${{ inputs.episode }}/voice/**
           if-no-files-found: warn
 
       - name: Summary
