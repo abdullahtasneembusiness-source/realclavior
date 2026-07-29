@@ -2,6 +2,7 @@ import React from "react";
 import { AbsoluteFill, Composition } from "remotion";
 
 import { TerrainMassing } from "./scenes/TerrainMassing";
+import { ForestTrail } from "./scenes/ForestTrail";
 import { largayRoute } from "./data/largay";
 
 const FPS = 30;
@@ -21,12 +22,23 @@ const LargayMassing: React.FC = () => (
 );
 
 export const RemotionRoot: React.FC = () => (
-  <Composition
-    id="LargayMassing"
-    component={LargayMassing}
-    durationInFrames={FPS * 12}
-    fps={FPS}
-    width={1920}
-    height={1080}
-  />
+  <>
+    <Composition
+      id="LargayMassing"
+      component={LargayMassing}
+      durationInFrames={FPS * 12}
+      fps={FPS}
+      width={1920}
+      height={1080}
+    />
+    {/* A usable 5-second shot: she walks away up the trail. */}
+    <Composition
+      id="ForestTrail"
+      component={ForestTrail}
+      durationInFrames={FPS * 5}
+      fps={FPS}
+      width={1920}
+      height={1080}
+    />
+  </>
 );
