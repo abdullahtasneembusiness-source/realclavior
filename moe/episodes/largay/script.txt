@@ -16,13 +16,13 @@ She was alive out there for twenty-six days... Nobody found her for two years.
 
 <break time="1.0s" />
 
-And the reason they missed her isn't carelessness, and it isn't bad luck. It's that she did something right... One decision — a good decision, the one that kept her alive as long as it did — is the exact reason nobody could find her.
+And here's the thing. They didn't walk past her because anyone messed up. They walked past her because of something she did right. One decision. A good one — genuinely, the decision that kept her alive out there — and it's the exact reason nobody could find her.
 
 Her name was Geraldine Largay. Sixty-six years old, a retired nurse from Tennessee. On the trail she went by "Inchworm," because she was slow, and she knew she was slow, and she thought that was funny.
 
 It's the morning of the 22nd of July, 2013, in Redington Township, Maine, and she is walking north on the Appalachian Trail, about two hundred miles from the end of it.
 
-Out here the trail is not a road. It's a footpath about twenty inches wide, marked by white blazes painted on tree trunks, threading through spruce and fir so dense that in places you cannot see thirty feet in any direction. No landmarks. No phone signal. The nearest road is hours away.
+Now, the trail out here isn't a road. It's a footpath — about twenty inches across, marked by white blazes painted onto tree trunks — and it runs through spruce and fir so thick that in places you can't see thirty feet in front of you. No landmarks. No phone signal. Nearest road is hours away.
 
 And to the east of the path, though she almost certainly doesn't know it, is the boundary of a United States Navy survival school — a closed training area in the middle of the woods.
 
@@ -30,7 +30,7 @@ Remember that it's there.
 
 <break time="0.8s" />
 
-At some point that morning, Gerry steps off the trail to go to the bathroom. She walks a short distance for privacy — the ordinary thing, the thing every hiker does several times a day.
+And at some point that morning, Gerry steps off the trail to go to the bathroom. Walks a little way off for privacy. Completely ordinary — every hiker does it a few times a day.
 
 And then she turns around... and the path is gone.
 
@@ -40,19 +40,19 @@ She was section hiking the Appalachian Trail — not the whole thing in one push
 
 She had a system, and it was a good one. Her husband George drove. She walked. He'd meet her at road crossings with food and a bed, and she'd set off on the next stretch. For part of the trip she'd had a hiking partner, a friend named Jane, but Jane had left the trail early for a family emergency back home.
 
-So by the third week of July, Gerry was walking alone. That is not, in itself, a mistake. Thousands of people do it every year.
+So by the third week of July she was walking on her own. Which isn't a mistake, by the way. Plenty of people hike this thing alone.
 
 And then there's the forest.
 
-Hikers who have walked the entire trail from Georgia will tell you the last hundred miles in Maine are the hardest, and it isn't the mountains. It's the trees. Spruce and fir packed in tight, low branches, wet ground, and no long sightlines in any direction.
+Ask anyone who's walked the whole trail up from Georgia and they'll tell you the last hundred miles in Maine are the worst of it. And it's not the mountains. It's the trees. Spruce and fir jammed in tight, branches low, ground wet, and you can't see any distance in any direction.
 
-The etiquette when you step off the trail is that you go far enough to be out of sight of it. In an ordinary forest that might be forty or fifty yards.
+The etiquette, when you step off to go to the bathroom, is that you get far enough away to be out of sight. In a normal forest that's maybe forty, fifty yards.
 
 In this one... thirty feet will do it.
 
 <break time="1.0s" />
 
-That's the whole story, really. That number, and the fact that she had no reason to think it mattered.
+And that's it. That's the whole thing, really — that number, and the fact that she had absolutely no reason to think it mattered.
 
 So here is everything in position on the morning of the 22nd.
 
@@ -72,19 +72,19 @@ At 11:01 that morning, she stopped and typed a message to George.
 
 Look at the typos. "Somm trouble." "Trial maintainer." She's typing fast.
 
-And look at what it tells us. Within a couple of hours of stepping off the path, she already understood she was in serious trouble. She wasn't wandering along confidently, expecting to bump back into it. She knew.
+And look at what that tells you. Within a couple of hours of stepping off the path, she already knew she was in real trouble. She's not wandering around confident she'll bump back into it. She knows.
 
 The message didn't send... There was no signal where she was standing.
 
 <break time="1.0s" />
 
-So she did the thing almost anyone would do — the thing that is genuinely, technically correct.
+So she does what pretty much anyone would do. And I want to be clear, it's the correct thing.
 
-To get a signal, you go up.
+To get signal, you go up.
 
-Higher ground means fewer obstructions between a phone and a tower. It isn't a foolish instinct. It's the right one.
+Higher ground, fewer trees between your phone and a tower. That's not a silly instinct — that's just how phones work.
 
-And here's what it did.
+And here's what it did to her.
 
 The trail through this country runs along a corridor. When she climbed for signal, she moved away from that corridor — onto higher, denser ground, further from the line that everyone was about to search.
 
@@ -94,9 +94,9 @@ She never got the signal. She sent more messages. None were delivered.
 
 And then she did something else that was correct. She stopped, and she made camp.
 
-Because the standard advice — the advice in every wilderness safety guide, advice that is right far more often than it's wrong — is that when you're lost, you stay put. Don't wander. Let the searchers come to you.
+Because the standard advice — it's in every wilderness safety guide, and it's right far more often than it's wrong — is that when you're lost, you stay put. Don't wander. Let them come to you.
 
-Two pieces of good advice. Go high for signal. Stay where you are. She followed both, in that order.
+So: go high to get signal. Stay where you are when you're lost. Two pieces of perfectly good advice. She followed both of them. In that order.
 
 And the order is the problem. She moved first and stopped second... So she stayed put in the wrong place.
 
@@ -108,7 +108,7 @@ The Warden Service's own figures are stark: ninety-two percent of people reporte
 
 They didn't begin searching in earnest for about eighteen.
 
-I want to be careful here, because it's easy to turn that into an accusation, and the wardens have been more honest about this than most agencies would be. There were real reasons — a late report, remote country, genuine uncertainty about where she'd even entered the woods.
+And I want to be careful with that, because it's easy to make it sound like an accusation, and honestly the wardens have been more upfront about this than most agencies would be. There were real reasons — the report came in late, it's remote country, and nobody was even certain where she'd gone into the woods.
 
 But the window closed.
 
@@ -124,7 +124,7 @@ So why didn't the dogs alert?
 
 <break time="1.4s" />
 
-Because a cadaver dog doesn't find a body. It finds scent — molecules moving through air.
+Because a cadaver dog doesn't actually find a body. It finds scent. Molecules, moving through air.
 
 And Gerry was inside her tent.
 
@@ -150,7 +150,7 @@ Eventually the search wound down.
 
 We know what happened next because Gerry wrote it down.
 
-She kept a journal. And the thing that makes it hard to read is how calm it is.
+She kept a journal. And the thing that makes it hard to read is just how calm it is.
 
 On August 6th, about two weeks after she got lost, she wrote this:
 
@@ -160,7 +160,7 @@ No matter how many years from now.
 
 <break time="1.4s" />
 
-She had worked out by then what was likely to happen. And what she was thinking about wasn't herself. It was the not-knowing her family would be left with. She was doing the last piece of care she could still do for the people she loved.
+She'd worked out by then what was probably going to happen. And what she's thinking about isn't herself. It's the not-knowing that her family would be stuck with. She's doing the last bit of looking-after she can still do for them.
 
 She kept writing. The entries continue through August 10th.
 
@@ -188,7 +188,7 @@ Twenty-six days. Hundreds of searchers. Helicopters, dog teams, weeks of grid wo
 
 Against one signal, a set of coordinates, and a helicopter that would have known exactly where to land.
 
-And I want to be careful with this, because it's easy to hear it as stupidity, and it isn't. It was 2013. Beacons were heavier, more expensive, and widely thought of as mountaineering equipment — for glaciers and expeditions, not for a marked footpath in Maine that thousands of people walk every summer. Almost nobody on that trail was carrying one. She was a day from a road crossing where her husband would be waiting. She had a phone.
+And again — this isn't stupidity, and I don't want it to land that way. This was 2013. Beacons were heavier, they cost more, and people thought of them as mountaineering kit. Glaciers, expeditions. Not a marked footpath in Maine that thousands of people walk every summer. Almost nobody out there was carrying one. She was a day from a road crossing where her husband was waiting. She had a phone.
 
 The phone was the plan... The phone was always going to fail.
 
