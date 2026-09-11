@@ -14,6 +14,11 @@ dirt. This does three things, in order:
      real line work is long and connected.
   3. Grow what is left, so a toddler has a line thick enough to stay inside.
 
+Removing solid fills was tried here and taken out again. Eroding to find them
+cannot tell a shadow from a deliberately heavy stroke, so it hollowed out the
+drawing and left the roller's drum in ragged pieces — worse than the shadow
+it was removing. A solid black area is a reason to redo the image.
+
 What it cannot do is simplify a drawing. If Flux returns a detailed machine,
 the fix is the prompt, not this file.
 
