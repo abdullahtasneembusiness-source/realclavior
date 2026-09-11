@@ -1,7 +1,12 @@
 #!/usr/bin/env node
 /**
  * Generate the line-art illustrations for "Cut, Color & Build: Construction Site"
- * on Replicate (FLUX 1.1 Pro).
+ * on Replicate.
+ *
+ * Two models, chosen per image in images.json. Flux 1.1 Pro draws simple
+ * objects well but returns technical illustration for cranes, rollers and
+ * excavators whatever the prompt says; those go to Recraft V3 SVG, which
+ * returns real vector line art and needs no tracing.
  *
  * This script spends real money, so every guard the project runs on is in here
  * rather than in someone's memory:
@@ -69,6 +74,53 @@ const STYLE = readFileSync(join(BOOK, "style.txt"), "utf8").trim();
 const buildPrompt = (img) => `${STYLE}\n\nSubject: ${img.subject}`;
 
 /**
+ * Which model draws an image, and what that model needs.
+ *
+ * Flux 1.1 Pro draws simple objects well — a cone, a hard hat, a sign — but
+ * returns technical illustration for cranes, rollers and excavators whatever
+ * the prompt says, so those go to Recraft, which draws real vector line art.
+ * Each model takes its own size argument and returns its own file type.
+ */
+const modelOf = (img) => img.model ?? spec.model;
+const settingsOf = (img) => {
+  const name = modelOf(img);
+  const cfg = spec.models[name];
+  if (!cfg) throw new Error(`images.json has no settings for model "${name}".`);
+  return cfg;
+};
+const priceOf = (img) => settingsOf(img).usdPerImage;
+const outPath = (img) => join(ART, `${img.key}.${settingsOf(img).ext}`);
+
+function inputFor(img) {
+  const cfg = settingsOf(img);
+  const size = cfg.sizes[img.aspect];
+  const base = { prompt: buildPrompt(img) };
+
+  if (modelOf(img).startsWith("recraft")) {
+    // Recraft has no seed; consistency comes from its style setting.
+    return { ...base, size: size.size, style: cfg.style };
+  }
+  return {
+    ...base,
+    // flux-1.1-pro only honours width/height when aspect_ratio is "custom";
+    // its `megapixels` input is ignored entirely.
+    aspect_ratio: "custom",
+    width: size.width,
+    height: size.height,
+    seed: SEED,
+    output_format: cfg.ext,
+    prompt_upsampling: spec.promptUpsampling,
+    safety_tolerance: 2,
+  };
+}
+
+const describe = (img) => {
+  const cfg = settingsOf(img);
+  const size = cfg.sizes[img.aspect];
+  return size.size ?? `${size.width}x${size.height}`;
+};
+
+/**
  * One seed across the whole book keeps the drawing style consistent. The flip
  * side is that a straight re-run reproduces the same picture, so redoing a
  * rejected image needs a different seed — hence the override.
@@ -95,18 +147,21 @@ for (const key of ONLY) {
 
 const requested = ONLY.length ? spec.images.filter((i) => ONLY.includes(i.key)) : spec.images;
 
-const outPath = (key) => join(ART, `${key}.${spec.outputFormat}`);
-const cached = requested.filter((i) => !FORCE && existsSync(outPath(i.key)));
-const todo = requested.filter((i) => FORCE || !existsSync(outPath(i.key)));
+const cached = requested.filter((i) => !FORCE && existsSync(outPath(i)));
+const todo = requested.filter((i) => FORCE || !existsSync(outPath(i)));
 
-const estimate = +(todo.length * spec.usdPerImage).toFixed(2);
+const estimate = +todo.reduce((sum, i) => sum + priceOf(i), 0).toFixed(2);
+const byModel = new Map();
+for (const i of todo) byModel.set(modelOf(i), (byModel.get(modelOf(i)) ?? 0) + 1);
 
-console.log(`model      ${spec.model}`);
-console.log(`seed       ${SEED}${SEED === spec.seed ? " (book default, same for every image)" : " (override of the book default " + spec.seed + ")"}`);
+console.log(`seed       ${SEED}${SEED === spec.seed ? " (book default, Flux only)" : " (override of the book default " + spec.seed + ")"}`);
 console.log(`requested  ${requested.length}${ONLY.length ? ` (ONLY=${ONLY.join(",")})` : ""}`);
 console.log(`cached     ${cached.length}${cached.length ? ` → ${cached.map((i) => i.key).join(", ")}` : ""}`);
 console.log(`to build   ${todo.length}${todo.length ? ` → ${todo.map((i) => i.key).join(", ")}` : ""}`);
-console.log(`estimate   $${estimate.toFixed(2)} at $${spec.usdPerImage}/image`);
+for (const [name, n] of byModel) {
+  console.log(`           ${n} on ${name} at $${spec.models[name].usdPerImage}/image`);
+}
+console.log(`estimate   $${estimate.toFixed(2)}`);
 console.log("");
 
 if (!todo.length) {
@@ -122,8 +177,7 @@ if (estimate > CEILING_USD) {
 
 if (DRY_RUN) {
   for (const img of todo) {
-    const size = spec.sizes[img.aspect];
-    console.log(`--- ${img.key}  ${img.aspect}  ${size.width}x${size.height}  activities ${img.usedBy.join(", ")}`);
+    console.log(`--- ${img.key}  ${img.aspect}  ${describe(img)}  ${modelOf(img)}  activities ${img.usedBy.join(", ")}`);
     console.log(buildPrompt(img));
     console.log("");
   }
@@ -155,22 +209,10 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /** Run one prediction to completion and return the output image URL. */
 async function predict(img) {
-  const size = spec.sizes[img.aspect];
-  const input = {
-    prompt: buildPrompt(img),
-    // flux-1.1-pro only honours width/height when aspect_ratio is "custom";
-    // its `megapixels` input is ignored entirely.
-    aspect_ratio: "custom",
-    width: size.width,
-    height: size.height,
-    seed: SEED,
-    output_format: spec.outputFormat,
-    prompt_upsampling: spec.promptUpsampling,
-    safety_tolerance: 2,
-  };
+  const input = inputFor(img);
 
   const create = () =>
-    fetchWithTimeout(`https://api.replicate.com/v1/models/${spec.model}/predictions`, {
+    fetchWithTimeout(`https://api.replicate.com/v1/models/${modelOf(img)}/predictions`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${TOKEN}`,
@@ -216,7 +258,7 @@ async function predict(img) {
     throw new Error(`Prediction ${pred.status}: ${pred.error ?? "no error given"}`);
   }
 
-  // flux-1.1-pro returns a single URI string.
+  // Both models return a single URI string: a PNG from Flux, an SVG from Recraft.
   const url = Array.isArray(pred.output) ? pred.output[0] : pred.output;
   if (typeof url !== "string") throw new Error(`Unexpected output shape: ${JSON.stringify(pred.output).slice(0, 200)}`);
   return { url, id: pred.id };
@@ -234,8 +276,7 @@ const made = [];
 for (const [i, img] of todo.entries()) {
   if (i > 0 && PACE_MS > 0) await sleep(PACE_MS);
 
-  const size = spec.sizes[img.aspect];
-  process.stdout.write(`${img.key}  ${img.aspect} ${size.width}x${size.height}  ... `);
+  process.stdout.write(`${img.key}  ${img.aspect} ${describe(img)}  ... `);
 
   let result;
   try {
@@ -259,9 +300,9 @@ for (const [i, img] of todo.entries()) {
     console.error(`Image URL: ${result.url}`);
     process.exit(1);
   }
-  writeFileSync(outPath(img.key), Buffer.from(await bin.arrayBuffer()));
+  writeFileSync(outPath(img), Buffer.from(await bin.arrayBuffer()));
 
-  spent += spec.usdPerImage;
+  spent += priceOf(img);
   made.push(img.key);
 
   appendFileSync(
@@ -270,15 +311,15 @@ for (const [i, img] of todo.entries()) {
       ts: new Date().toISOString(),
       project: "book1-construction",
       service: "replicate",
-      model: spec.model,
+      model: modelOf(img),
       item: img.key,
       predictionId: result.id,
       seed: SEED,
-      usd: spec.usdPerImage,
+      usd: priceOf(img),
     }) + "\n",
   );
 
-  console.log(`ok  → book1/art/${img.key}.${spec.outputFormat}`);
+  console.log(`ok  → book1/art/${img.key}.${settingsOf(img).ext}`);
 }
 
 console.log("");

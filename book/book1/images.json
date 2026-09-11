@@ -4,17 +4,6 @@
   "seed": 42,
   "outputFormat": "png",
   "promptUpsampling": false,
-  "usdPerImage": 0.04,
-  "sizes": {
-    "4:3": {
-      "width": 1408,
-      "height": 1056
-    },
-    "1:1": {
-      "width": 1440,
-      "height": 1440
-    }
-  },
   "images": [
     {
       "key": "a01",
@@ -23,7 +12,8 @@
       "usedBy": [
         1
       ],
-      "subject": "a chunky toy excavator, side view, with a boxy cab, a simple two-part arm and one plain bucket. Its tracks are one smooth plain oval outline. It stands on one simple straight ground line."
+      "subject": "a chunky toy excavator, side view, with a boxy cab, a simple two-part arm and one plain bucket. Its tracks are one smooth plain oval outline. It stands on one simple straight ground line.",
+      "model": "recraft-ai/recraft-v3-svg"
     },
     {
       "key": "a02",
@@ -32,7 +22,8 @@
       "usedBy": [
         2
       ],
-      "subject": "a neat stack of five long planks, side view, each drawn as one smooth empty rectangle, resting on one simple straight ground line."
+      "subject": "a neat stack of five long planks, side view, each drawn as one smooth empty rectangle, resting on one simple straight ground line.",
+      "model": "recraft-ai/recraft-v3-svg"
     },
     {
       "key": "a03",
@@ -59,7 +50,8 @@
       "usedBy": [
         5
       ],
-      "subject": "a simple fence of five plain upright posts joined by two straight rails, with one large empty rectangular board in the middle, on one simple straight ground line."
+      "subject": "a simple fence of five plain upright posts joined by two straight rails, with one large empty rectangular board in the middle, on one simple straight ground line.",
+      "model": "recraft-ai/recraft-v3-svg"
     },
     {
       "key": "a06",
@@ -87,7 +79,8 @@
       "usedBy": [
         8
       ],
-      "subject": "a chunky toy bulldozer, side view, with one big flat blade at the front pushing one smooth rounded mound. Its tracks are one smooth plain oval outline. It stands on one simple straight ground line."
+      "subject": "a chunky toy bulldozer, side view, with one big flat blade at the front pushing one smooth rounded mound. Its tracks are one smooth plain oval outline. It stands on one simple straight ground line.",
+      "model": "recraft-ai/recraft-v3-svg"
     },
     {
       "key": "a09",
@@ -96,7 +89,8 @@
       "usedBy": [
         9
       ],
-      "subject": "a chunky toy tower crane, side view, with one thick straight upright mast and one long straight arm across the top, lifting a bundle of three plain pipes on a hook hanging from a single straight line. It stands on one simple straight ground line."
+      "subject": "a chunky toy tower crane, side view, with one thick straight upright mast and one long straight arm across the top, lifting a bundle of three plain pipes on a hook hanging from a single straight line. It stands on one simple straight ground line.",
+      "model": "recraft-ai/recraft-v3-svg"
     },
     {
       "key": "a10",
@@ -105,7 +99,8 @@
       "usedBy": [
         10
       ],
-      "subject": "a chunky toy road roller, side view, with one huge smooth round drum at the front and one plain round wheel at the back, on one simple straight ground line."
+      "subject": "a chunky toy road roller, side view, with one huge smooth round drum at the front and one plain round wheel at the back, on one simple straight ground line.",
+      "model": "recraft-ai/recraft-v3-svg"
     },
     {
       "key": "a11",
@@ -132,7 +127,8 @@
       "usedBy": [
         13
       ],
-      "subject": "a chunky toy loader, side view, with one plain bucket at the front, next to three big smooth round stones, on one simple straight ground line."
+      "subject": "a chunky toy loader, side view, with one plain bucket at the front, next to three big smooth round stones, on one simple straight ground line.",
+      "model": "recraft-ai/recraft-v3-svg"
     },
     {
       "key": "a14",
@@ -150,7 +146,8 @@
       "usedBy": [
         15
       ],
-      "subject": "a chunky toy excavator, side view, its simple two-part arm reaching down into one plain curved hole in the ground line."
+      "subject": "a chunky toy excavator, side view, its simple two-part arm reaching down into one plain curved hole in the ground line.",
+      "model": "recraft-ai/recraft-v3-svg"
     },
     {
       "key": "a16",
@@ -160,7 +157,8 @@
         16,
         35
       ],
-      "subject": "a half-built tower of eight large chunky blocks stacked in a simple pattern, front view, with one plain straight ladder leaning against it, on one simple straight ground line."
+      "subject": "a half-built tower of eight large chunky blocks stacked in a simple pattern, front view, with one plain straight ladder leaning against it, on one simple straight ground line.",
+      "model": "recraft-ai/recraft-v3-svg"
     },
     {
       "key": "a17",
@@ -169,7 +167,8 @@
       "usedBy": [
         17
       ],
-      "subject": "a chunky toy tank truck, side view, with one big smooth round tank, and three simple curved lines of water coming from the back, on one simple straight ground line."
+      "subject": "a chunky toy tank truck, side view, with one big smooth round tank, and three simple curved lines of water coming from the back, on one simple straight ground line.",
+      "model": "recraft-ai/recraft-v3-svg"
     },
     {
       "key": "a18",
@@ -187,7 +186,8 @@
       "usedBy": [
         19
       ],
-      "subject": "a chunky toy bulldozer, side view, standing on top of one smooth round hill, with one small plain flag on a straight pole."
+      "subject": "a chunky toy bulldozer, side view, standing on top of one smooth round hill, with one small plain flag on a straight pole.",
+      "model": "recraft-ai/recraft-v3-svg"
     },
     {
       "key": "a20",
@@ -196,7 +196,8 @@
       "usedBy": [
         20
       ],
-      "subject": "a chunky toy tower crane, side view, with one thick straight upright mast, one long straight arm across the top, and one big plain hook hanging from a single straight line, on one simple straight ground line."
+      "subject": "a chunky toy tower crane, side view, with one thick straight upright mast, one long straight arm across the top, and one big plain hook hanging from a single straight line, on one simple straight ground line.",
+      "model": "recraft-ai/recraft-v3-svg"
     },
     {
       "key": "a21",
@@ -205,7 +206,8 @@
       "usedBy": [
         21
       ],
-      "subject": "a single chunky toy wooden crate, front view: one smooth empty square with two plain straight boards across it."
+      "subject": "a single chunky toy wooden crate, front view: one smooth empty square with two plain straight boards across it.",
+      "model": "recraft-ai/recraft-v3-svg"
     },
     {
       "key": "a22",
@@ -214,7 +216,8 @@
       "usedBy": [
         22
       ],
-      "subject": "a single chunky cinder block, front view: one smooth empty rectangle with two plain square holes in it."
+      "subject": "a single chunky cinder block, front view: one smooth empty rectangle with two plain square holes in it.",
+      "model": "recraft-ai/recraft-v3-svg"
     },
     {
       "key": "a23",
@@ -234,7 +237,8 @@
         24,
         27
       ],
-      "subject": "a single chunky toy wheel, front view: one thick smooth circle with one smaller smooth circle inside it, and no tread."
+      "subject": "a single chunky toy wheel, front view: one thick smooth circle with one smaller smooth circle inside it, and no tread.",
+      "model": "recraft-ai/recraft-v3-svg"
     },
     {
       "key": "a25",
@@ -264,5 +268,34 @@
       ],
       "subject": "a single chunky toy toolbox, front view: one smooth empty box with a plain handle on top and two simple tools standing inside."
     }
-  ]
+  ],
+  "models": {
+    "black-forest-labs/flux-1.1-pro": {
+      "usdPerImage": 0.04,
+      "ext": "png",
+      "sizes": {
+        "4:3": {
+          "width": 1408,
+          "height": 1056
+        },
+        "1:1": {
+          "width": 1440,
+          "height": 1440
+        }
+      }
+    },
+    "recraft-ai/recraft-v3-svg": {
+      "usdPerImage": 0.08,
+      "ext": "svg",
+      "sizes": {
+        "4:3": {
+          "size": "1365x1024"
+        },
+        "1:1": {
+          "size": "1024x1024"
+        }
+      },
+      "style": "line_art"
+    }
+  }
 }
