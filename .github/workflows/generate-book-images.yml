@@ -1,0 +1,80 @@
+name: Generate book images
+
+# The agent sandbox cannot reach api.replicate.com (the egress proxy denies the
+# CONNECT), so image generation runs here, where the runner has open internet.
+# Generated PNGs are committed straight back to the branch rather than uploaded
+# as artifacts, because the sandbox cannot download artifacts either.
+
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: 'Image keys to build, comma separated (blank = all missing). Test batch: a06,a23,a29'
+        required: false
+        default: 'a06,a23,a29'
+      dry_run:
+        description: 'Print the prompts and the price, call nothing, charge nothing'
+        type: boolean
+        required: false
+        default: false
+      force:
+        description: 'Rebuild images that already exist in book/book1/art'
+        type: boolean
+        required: false
+        default: false
+      seed:
+        description: 'Override the book seed (42). Use for redoing a rejected image.'
+        required: false
+        default: ''
+      ceiling_usd:
+        description: 'Hard stop for this run, in dollars'
+        required: false
+        default: '5'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check the API key is present
+        if: ${{ inputs.dry_run == false }}
+        env:
+          REPLICATE_API_KEY: ${{ secrets.REPLICATE_API_KEY }}
+        run: |
+          if [ -z "$REPLICATE_API_KEY" ]; then
+            echo "::error::REPLICATE_API_KEY is not set as a repository secret. Add it under Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+          echo "Key present."
+
+      - name: Generate
+        env:
+          REPLICATE_API_KEY: ${{ secrets.REPLICATE_API_KEY }}
+          ONLY: ${{ inputs.only }}
+          DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
+          FORCE: ${{ inputs.force && '1' || '0' }}
+          SEED: ${{ inputs.seed }}
+          CEILING_USD: ${{ inputs.ceiling_usd }}
+        run: node book/scripts/generate-images.mjs
+
+      - name: Commit the images and the cost ledger
+        if: ${{ inputs.dry_run == false }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add book/book1/art costs.jsonl
+          if git diff --staged --quiet; then
+            echo "No new images — everything requested was already in the repo."
+            exit 0
+          fi
+          git commit -m "Generate book 1 images: ${{ inputs.only || 'all missing' }}"
+          git push origin HEAD:${{ github.ref_name }}
