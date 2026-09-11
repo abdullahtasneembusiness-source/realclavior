@@ -9,9 +9,12 @@ on:
   workflow_dispatch:
     inputs:
       only:
-        description: 'Image keys to build, comma separated (blank = all missing). Test batch: a06,a23,a29'
+        # Blank means everything missing. A non-blank default would come back
+        # whenever the field is cleared, which is how a run once asked for an
+        # image key that no longer existed.
+        description: 'Image keys to build, comma separated. Leave blank to build every image not yet generated.'
         required: false
-        default: 'a06,a23,a29'
+        default: ''
       dry_run:
         description: 'Print the prompts and the price, call nothing, charge nothing'
         type: boolean

@@ -493,10 +493,9 @@ CUTTERS = {
 # --- Assembly --------------------------------------------------------------
 
 
-def build(activity: dict, levels: dict, out: Path) -> None:
+def draw_activity(c: canvas.Canvas, activity: dict, levels: dict) -> None:
+    """Draw one activity onto the current page of an open canvas."""
     level = activity["level"]
-    c = canvas.Canvas(str(out), pagesize=(PAGE_W, PAGE_H))
-    c.setTitle(activity["title"])
 
     draw_tear_line(c)
     below = draw_header(c, activity["title"], level, levels[level]["name"])
