@@ -38,6 +38,13 @@ const ATTEMPTS = 1;
 /** Flux normally answers in well under a minute; these bound a hung request. */
 const REQ_TIMEOUT_MS = 150_000;
 const MAX_POLL_MS = 180_000;
+/**
+ * Replicate throttles prediction creation to 6 a minute with a burst of 1
+ * while the account holds under $5 of credit, so two back-to-back images 429.
+ * Wait this long between creations to stay under it. Top the account up past
+ * $5 and this can drop.
+ */
+const PACE_MS = Number(process.env.PACE_MS ?? 11_000);
 
 const DRY_RUN = process.env.DRY_RUN === "1";
 const FORCE = process.env.FORCE === "1";
@@ -162,9 +169,8 @@ async function predict(img) {
     safety_tolerance: 2,
   };
 
-  const res = await fetchWithTimeout(
-    `https://api.replicate.com/v1/models/${spec.model}/predictions`,
-    {
+  const create = () =>
+    fetchWithTimeout(`https://api.replicate.com/v1/models/${spec.model}/predictions`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${TOKEN}`,
@@ -172,8 +178,20 @@ async function predict(img) {
         Prefer: "wait",
       },
       body: JSON.stringify({ input }),
-    },
-  );
+    });
+
+  let res = await create();
+
+  // A 429 is the one failure worth waiting out. The request is refused before
+  // any image is made, so nothing was billed and asking again is not a second
+  // charge — unlike a failed prediction, which this script never retries.
+  for (let waits = 0; res.status === 429 && waits < 2; waits++) {
+    const body = await res.clone().json().catch(() => ({}));
+    const after = Math.min(Number(body.retry_after ?? 10), 60);
+    console.log(`throttled, waiting ${after}s`);
+    await sleep((after + 1) * 1000);
+    res = await create();
+  }
 
   if (!res.ok) {
     throw new Error(`Replicate returned ${res.status}: ${(await res.text()).slice(0, 400)}`);
@@ -213,7 +231,9 @@ mkdirSync(ART, { recursive: true });
 let spent = 0;
 const made = [];
 
-for (const img of todo) {
+for (const [i, img] of todo.entries()) {
+  if (i > 0 && PACE_MS > 0) await sleep(PACE_MS);
+
   const size = spec.sizes[img.aspect];
   process.stdout.write(`${img.key}  ${img.aspect} ${size.width}x${size.height}  ... `);
 

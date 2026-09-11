@@ -56,6 +56,37 @@ anyone's head:
   an automatic second charge.
 - Every charge is appended to `costs.jsonl` before the next call starts.
 
+## Cleaning the art
+
+Flux draws in soft grays and, left to itself, stipples anything that should
+read as sand or dirt. Neither prints well in a black-and-white interior, so
+every image goes through `scripts/clean-art.py` on its way to a page:
+threshold to pure black on white, drop ink blobs too small to be line work,
+then grow what is left so the lines are thick enough for a 3-year-old to stay
+inside. Output lands in `book1/art-clean/`.
+
+```bash
+python3 book/scripts/clean-art.py          # every image
+python3 book/scripts/clean-art.py a06      # just one
+```
+
+The split matters: cleanup fixes weight and speckle, and nothing else. If Flux
+returns a detailed machine instead of a toy, that is a prompt problem.
+
+## What Flux ignores
+
+Flux 1.1 Pro is distilled. It rejects a `negative_prompt` outright, and it
+largely ignores negations inside the prompt too — the first two test images
+came back stippled despite "no dots, no speckles, no stippling" sitting in the
+style block, because naming a thing tends to summon it.
+
+So the levers that actually work are positive ones: describing the line weight
+as a single marker stroke, anchoring simplification to a concrete object (a
+wooden toy, a preschool sticker), and saying what a surface *is* ("one smooth
+rounded shape") rather than what it must not have. The remaining "no ..."
+clauses in `style.txt` are kept because they cost nothing, not because they
+carry the result.
+
 ## Style consistency
 
 All 30 images share seed 42 and a byte-identical style block, which is what

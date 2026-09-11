@@ -66,8 +66,12 @@ jobs:
           CEILING_USD: ${{ inputs.ceiling_usd }}
         run: node book/scripts/generate-images.mjs
 
+      # always(), because a run that fails partway has still generated — and
+      # been charged for — everything before the failure. Letting the job end
+      # without this step throws that away and the images have to be bought
+      # a second time.
       - name: Commit the images and the cost ledger
-        if: ${{ inputs.dry_run == false }}
+        if: ${{ always() && inputs.dry_run == false }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
