@@ -9,8 +9,10 @@ invisible until then.
 
 Usage:
     python3 book/scripts/check_pdf.py book/out/interior.pdf
+    python3 book/scripts/check_pdf.py book/out/cover.pdf --size 17.421 11.25 --bleeds
 """
 
+import argparse
 import sys
 from pathlib import Path
 
@@ -63,7 +65,17 @@ def ink_bounds(path: Path, dpi: int = 72):
 
 
 def main() -> int:
-    path = Path(sys.argv[1] if len(sys.argv) > 1 else "book/out/interior.pdf")
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("pdf", nargs="?", type=Path, default=Path("book/out/interior.pdf"))
+    ap.add_argument("--size", nargs=2, type=float, metavar=("W", "H"), default=TRIM,
+                    help="expected page size in inches; a cover is not 8.5 x 11")
+    ap.add_argument("--bleeds", action="store_true",
+                    help="artwork is meant to run off the edge, so skip the "
+                         "margin check — a cover's safe area is checked by "
+                         "build_cover.py, which knows where the text is")
+    args = ap.parse_args()
+
+    path, expect = args.pdf, tuple(args.size)
     reader = PdfReader(str(path))
     ok = True
 
@@ -73,8 +85,8 @@ def main() -> int:
     sizes = {(round(float(p.mediabox.width) / 72, 3), round(float(p.mediabox.height) / 72, 3))
              for p in reader.pages}
     print(f"  page size       {', '.join(f'{w} x {h} in' for w, h in sorted(sizes))}")
-    if sizes != {TRIM}:
-        print(f"    FAIL: every page must be {TRIM[0]} x {TRIM[1]} in")
+    if sizes != {expect}:
+        print(f"    FAIL: every page must be {expect[0]} x {expect[1]} in")
         ok = False
 
     found = fonts(reader)
@@ -83,11 +95,14 @@ def main() -> int:
         if not embedded:
             ok = False
 
-    page, closest = ink_bounds(path)
-    print(f"  closest ink     {closest:.3f} in from the trim edge (page {page})")
-    if closest < MARGIN_IN - 0.005:
-        print(f"    FAIL: KDP wants at least {MARGIN_IN} in on a book without bleed")
-        ok = False
+    if args.bleeds:
+        print("  margins         skipped: this artwork bleeds off the edge by design")
+    else:
+        page, closest = ink_bounds(path)
+        print(f"  closest ink     {closest:.3f} in from the trim edge (page {page})")
+        if closest < MARGIN_IN - 0.005:
+            print(f"    FAIL: KDP wants at least {MARGIN_IN} in on a book without bleed")
+            ok = False
 
     print("  PASS" if ok else "  FAILED")
     return 0 if ok else 1
