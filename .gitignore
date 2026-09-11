@@ -41,3 +41,6 @@ next-env.d.ts
 
 # generated book art cleanup output, rebuilt from art/ by clean-art.py
 book/book1/art-clean/
+
+# book build output, rebuilt by the build scripts
+book/out/

@@ -33,7 +33,7 @@ from reportlab.pdfgen import canvas
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from build_pages import draw_art, register_fonts  # noqa: E402
+from build_pages import art_path, draw_art, draw_body, register_fonts  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
 BOOK = HERE.parent / "book1"
@@ -51,22 +51,21 @@ INK = black
 
 
 def _art(key: str) -> Path | None:
+    """Only raster art can be flat-filled, so the cover draws from Flux pages."""
     p = ART_CLEAN / f"{key}.png"
     return p if p.exists() else None
 
 
 def coloured(c, key: str, box, tint: Color):
     """
-    Draw one interior illustration twice: a solid tint, then its black lines
-    on top. The line art has no fillable regions of its own, so this reads as
-    a flat colour behind the drawing rather than true colouring-in — which is
-    what a chunky toddler cover wants anyway.
+    Fill the drawing's body with a flat colour, then lay its black lines on
+    top — the interior art, coloured in, rather than a tinted copy offset
+    behind it.
     """
     art = _art(key)
     if art is None:
         return False
-    x, y, w, h = box
-    draw_art(c, art, (x + 2.5, y - 2.5, w, h), fill=tint)
+    draw_body(c, art, box, tint)
     draw_art(c, art, box, fill=INK)
     return True
 
@@ -102,7 +101,7 @@ def build(out: Path, pages: int, bleed: float) -> tuple[float, float]:
 
     coloured(c, "a06", (front_x + 0.45 * inch, bl + TRIM_H * 0.36,
                         TRIM_W - 0.9 * inch, TRIM_H * 0.30), Color(0.96, 0.62, 0.15))
-    coloured(c, "a01", (front_x + 0.5 * inch, bl + TRIM_H * 0.14,
+    coloured(c, "a07", (front_x + 0.5 * inch, bl + TRIM_H * 0.14,
                         TRIM_W * 0.44, TRIM_H * 0.20), Color(0.98, 0.80, 0.18))
     coloured(c, "a23", (front_x + TRIM_W * 0.62, bl + TRIM_H * 0.14,
                         TRIM_W * 0.26, TRIM_H * 0.20), Color(0.94, 0.35, 0.22))
