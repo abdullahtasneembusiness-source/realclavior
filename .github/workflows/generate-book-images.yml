@@ -8,6 +8,11 @@ name: Generate book images
 on:
   workflow_dispatch:
     inputs:
+      upscale:
+        description: 'Upscale the cover illustration to 300 DPI instead of generating. Tries the cheapest upscaler that answers.'
+        type: boolean
+        required: false
+        default: false
       recover:
         description: 'Re-download images already generated and paid for but lost by a failed run. Generates nothing, charges nothing.'
         type: boolean
@@ -74,8 +79,14 @@ jobs:
           REPLICATE_API_KEY: ${{ secrets.REPLICATE_API_KEY }}
         run: node book/scripts/recover-images.mjs
 
+      - name: Upscale the cover
+        if: ${{ inputs.upscale }}
+        env:
+          REPLICATE_API_KEY: ${{ secrets.REPLICATE_API_KEY }}
+        run: node book/scripts/upscale.mjs
+
       - name: Generate
-        if: ${{ !inputs.recover }}
+        if: ${{ !inputs.recover && !inputs.upscale }}
         env:
           REPLICATE_API_KEY: ${{ secrets.REPLICATE_API_KEY }}
           SPEC: ${{ inputs.spec }}
