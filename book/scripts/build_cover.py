@@ -156,7 +156,7 @@ def build(out: Path, pages: int, bleed: float) -> tuple[float, float]:
 
     bullets = [
         "35 cutting activities across 5 levels",
-        "Big, bold trucks, diggers and cranes to color",
+        "Big, bold trucks, diggers and road machines to color",
         "Single-sided pages, so cutting one never ruins the next",
         "An easy tear-out line on every page",
         "A Scissor Master certificate at the end",

@@ -153,7 +153,33 @@ def crane():
     ]
 
 
+def crate():
+    """A shipping crate: a square with two boards across it."""
+    return [
+        _rounded_rect(0.08, 0.08, 0.92, 0.92, 0.05),
+        [(0.08, 0.36), (0.92, 0.36)],
+        [(0.08, 0.64), (0.92, 0.64)],
+    ]
+
+
+def block():
+    """A cinder block: a wide rectangle with two square holes."""
+    return [
+        _rounded_rect(0.04, 0.26, 0.96, 0.74, 0.04),
+        _rounded_rect(0.18, 0.38, 0.44, 0.62, 0.02),
+        _rounded_rect(0.56, 0.38, 0.82, 0.62, 0.02),
+    ]
+
+
+def plank():
+    """A single board, long and plain."""
+    return [_rounded_rect(0.03, 0.38, 0.97, 0.62, 0.05)]
+
+
 PIECES = {
+    "o-crate": crate,
+    "o-block": block,
+    "o-plank": plank,
     "p29cab": cab,
     "p29bed": bed,
     "p29wheel": wheel,

@@ -238,6 +238,22 @@ def draw_art(
     c.restoreState()
 
 
+def place(c: canvas.Canvas, key: str, box, fill=black) -> bool:
+    """
+    Draw whatever `key` names — a code-drawn piece or a generated image.
+
+    One entry point, so activities.json can name either without the page
+    builder caring which it got.
+    """
+    if draw_piece(c, key, box, fill=None if fill is black else fill):
+        return True
+    path = art_path(key)
+    if path is None:
+        return False
+    draw_art(c, path, box, fill=fill)
+    return True
+
+
 # --- Page furniture --------------------------------------------------------
 
 
@@ -467,7 +483,7 @@ SHAPE_FIT = {"square": 0.86, "rectangle": 0.84, "circle": 0.70,
              "triangle": 0.70, "diamond": 0.60, "halfcircle": 0.64}
 
 
-def cut_shape(c, level, box, spec, art: Path | None = None, art_for=None):
+def cut_shape(c, level, box, spec, art: str | None = None):
     """Level 4: a dashed outline around each object, two by two."""
     x0, y0, w, h = box
     n = spec.get("count", 4)
@@ -480,7 +496,7 @@ def cut_shape(c, level, box, spec, art: Path | None = None, art_for=None):
     slots = spec.get("slots")
     if slots:
         order = [s["shape"] for s in slots]
-        arts = [art_for(s["img"]) if art_for else None for s in slots]
+        arts = [s["img"] for s in slots]
     else:
         order = [shape] * n
         arts = [art] * n
@@ -489,12 +505,11 @@ def cut_shape(c, level, box, spec, art: Path | None = None, art_for=None):
         cx = x0 + cw * (i % cols) + cw / 2
         cy = y0 + h - ch * (i // cols) - ch / 2
         kind = order[i]
-        piece_art = arts[i]
-        if piece_art is not None:
+        if arts[i] is not None:
             inner = size * SHAPE_FIT.get(kind, 0.8)
             # A triangle's usable room sits low, a half circle's lower still.
             drop = {"triangle": -0.09, "halfcircle": -0.14}.get(kind, 0.0) * size
-            draw_art(c, piece_art, (cx - inner / 2, cy - inner / 2 + drop, inner, inner))
+            place(c, arts[i], (cx - inner / 2, cy - inner / 2 + drop, inner, inner))
 
         c.saveState(); _dashed(c, level)
         s = size * 0.98
@@ -524,7 +539,7 @@ def cut_shape(c, level, box, spec, art: Path | None = None, art_for=None):
         draw_scissors(c, cx - s / 2 - 14, cy + s / 2 - 6)
 
 
-def cut_pieces(c, level, box, spec, build, art_for):
+def cut_pieces(c, level, box, spec, build):
     """
     Level 5, odd page: the pieces laid out to be cut out.
 
@@ -541,13 +556,9 @@ def cut_pieces(c, level, box, spec, build, art_for):
     for i, piece in enumerate(build):
         cx = x0 + cw * (i % cols) + cw / 2
         cy = y0 + h - ch * (i // cols) - ch / 2
-        cell_box = (cx - cell / 2, cy - cell / 2, cell, cell)
         # The cut page shows every piece upright, however it is angled once
         # assembled, because a child cuts a shape, not an orientation.
-        if not draw_piece(c, piece["img"], cell_box):
-            png = art_for(piece["img"])
-            if png is not None:
-                draw_art(c, png, cell_box)
+        place(c, piece["img"], (cx - cell / 2, cy - cell / 2, cell, cell))
 
         c.saveState(); _dashed(c, level)
         c.roundRect(cx - cell * 0.58, cy - cell * 0.58, cell * 1.16, cell * 1.16, 10, stroke=1, fill=0)
@@ -555,7 +566,7 @@ def cut_pieces(c, level, box, spec, build, art_for):
         draw_scissors(c, cx - cell * 0.58 - 13, cy + cell * 0.58 - 6)
 
 
-def cut_glue(c, level, box, spec, build, art_for):
+def cut_glue(c, level, box, spec, build):
     """
     Level 5, even page: the finished shape as a faint dotted outline, so the
     cut pieces have somewhere to be glued.
@@ -572,9 +583,7 @@ def cut_glue(c, level, box, spec, build, art_for):
         pbox = (ax + side * piece["x"] - pw / 2, ay + side * piece["y"] - pw / 2, pw, pw)
         if draw_piece(c, piece["img"], pbox, fill=ghost, rot=piece.get("rot", 0)):
             continue
-        png = art_for(piece["img"])
-        if png is not None:
-            draw_art(c, png, pbox, fill=ghost)
+        place(c, piece["img"], pbox, fill=ghost)
 
     c.saveState()
     c.setStrokeGray(0.55)
@@ -619,27 +628,22 @@ def draw_activity(c: canvas.Canvas, activity: dict, levels: dict) -> None:
     work_h = work_top - work_bottom
 
     spec = activity["cut"]
-    art = art_path(activity["image"]) if activity.get("image") else None
-    art_for = art_path
     work_box = (CONTENT_L, work_bottom, CONTENT_W, work_h)
 
     if spec["type"] == "pieces":
-        cut_pieces(c, level, work_box, spec, activity["build"], art_for)
+        cut_pieces(c, level, work_box, spec, activity["build"])
     elif spec["type"] == "glue":
-        cut_glue(c, level, work_box, spec, activity["build"], art_for)
+        cut_glue(c, level, work_box, spec, activity["build"])
     elif spec["type"] == "shape":
         # Level 4 puts the art inside each cutting shape rather than above it.
-        cut_shape(c, level, work_box, spec, art, art_for)
+        cut_shape(c, level, work_box, spec, activity.get("image"))
     else:
         art_h = work_h * 0.52
-        if art is not None:
-            draw_art(c, art, (CONTENT_L, work_top - art_h, CONTENT_W, art_h))
+        if activity.get("image"):
+            place(c, activity["image"], (CONTENT_L, work_top - art_h, CONTENT_W, art_h))
         for placed in activity.get("scene", []):
-            png = art_for(placed["img"])
-            if png is None:
-                continue
             pw = CONTENT_W * placed["w"]
-            draw_art(c, png, (
+            place(c, placed["img"], (
                 CONTENT_L + CONTENT_W * placed["x"] - pw / 2,
                 work_bottom + work_h * placed["y"] - pw / 2,
                 pw, pw,
@@ -685,7 +689,9 @@ def main() -> int:
         needed = [a["image"]] if a.get("image") else []
         needed += [p["img"] for p in a.get("scene", [])]
         needed += [sl["img"] for sl in a.get("cut", {}).get("slots", [])]
-        missing = [k for k in dict.fromkeys(needed) if art_path(k) is None]
+        from pieces import PIECES
+        missing = [k for k in dict.fromkeys(needed)
+                   if k not in PIECES and art_path(k) is None]
         if missing:
             print(f"activity {n}: {', '.join(missing)} not generated yet, skipped")
             continue
