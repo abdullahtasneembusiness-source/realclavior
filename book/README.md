@@ -43,6 +43,20 @@ node book/scripts/generate-images.mjs                    # everything missing
 
 Whole book: 30 images, $1.20 at $0.04 each on FLUX 1.1 Pro.
 
+## Checking a PDF before upload
+
+```bash
+python3 book/scripts/check_pdf.py book/out/interior.pdf
+```
+
+Page count, page size, whether every font is embedded, and how close the
+nearest mark comes to the trim edge. KDP only reports these after a long
+upload, and an unembedded font is invisible until it does — reportlab
+defaults to Helvetica, one of the base-14 fonts it references without
+embedding, so a single default-font operation anywhere is enough to fail.
+`register_fonts()` makes Fredoka the canvas default so there is nothing
+unembedded to fall back to.
+
 ## Money
 
 This pipeline spends real money, so the rules are in the code rather than in

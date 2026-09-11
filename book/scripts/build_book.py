@@ -53,9 +53,9 @@ from build_pages import (  # noqa: E402
 BOOK = Path(__file__).resolve().parent.parent / "book1"
 OUT = BOOK.parent / "out"
 
-# Fill this in before publishing — it is the name on the copyright line and
-# the one KDP checks against the account. Left obvious on purpose.
-BRAND = "[BRAND NAME]"
+# The imprint name: the copyright line, the PDF author field, and the name
+# KDP checks against the account all read from here.
+BRAND = "Little Snippers Press"
 YEAR = 2026
 
 
@@ -122,7 +122,7 @@ def page_parents(c, data):
         ("Go at your child's pace", None),
         (None, "The five levels build up from single snips to cut-and-glue projects."),
         (None, "Repeat a level as often as you like. There is no order to keep to,"),
-        (None, "and a child who wants the same page four times is practising."),
+        (None, "and a child who wants the same page four times is practicing."),
         (None, ""),
         ("Stay close", None),
         (None, "Use child-safe scissors and supervise every session. Little hands tire"),
@@ -236,6 +236,7 @@ def build_book(out: Path) -> int:
     c = canvas.Canvas(str(out), pagesize=(PAGE_W, PAGE_H))
     c.setTitle(f"{data['series']}: Construction Site")
     c.setAuthor(BRAND)
+    c.setSubject("Scissor skills activity book for ages 3 to 5")
 
     for page in range(1, 77):
         if page in FRONT:
@@ -263,9 +264,6 @@ def main() -> int:
     n = build_book(args.out)
     size = args.out.stat().st_size / 1024
     print(f"{n} pages, {size:.0f} KB → {args.out}")
-    if BRAND.startswith("["):
-        print("Set BRAND in this file before uploading: the copyright page still says "
-              f"{BRAND}.")
     return 0
 
 

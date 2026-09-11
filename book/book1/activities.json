@@ -1,5 +1,5 @@
 {
-  "$comment": "The 35 activity pages. `page` is the printed interior page number (page = n * 2 + 3); each activity sits on an odd page with a blank back so cutting one page never ruins the next. `image` names either a generated illustration in images.json or a shape drawn by scripts/pieces.py — the page builder takes both. The list was reshaped around the art that passed the quality checklist after fourteen subjects were dropped.",
+  "$comment": "The plan's own 35 activities. `page` is the printed interior page number (page = n * 2 + 3); each activity sits on an odd page with a blank back so cutting one page never ruins the next. `image` names an illustration in images.json; level 5's pieces come from scripts/pieces.py and are listed under `build` with the position each takes in the finished model, so the cut page and the glue page draw the same shape at the same size. Art is reused only where the plan says so: activities 27 and 35, the title page and the certificate.",
   "title": "Cut, Color & Build: Construction Site",
   "series": "Cut, Color & Build",
   "trim": {
@@ -64,22 +64,24 @@
       "n": 1,
       "page": 5,
       "level": 1,
-      "title": "Snip the Sand for the Dump Truck",
-      "image": "a06",
+      "title": "Snip the Grass for the Digger",
+      "image": "a01",
       "cut": {
         "type": "snip",
-        "count": 8
+        "count": 8,
+        "note": "grass strips along the bottom edge"
       }
     },
     {
       "n": 2,
       "page": 7,
       "level": 1,
-      "title": "Snip the Bricks",
-      "image": "a04",
+      "title": "Snip the Wooden Planks",
+      "image": "a02",
       "cut": {
         "type": "snip",
-        "count": 7
+        "count": 7,
+        "note": "plank ends along the bottom edge"
       }
     },
     {
@@ -90,29 +92,32 @@
       "image": "a03",
       "cut": {
         "type": "snip",
-        "count": 8
+        "count": 8,
+        "note": "tape pieces along the bottom edge"
       }
     },
     {
       "n": 4,
       "page": 11,
       "level": 1,
-      "title": "Snip Past the Cones",
-      "image": "a18",
+      "title": "Snip the Bricks",
+      "image": "a04",
       "cut": {
         "type": "snip",
-        "count": 6
+        "count": 7,
+        "note": "brick edges along the bottom edge"
       }
     },
     {
       "n": 5,
       "page": 13,
       "level": 1,
-      "title": "Snip the Toolbox Tags",
-      "image": "a28",
+      "title": "Snip the Fence Posts",
+      "image": "a05",
       "cut": {
         "type": "snip",
-        "count": 7
+        "count": 6,
+        "note": "fence post strips along the bottom edge"
       }
     },
     {
@@ -143,6 +148,30 @@
       "n": 8,
       "page": 19,
       "level": 2,
+      "title": "Push the Dirt, Bulldozer!",
+      "image": "a08",
+      "cut": {
+        "type": "straight",
+        "orientation": "horizontal",
+        "count": 3
+      }
+    },
+    {
+      "n": 9,
+      "page": 21,
+      "level": 2,
+      "title": "Cut the Pipes for the Crane",
+      "image": "a09",
+      "cut": {
+        "type": "straight",
+        "orientation": "vertical",
+        "count": 4
+      }
+    },
+    {
+      "n": 10,
+      "page": 23,
+      "level": 2,
       "title": "Roll the Road Flat",
       "image": "a10",
       "cut": {
@@ -153,8 +182,8 @@
       }
     },
     {
-      "n": 9,
-      "page": 21,
+      "n": 11,
+      "page": 25,
       "level": 2,
       "title": "Tow Truck to the Rescue",
       "image": "a11",
@@ -165,43 +194,31 @@
       }
     },
     {
-      "n": 10,
-      "page": 23,
+      "n": 12,
+      "page": 27,
       "level": 2,
       "title": "Lift the Boxes, Forklift!",
       "image": "a12",
       "cut": {
         "type": "corner",
-        "count": 3
-      }
-    },
-    {
-      "n": 11,
-      "page": 25,
-      "level": 2,
-      "title": "Cut the Posts for the Road Sign",
-      "image": "a26",
-      "cut": {
-        "type": "straight",
-        "orientation": "vertical",
-        "count": 4
-      }
-    },
-    {
-      "n": 12,
-      "page": 27,
-      "level": 2,
-      "title": "Hard Hats on the Way",
-      "image": "a25",
-      "cut": {
-        "type": "straight",
-        "orientation": "horizontal",
-        "count": 3
+        "count": 3,
+        "note": "one right-angle turn each"
       }
     },
     {
       "n": 13,
       "page": 29,
+      "level": 3,
+      "title": "Zigzag Over the Rocks",
+      "image": "a13",
+      "cut": {
+        "type": "zigzag",
+        "count": 3
+      }
+    },
+    {
+      "n": 14,
+      "page": 31,
       "level": 3,
       "title": "Bump Over the Hills",
       "image": "a14",
@@ -212,33 +229,23 @@
       }
     },
     {
-      "n": 14,
-      "page": 31,
-      "level": 3,
-      "title": "Zigzag Past the Cones",
-      "image": "a18",
-      "cut": {
-        "type": "zigzag",
-        "count": 3
-      }
-    },
-    {
       "n": 15,
       "page": 33,
       "level": 3,
-      "title": "Curvy Road Around the Cone",
-      "image": "a23",
+      "title": "Dig a Curvy Trench",
+      "image": "a15",
       "cut": {
-        "type": "scurve",
-        "count": 3
+        "type": "curve",
+        "count": 3,
+        "note": "gentle single curves"
       }
     },
     {
       "n": 16,
       "page": 35,
       "level": 3,
-      "title": "Climb the Brick Steps",
-      "image": "a04",
+      "title": "Climb the Stairs to the Top",
+      "image": "a16",
       "cut": {
         "type": "steps",
         "count": 2
@@ -248,8 +255,8 @@
       "n": 17,
       "page": 37,
       "level": 3,
-      "title": "Wiggly Water Road",
-      "image": "a07",
+      "title": "Wiggly Water Spray",
+      "image": "a17",
       "cut": {
         "type": "wave",
         "count": 3,
@@ -260,19 +267,31 @@
       "n": 18,
       "page": 39,
       "level": 3,
-      "title": "The Tow Truck's Bumpy Trip",
-      "image": "a11",
+      "title": "Curvy Road Around the Cones",
+      "image": "a18",
       "cut": {
-        "type": "mixed",
-        "count": 2
+        "type": "scurve",
+        "count": 3
       }
     },
     {
       "n": 19,
       "page": 41,
       "level": 3,
-      "title": "Swing Around the Sign",
-      "image": "a26",
+      "title": "The Bulldozer's Bumpy Trip",
+      "image": "a19",
+      "cut": {
+        "type": "mixed",
+        "count": 2,
+        "note": "straight that turns into a zigzag"
+      }
+    },
+    {
+      "n": 20,
+      "page": 43,
+      "level": 3,
+      "title": "Swing the Crane Hook",
+      "image": "a20",
       "cut": {
         "type": "arc",
         "count": 3,
@@ -280,19 +299,32 @@
       }
     },
     {
-      "n": 20,
-      "page": 43,
-      "level": 3,
-      "title": "The Long Curvy Haul",
-      "image": "a12",
+      "n": 21,
+      "page": 45,
+      "level": 4,
+      "title": "Cut Out the Crates",
+      "image": "a21",
       "cut": {
-        "type": "curve",
-        "count": 3
+        "type": "shape",
+        "shape": "square",
+        "count": 4
       }
     },
     {
-      "n": 21,
-      "page": 45,
+      "n": 22,
+      "page": 47,
+      "level": 4,
+      "title": "Cut Out the Building Blocks",
+      "image": "a22",
+      "cut": {
+        "type": "shape",
+        "shape": "rectangle",
+        "count": 4
+      }
+    },
+    {
+      "n": 23,
+      "page": 49,
       "level": 4,
       "title": "Cut Out the Traffic Cones",
       "image": "a23",
@@ -303,35 +335,11 @@
       }
     },
     {
-      "n": 22,
-      "page": 47,
-      "level": 4,
-      "title": "Cut Out the Hard Hats",
-      "image": "a25",
-      "cut": {
-        "type": "shape",
-        "shape": "halfcircle",
-        "count": 4
-      }
-    },
-    {
-      "n": 23,
-      "page": 49,
-      "level": 4,
-      "title": "Cut Out the Road Signs",
-      "image": "a26",
-      "cut": {
-        "type": "shape",
-        "shape": "diamond",
-        "count": 4
-      }
-    },
-    {
       "n": 24,
       "page": 51,
       "level": 4,
       "title": "Cut Out the Truck Wheels",
-      "image": "p29wheel",
+      "image": "a24",
       "cut": {
         "type": "shape",
         "shape": "circle",
@@ -342,23 +350,23 @@
       "n": 25,
       "page": 53,
       "level": 4,
-      "title": "Cut Out the Crates",
-      "image": "o-crate",
+      "title": "Cut Out the Hard Hats",
+      "image": "a25",
       "cut": {
-        "type": "shape",
-        "shape": "square",
-        "count": 4
+        "type": "outline",
+        "count": 4,
+        "note": "cutting line follows the whole hat, brim included"
       }
     },
     {
       "n": 26,
       "page": 55,
       "level": 4,
-      "title": "Cut Out the Building Blocks",
-      "image": "o-block",
+      "title": "Cut Out the Road Signs",
+      "image": "a26",
       "cut": {
         "type": "shape",
-        "shape": "rectangle",
+        "shape": "diamond",
         "count": 4
       }
     },
@@ -366,20 +374,13 @@
       "n": 27,
       "page": 57,
       "level": 4,
-      "title": "Cut Out the Toolboxes",
-      "image": "a28",
-      "cut": {
-        "type": "outline",
-        "count": 2,
-        "note": "cutting line follows the toolbox silhouette"
-      }
-    },
-    {
-      "n": 28,
-      "page": 59,
-      "level": 4,
       "title": "Signs, Wheels and Cones",
       "image": null,
+      "reuses": [
+        "a23",
+        "a24",
+        "a26"
+      ],
       "cut": {
         "type": "shape",
         "shape": "mixed",
@@ -391,7 +392,7 @@
           },
           {
             "shape": "circle",
-            "img": "p29wheel"
+            "img": "a24"
           },
           {
             "shape": "diamond",
@@ -403,19 +404,26 @@
           },
           {
             "shape": "circle",
-            "img": "p29wheel"
+            "img": "a24"
           },
           {
             "shape": "diamond",
             "img": "a26"
           }
         ]
-      },
-      "reuses": [
-        "a23",
-        "a26",
-        "p29wheel"
-      ]
+      }
+    },
+    {
+      "n": 28,
+      "page": 59,
+      "level": 4,
+      "title": "Cut Out the Toolbox",
+      "image": "a28",
+      "cut": {
+        "type": "outline",
+        "count": 2,
+        "note": "cutting line follows the toolbox silhouette"
+      }
     },
     {
       "n": 29,
@@ -429,30 +437,30 @@
       "build": [
         {
           "img": "p29bed",
-          "x": 0.38,
-          "y": 0.5,
-          "w": 0.58,
+          "x": 0.36,
+          "y": 0.52,
+          "w": 0.54,
           "label": "dump bed"
         },
         {
           "img": "p29cab",
-          "x": 0.76,
-          "y": 0.45,
-          "w": 0.32,
+          "x": 0.71,
+          "y": 0.47,
+          "w": 0.3,
           "label": "cab"
         },
         {
           "img": "p29wheel",
-          "x": 0.3,
-          "y": 0.3,
-          "w": 0.24,
+          "x": 0.29,
+          "y": 0.32,
+          "w": 0.22,
           "label": "wheel"
         },
         {
           "img": "p29wheel",
-          "x": 0.7,
-          "y": 0.3,
-          "w": 0.24,
+          "x": 0.67,
+          "y": 0.32,
+          "w": 0.22,
           "label": "wheel"
         }
       ]
@@ -469,36 +477,35 @@
         "p29wheel"
       ],
       "cut": {
-        "type": "glue",
-        "note": "road scene with the dotted truck outline"
+        "type": "glue"
       },
       "build": [
         {
           "img": "p29bed",
-          "x": 0.38,
-          "y": 0.5,
-          "w": 0.58,
+          "x": 0.36,
+          "y": 0.52,
+          "w": 0.54,
           "label": "dump bed"
         },
         {
           "img": "p29cab",
-          "x": 0.76,
-          "y": 0.45,
-          "w": 0.32,
+          "x": 0.71,
+          "y": 0.47,
+          "w": 0.3,
           "label": "cab"
         },
         {
           "img": "p29wheel",
-          "x": 0.3,
-          "y": 0.3,
-          "w": 0.24,
+          "x": 0.29,
+          "y": 0.32,
+          "w": 0.22,
           "label": "wheel"
         },
         {
           "img": "p29wheel",
-          "x": 0.7,
-          "y": 0.3,
-          "w": 0.24,
+          "x": 0.67,
+          "y": 0.32,
+          "w": 0.22,
           "label": "wheel"
         }
       ]
@@ -515,39 +522,39 @@
       "build": [
         {
           "img": "p31track",
-          "x": 0.4,
-          "y": 0.17,
-          "w": 0.66,
+          "x": 0.42,
+          "y": 0.19,
+          "w": 0.62,
           "label": "tracks"
         },
         {
           "img": "p31cab",
-          "x": 0.3,
+          "x": 0.32,
           "y": 0.46,
-          "w": 0.4,
+          "w": 0.38,
           "label": "cab"
         },
         {
           "img": "p31arm",
-          "x": 0.6,
-          "y": 0.58,
-          "w": 0.38,
-          "rot": 22,
+          "x": 0.58,
+          "y": 0.52,
+          "w": 0.34,
+          "rot": 20,
           "label": "boom"
         },
         {
           "img": "p31arm",
-          "x": 0.82,
-          "y": 0.42,
-          "w": 0.34,
-          "rot": -58,
+          "x": 0.796,
+          "y": 0.4535,
+          "w": 0.3,
+          "rot": -60,
           "label": "stick"
         },
         {
           "img": "p31bucket",
-          "x": 0.86,
-          "y": 0.19,
-          "w": 0.22,
+          "x": 0.865,
+          "y": 0.258,
+          "w": 0.2,
           "label": "bucket"
         }
       ]
@@ -565,45 +572,44 @@
         "p31track"
       ],
       "cut": {
-        "type": "glue",
-        "note": "dig site with the dotted outline"
+        "type": "glue"
       },
       "build": [
         {
           "img": "p31track",
-          "x": 0.4,
-          "y": 0.17,
-          "w": 0.66,
+          "x": 0.42,
+          "y": 0.19,
+          "w": 0.62,
           "label": "tracks"
         },
         {
           "img": "p31cab",
-          "x": 0.3,
+          "x": 0.32,
           "y": 0.46,
-          "w": 0.4,
+          "w": 0.38,
           "label": "cab"
         },
         {
           "img": "p31arm",
-          "x": 0.6,
-          "y": 0.58,
-          "w": 0.38,
-          "rot": 22,
+          "x": 0.58,
+          "y": 0.52,
+          "w": 0.34,
+          "rot": 20,
           "label": "boom"
         },
         {
           "img": "p31arm",
-          "x": 0.82,
-          "y": 0.42,
-          "w": 0.34,
-          "rot": -58,
+          "x": 0.796,
+          "y": 0.4535,
+          "w": 0.3,
+          "rot": -60,
           "label": "stick"
         },
         {
           "img": "p31bucket",
-          "x": 0.86,
-          "y": 0.19,
-          "w": 0.22,
+          "x": 0.865,
+          "y": 0.258,
+          "w": 0.2,
           "label": "bucket"
         }
       ]
@@ -620,37 +626,38 @@
       "build": [
         {
           "img": "p33floor",
-          "x": 0.36,
-          "y": 0.2,
-          "w": 0.48,
+          "x": 0.34,
+          "y": 0.19,
+          "w": 0.46,
           "label": "floor"
         },
         {
           "img": "p33floor",
-          "x": 0.36,
-          "y": 0.42,
-          "w": 0.48,
+          "x": 0.34,
+          "y": 0.4,
+          "w": 0.46,
           "label": "floor"
         },
         {
           "img": "p33floor",
-          "x": 0.36,
-          "y": 0.64,
-          "w": 0.48,
+          "x": 0.34,
+          "y": 0.61,
+          "w": 0.46,
           "label": "floor"
         },
         {
           "img": "p33roof",
-          "x": 0.36,
-          "y": 0.83,
-          "w": 0.54,
+          "x": 0.34,
+          "y": 0.8,
+          "w": 0.5,
           "label": "roof"
         },
         {
           "img": "p33crane",
-          "x": 0.83,
-          "y": 0.54,
-          "w": 0.46,
+          "x": 0.8,
+          "y": 0.48,
+          "w": 0.3,
+          "h": 0.82,
           "label": "crane"
         }
       ]
@@ -667,43 +674,43 @@
         "p33roof"
       ],
       "cut": {
-        "type": "glue",
-        "note": "dotted outline standing next to the crane"
+        "type": "glue"
       },
       "build": [
         {
           "img": "p33floor",
-          "x": 0.36,
-          "y": 0.2,
-          "w": 0.48,
+          "x": 0.34,
+          "y": 0.19,
+          "w": 0.46,
           "label": "floor"
         },
         {
           "img": "p33floor",
-          "x": 0.36,
-          "y": 0.42,
-          "w": 0.48,
+          "x": 0.34,
+          "y": 0.4,
+          "w": 0.46,
           "label": "floor"
         },
         {
           "img": "p33floor",
-          "x": 0.36,
-          "y": 0.64,
-          "w": 0.48,
+          "x": 0.34,
+          "y": 0.61,
+          "w": 0.46,
           "label": "floor"
         },
         {
           "img": "p33roof",
-          "x": 0.36,
-          "y": 0.83,
-          "w": 0.54,
+          "x": 0.34,
+          "y": 0.8,
+          "w": 0.5,
           "label": "roof"
         },
         {
           "img": "p33crane",
-          "x": 0.83,
-          "y": 0.54,
-          "w": 0.46,
+          "x": 0.8,
+          "y": 0.48,
+          "w": 0.3,
+          "h": 0.82,
           "label": "crane"
         }
       ]
@@ -716,24 +723,24 @@
       "image": null,
       "reuses": [
         "a06",
-        "a10"
+        "a16"
       ],
       "cut": {
         "type": "path",
-        "note": "one long path mixing straight, zigzag, wave and curve, truck to finished building"
+        "note": "straight into zigzag into wave into curve"
       },
       "scene": [
         {
           "img": "a06",
-          "x": 0.2,
-          "y": 0.76,
-          "w": 0.4
+          "x": 0.19,
+          "y": 0.84,
+          "w": 0.46
         },
         {
-          "img": "a10",
-          "x": 0.81,
-          "y": 0.76,
-          "w": 0.34
+          "img": "a16",
+          "x": 0.82,
+          "y": 0.84,
+          "w": 0.36
         }
       ]
     }

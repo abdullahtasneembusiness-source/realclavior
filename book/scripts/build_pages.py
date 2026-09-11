@@ -27,17 +27,15 @@ import numpy as np
 import potrace
 from scipy import ndimage
 from PIL import Image
+from reportlab import rl_config
 from reportlab.lib.colors import Color, black, white
 from reportlab.lib.units import inch
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
-from reportlab.graphics import renderPDF
-from reportlab.graphics.shapes import Drawing, Group
 from reportlab.pdfgen.canvas import FILL_EVEN_ODD
-from svglib.svglib import svg2rlg
 
-from pieces import draw_piece
+from pieces import PIECES, draw_piece, draw_piece_cutline, piece_box
 
 HERE = Path(__file__).resolve().parent
 BOOK = HERE.parent / "book1"
@@ -52,13 +50,10 @@ def art_path(key: str) -> Path | None:
     """
     Where an illustration lives, whichever model drew it.
 
-    Flux images are cleaned and traced, so they come from art-clean. Recraft
-    returns vector already, so its SVG is used straight from art.
+    Every illustration is cleaned and traced, so they all come from art-clean.
     """
-    for candidate in (ART_CLEAN / f"{key}.png", ART_RAW / f"{key}.svg"):
-        if candidate.exists():
-            return candidate
-    return None
+    candidate = ART_CLEAN / f"{key}.png"
+    return candidate if candidate.exists() else None
 
 # --- Page geometry, all in points (72 to the inch) -------------------------
 PAGE_W, PAGE_H = 8.5 * inch, 11 * inch
@@ -77,10 +72,25 @@ CONTENT_W = CONTENT_R - CONTENT_L
 LEVEL_STROKE = {1: 5.0, 2: 4.2, 3: 3.4, 4: 3.0, 5: 2.4}
 LEVEL_DASH = {1: (10, 7), 2: (11, 8), 3: (9, 7), 4: (8, 6), 5: (7, 5)}
 
+# A first snip is made from the paper's edge inward, so level 1's lines run
+# as low as KDP allows. The endpoint sits above 0.25in by half the line
+# weight, because a round cap paints past where the line stops.
+SNIP_BOTTOM = 0.31 * inch
+
 
 def register_fonts() -> None:
+    """
+    Register Fredoka and make it the canvas default.
+
+    reportlab's default is Helvetica, one of the base-14 fonts it references
+    without embedding. KDP rejects an interior with an unembedded font, and a
+    single default-font operation anywhere — a drawing, a form, a stray text
+    call — is enough to put Helvetica in the file. Setting the base font means
+    there is no unembedded font to fall back to.
+    """
     for weight in ("Regular", "SemiBold", "Bold"):
         pdfmetrics.registerFont(TTFont(f"Fredoka-{weight}", FONTS / f"Fredoka-{weight}.ttf"))
+    rl_config.canvas_basefontname = "Fredoka-Regular"
 
 
 # --- Illustration ----------------------------------------------------------
@@ -112,41 +122,7 @@ def trace(png: Path) -> tuple[potrace.Path, tuple[int, int, int, int]]:
 
 
 @lru_cache(maxsize=64)
-def load_svg(path: Path):
-    """Recraft returns real vector art, so it needs no cleanup and no tracing."""
-    return svg2rlg(str(path))
-
-
-def _recolour(node, colour) -> None:
-    """Force every shape in a drawing to one colour, for the glue page's ghost."""
-    for attr in ("fillColor", "strokeColor"):
-        if getattr(node, attr, None) is not None:
-            setattr(node, attr, colour)
-    for child in getattr(node, "contents", ()):
-        _recolour(child, colour)
-
-
-def draw_svg(c: canvas.Canvas, path: Path, box, fill=None) -> None:
-    """Draw an SVG illustration to fit (x, y, w, h), cropped to its own ink."""
-    src = load_svg(path)
-    x0, y0, x1, y1 = src.getBounds()
-    iw, ih = max(x1 - x0, 1e-6), max(y1 - y0, 1e-6)
-    bx, by, bw, bh = box
-    scale = min(bw / iw, bh / ih)
-
-    # The source drawing is shared by the cache, so wrap rather than mutate it.
-    group = Group(*src.contents)
-    group.transform = (scale, 0, 0, scale, -x0 * scale, -y0 * scale)
-    if fill is not None and fill is not black:
-        _recolour(group, fill)
-
-    out = Drawing(iw * scale, ih * scale)
-    out.add(group)
-    renderPDF.draw(out, c, bx + (bw - iw * scale) / 2, by + (bh - ih * scale) / 2)
-
-
-@lru_cache(maxsize=32)
-def silhouette(png: Path):
+def silhouette(png: Path, grow: int = 0):
     """
     Trace the drawing's filled body: its ink plus everything enclosed by it.
 
@@ -154,6 +130,10 @@ def silhouette(png: Path):
     the lines rather than what they surround. The body is found by flooding
     white inward from the border — anything the flood cannot reach is inside
     the drawing.
+
+    `grow` pushes the body outward by that many pixels, which is how a cutting
+    line follows an illustration's own shape with a little clearance instead
+    of slicing through the lines a child just coloured.
     """
     a = np.asarray(Image.open(png).convert("L"))
     ink = a < 128
@@ -162,6 +142,9 @@ def silhouette(png: Path):
     edge = np.unique(np.concatenate([labels[0], labels[-1], labels[:, 0], labels[:, -1]]))
     outside = np.isin(labels, edge[edge != 0])
     body = ~outside
+    if grow:
+        body = ndimage.binary_dilation(body, ndimage.generate_binary_structure(2, 2),
+                                       iterations=grow)
 
     ys, xs = np.nonzero(body)
     bbox = (
@@ -174,8 +157,6 @@ def silhouette(png: Path):
 
 def draw_body(c: canvas.Canvas, png: Path, box, fill) -> None:
     """Fill the drawing's body with one flat colour, for the cover."""
-    if png.suffix.lower() == ".svg":
-        return
     path, (ix0, iy0, ix1, iy1) = silhouette(png)
     iw, ih = ix1 - ix0, iy1 - iy0
     bx, by, bw, bh = box
@@ -204,10 +185,6 @@ def draw_art(
     fill=black,
 ) -> None:
     """Draw an illustration to fit inside (x, y, w, h), centred."""
-    if png.suffix.lower() == ".svg":
-        draw_svg(c, png, box, fill)
-        return
-
     path, (ix0, iy0, ix1, iy1) = trace(png)
     iw, ih = ix1 - ix0, iy1 - iy0
     bx, by, bw, bh = box
@@ -283,7 +260,9 @@ def draw_tear_line(c: canvas.Canvas) -> None:
     c.saveState()
     c.setFont("Fredoka-Regular", 7.5)
     c.setFillColor(black)
-    c.translate(TEAR_X - 5, PAGE_H / 2)
+    # Far enough left that a cutting line's scissor mark, which sits just
+    # inside the content edge, never lands on top of it.
+    c.translate(TEAR_X - 15, PAGE_H / 2)
     c.rotate(90)
     c.drawCentredString(0, 0, "Cut here to remove page")
     c.restoreState()
@@ -320,11 +299,19 @@ def draw_header(c: canvas.Canvas, title: str, level: int, level_name: str) -> fl
     return by - 14
 
 
-def draw_footer(c: canvas.Canvas, page: int) -> None:
+def draw_footer(c: canvas.Canvas, page: int, note: str = "Color first, then cut!",
+                y: float | None = None) -> None:
+    """
+    Page number and a one-line instruction.
+
+    `y` lifts the line above the work area, for the level 1 snips that have to
+    run right down to the bottom of the page.
+    """
+    baseline = M_BOTTOM - 2 if y is None else y
     c.setFont("Fredoka-Regular", 9)
     c.setFillColor(black)
-    c.drawString(CONTENT_L, M_BOTTOM - 2, "Color first, then cut!")
-    c.drawRightString(CONTENT_R, M_BOTTOM - 2, str(page))
+    c.drawString(CONTENT_L, baseline, note)
+    c.drawRightString(CONTENT_R, baseline, str(page))
 
 
 # --- Cutting guides --------------------------------------------------------
@@ -338,20 +325,24 @@ def _dashed(c: canvas.Canvas, level: int):
 
 
 def cut_snip(c, level, box, spec):
-    """Level 1: short snips rising from the bottom edge of the work area."""
-    x0, y0, w, h = box
+    """
+    Level 1: snips rising from the bottom of the page.
+
+    They run down to SNIP_BOTTOM rather than stopping inside the work area,
+    because a first snip is made by pushing the scissors in from the paper's
+    edge. That is as low as KDP allows content on a book without bleed, so the
+    footer moves up out of the way instead.
+    """
+    x0, _, w, _ = box
     n = spec.get("count", 8)
-    length = 1.5 * inch
+    top = SNIP_BOTTOM + 1.6 * inch
     gap = w / n
-    # The scissor marks hang below each snip, so the snips start high enough
-    # to keep them clear of the footer line.
-    base = y0 + 20
     for i in range(n):
         x = x0 + gap * (i + 0.5)
         c.saveState(); _dashed(c, level)
-        c.line(x, base, x, base + length)
+        c.line(x, SNIP_BOTTOM, x, top)
         c.restoreState()
-        draw_scissors(c, x - 4.5, base - 15)
+        draw_scissors(c, x - 4.5, top + 8)
 
 
 def cut_straight(c, level, box, spec):
@@ -462,16 +453,22 @@ def cut_mixed(c, level, box, spec):
 
 
 def cut_path(c, level, box, spec):
-    """Activity 35: one long route mixing every path the book has taught."""
+    """
+    Activity 35: one long route that revisits every path the book has taught.
+
+    Straight, then zigzag, then wave, then curve, drawn once across the full
+    width and tall enough to use the page rather than skim across it.
+    """
     def fn(t):
-        if t < 0.25:
+        if t < 0.22:                       # the straight roads of level 2
             return 0.0
-        if t < 0.5:
-            u = ((t - 0.25) * 8) % 1.0
-            return 16 * (4 * abs(u - 0.5) - 1)
-        if t < 0.75:
-            return 16 * math.sin(2 * math.pi * (t - 0.5) * 4)
-        return 22 * math.sin(math.pi * (t - 0.75) * 2)
+        if t < 0.48:                       # the zigzag of level 3
+            u = ((t - 0.22) * 7) % 1.0
+            return 30 * (4 * abs(u - 0.5) - 1)
+        if t < 0.74:                       # the waves
+            return 30 * math.sin(2 * math.pi * (t - 0.48) * 3.4)
+        return 44 * math.sin(math.pi * (t - 0.74) / 0.26)   # one long curve
+
     _wiggle(c, level, box, spec, fn, n=1)
 
 
@@ -481,6 +478,17 @@ SHAPES = ("square", "rectangle", "triangle", "circle", "halfcircle", "diamond", 
 # or a diamond encloses far less than its bounding square does.
 SHAPE_FIT = {"square": 0.86, "rectangle": 0.84, "circle": 0.70,
              "triangle": 0.70, "diamond": 0.60, "halfcircle": 0.64}
+
+
+def _shape_start(kind, cx, cy, s):
+    """Where a child puts the scissors in, per shape, so the mark sits on it."""
+    return {
+        "circle": (cx - s / 2, cy),
+        "halfcircle": (cx - s / 2, cy - s / 4),
+        "triangle": (cx - s / 2, cy - s / 2),
+        "diamond": (cx - s / 2, cy),
+        "rectangle": (cx - s / 2, cy + s * 0.35),
+    }.get(kind, (cx - s / 2, cy + s / 2))
 
 
 def cut_shape(c, level, box, spec, art: str | None = None):
@@ -495,8 +503,8 @@ def cut_shape(c, level, box, spec, art: str | None = None):
 
     slots = spec.get("slots")
     if slots:
-        order = [s["shape"] for s in slots]
-        arts = [s["img"] for s in slots]
+        order = [sl["shape"] for sl in slots]
+        arts = [sl["img"] for sl in slots]
     else:
         order = [shape] * n
         arts = [art] * n
@@ -512,93 +520,199 @@ def cut_shape(c, level, box, spec, art: str | None = None):
             place(c, arts[i], (cx - inner / 2, cy - inner / 2 + drop, inner, inner))
 
         c.saveState(); _dashed(c, level)
-        s = size * 0.98
+        s_ = size * 0.98
         if kind == "circle":
-            c.circle(cx, cy, s / 2, stroke=1, fill=0)
+            c.circle(cx, cy, s_ / 2, stroke=1, fill=0)
         elif kind == "halfcircle":
             p = c.beginPath()
-            p.moveTo(cx - s / 2, cy - s / 4)
-            p.arcTo(cx - s / 2, cy - s / 4 - s / 2, cx + s / 2, cy - s / 4 + s / 2, 0, 180)
+            p.moveTo(cx - s_ / 2, cy - s_ / 4)
+            p.arcTo(cx - s_ / 2, cy - s_ / 4 - s_ / 2, cx + s_ / 2, cy - s_ / 4 + s_ / 2, 0, 180)
             p.close()
             c.drawPath(p, stroke=1, fill=0)
         elif kind == "triangle":
             p = c.beginPath()
-            p.moveTo(cx, cy + s / 2); p.lineTo(cx + s / 2, cy - s / 2)
-            p.lineTo(cx - s / 2, cy - s / 2); p.close()
+            p.moveTo(cx, cy + s_ / 2); p.lineTo(cx + s_ / 2, cy - s_ / 2)
+            p.lineTo(cx - s_ / 2, cy - s_ / 2); p.close()
             c.drawPath(p, stroke=1, fill=0)
         elif kind == "diamond":
             p = c.beginPath()
-            p.moveTo(cx, cy + s / 2); p.lineTo(cx + s / 2, cy)
-            p.lineTo(cx, cy - s / 2); p.lineTo(cx - s / 2, cy); p.close()
+            p.moveTo(cx, cy + s_ / 2); p.lineTo(cx + s_ / 2, cy)
+            p.lineTo(cx, cy - s_ / 2); p.lineTo(cx - s_ / 2, cy); p.close()
             c.drawPath(p, stroke=1, fill=0)
         elif kind == "rectangle":
-            c.rect(cx - s / 2, cy - s * 0.35, s, s * 0.7, stroke=1, fill=0)
+            c.rect(cx - s_ / 2, cy - s_ * 0.35, s_, s_ * 0.7, stroke=1, fill=0)
         else:
-            c.rect(cx - s / 2, cy - s / 2, s, s, stroke=1, fill=0)
+            c.rect(cx - s_ / 2, cy - s_ / 2, s_, s_, stroke=1, fill=0)
         c.restoreState()
-        draw_scissors(c, cx - s / 2 - 14, cy + s / 2 - 6)
+
+        sx, sy = _shape_start(kind, cx, cy, s_)
+        draw_scissors(c, sx - 4, sy - 2.5)
+
+
+def cut_outline(c, level, box, spec, art: str | None = None):
+    """
+    A dashed line that follows the illustration's own silhouette.
+
+    A hard hat inside a half circle leaves its brim outside the cut, and a
+    toolbox inside a rectangle is not a toolbox shape at all. This traces the
+    drawing itself, grown a little so the line clears what a child coloured.
+    """
+    x0, y0, w, h = box
+    n = spec.get("count", 2)
+    cols = 2 if n > 1 else 1
+    rows = math.ceil(n / cols)
+    cw, ch = w / cols, h / rows
+    size = min(cw, ch) * 0.80
+
+    png = art_path(art) if art else None
+    for i in range(n):
+        cx = x0 + cw * (i % cols) + cw / 2
+        cy = y0 + h - ch * (i // cols) - ch / 2
+        cell = (cx - size / 2, cy - size / 2, size, size)
+        if png is None:
+            continue
+        draw_art(c, png, cell)
+
+        c.saveState(); _dashed(c, level)
+        start = _draw_silhouette_path(c, png, cell, grow=26)
+        c.restoreState()
+        if start:
+            draw_scissors(c, start[0] - 4, start[1] - 2.5)
+
+
+def _draw_silhouette_path(c, png: Path, box, grow: int):
+    """Stroke the grown silhouette of an illustration. Returns its left edge."""
+    path, (ix0, iy0, ix1, iy1) = silhouette(png, grow)
+    iw, ih = ix1 - ix0, iy1 - iy0
+    bx, by, bw, bh = box
+    scale = min(bw / iw, bh / ih)
+    ox = bx + (bw - iw * scale) / 2 - ix0 * scale
+    oy = by + (bh - ih * scale) / 2 + ih * scale + iy0 * scale
+
+    p = c.beginPath()
+    for curve in path:
+        pts = [(ox + q.x * scale, oy - q.y * scale)
+               for q in [curve.start_point] + [seg.end_point for seg in curve]]
+        p.moveTo(*pts[0])
+        for pt_ in pts[1:]:
+            p.lineTo(*pt_)
+        p.close()
+    c.drawPath(p, stroke=1, fill=0)
+    return ox + ix0 * scale, oy - (iy0 + ih / 2) * scale
+
+
+# Space between pieces on the cut page. Each piece's cutting line stands off
+# its outline, so two neighbours need room for both.
+PIECE_PAD = 34.0
+
+
+def pack_pieces(build, side, width):
+    """Shelf-pack the pieces at true size: rows fill left to right and wrap."""
+    rows, row, row_w, row_h = [], [], 0.0, 0.0
+    for piece in build:
+        pw = side * piece["w"]
+        ph = side * piece.get("h", piece["w"])
+        if row and row_w + pw + PIECE_PAD > width:
+            rows.append((row, row_w, row_h))
+            row, row_w, row_h = [], 0.0, 0.0
+        row.append((piece, pw, ph))
+        row_w += pw + PIECE_PAD
+        row_h = max(row_h, ph)
+    if row:
+        rows.append((row, row_w, row_h))
+    total_h = sum(r[2] for r in rows) + PIECE_PAD * (len(rows) - 1)
+    return rows, total_h
+
+
+def assembly_side(box, build) -> float:
+    """
+    The square the finished model is laid out in.
+
+    Both level 5 pages measure from this one number, so a piece drawn at
+    `side * w` on the cut page is the same size as its grey shape on the glue
+    page. It shrinks until every piece fits on the cut page laid out side by
+    side, because that page is the tighter of the two — a tall crane needs
+    more room loose than it does standing against a building.
+    """
+    _, _, w, h = box
+    side = min(w, h) * 0.70
+    for _ in range(60):
+        _, total_h = pack_pieces(build, side, w - 24)
+        if total_h <= h - 12:
+            break
+        side *= 0.95
+    return side
 
 
 def cut_pieces(c, level, box, spec, build):
     """
     Level 5, odd page: the pieces laid out to be cut out.
 
-    Each piece gets a dashed outline offset a little outside its drawing, so a
-    child cuts around the shape rather than along the line they coloured.
+    Each piece is drawn at exactly the size it takes in the finished model,
+    and its cutting line follows its own silhouette. A rectangle around each
+    piece would be easier to draw and useless to cut: the shape a child ends
+    up holding has to be the shape that fits the grey outline overleaf.
     """
     x0, y0, w, h = box
-    n = len(build)
-    cols = 2 if n <= 4 else 3
-    rows = math.ceil(n / cols)
-    cw, ch = w / cols, h / rows
-    cell = min(cw, ch) * 0.80
+    side = assembly_side(box, build)
+    rows, total_h = pack_pieces(build, side, w - 24)
 
-    for i, piece in enumerate(build):
-        cx = x0 + cw * (i % cols) + cw / 2
-        cy = y0 + h - ch * (i // cols) - ch / 2
-        # The cut page shows every piece upright, however it is angled once
-        # assembled, because a child cuts a shape, not an orientation.
-        place(c, piece["img"], (cx - cell / 2, cy - cell / 2, cell, cell))
+    y = y0 + h - max(0.0, (h - total_h) / 2)
+    for row, row_w, row_h in rows:
+        x = x0 + max(12.0, (w - row_w + PIECE_PAD) / 2)
+        for piece, pw, ph in row:
+            cell = (x, y - row_h / 2 - ph / 2, pw, ph)
+            uniform = "h" not in piece
+            # The cut page shows every piece upright, however it is angled
+            # once assembled, because a child cuts a shape, not an angle.
+            draw_piece(c, piece["img"], cell, uniform=uniform)
 
-        c.saveState(); _dashed(c, level)
-        c.roundRect(cx - cell * 0.58, cy - cell * 0.58, cell * 1.16, cell * 1.16, 10, stroke=1, fill=0)
-        c.restoreState()
-        draw_scissors(c, cx - cell * 0.58 - 13, cy + cell * 0.58 - 6)
+            c.saveState(); _dashed(c, level)
+            draw_piece_cutline(c, piece["img"], cell, uniform=uniform)
+            c.restoreState()
+            draw_scissors(c, x - 11, y - row_h / 2 + ph / 2 - 4)
+            x += pw + PIECE_PAD
+        y -= row_h + PIECE_PAD
 
 
 def cut_glue(c, level, box, spec, build):
     """
-    Level 5, even page: the finished shape as a faint dotted outline, so the
-    cut pieces have somewhere to be glued.
+    Level 5, even page: the finished model as flat grey shapes, so every cut
+    piece has somewhere to go.
     """
     x0, y0, w, h = box
-    side = min(w, h * 0.92)
-    ax, ay = x0 + (w - side) / 2, y0 + (h - side) / 2
+    side = assembly_side(box, build)
+    frame = side * 1.18
+    ax = x0 + (w - frame) / 2
+    ay = y0 + (h - frame) / 2 + 14
+    # The assembly sits centred inside the frame, which is a little larger so
+    # nothing — the crane especially — touches or crosses the dashed edge.
+    sx = ax + (frame - side) / 2
+    sy = ay + (frame - side) / 2
 
-    # Light gray, so the child's own coloured piece covers it rather than
-    # showing through around the edges.
     ghost = Color(0.72, 0.72, 0.72)
     for piece in build:
         pw = side * piece["w"]
-        pbox = (ax + side * piece["x"] - pw / 2, ay + side * piece["y"] - pw / 2, pw, pw)
-        if draw_piece(c, piece["img"], pbox, fill=ghost, rot=piece.get("rot", 0)):
-            continue
-        place(c, piece["img"], pbox, fill=ghost)
+        ph = side * piece.get("h", piece["w"])
+        pbox = (sx + side * piece["x"] - pw / 2, sy + side * piece["y"] - ph / 2, pw, ph)
+        draw_piece(c, piece["img"], pbox, fill=ghost, rot=piece.get("rot", 0),
+                   uniform="h" not in piece)
 
     c.saveState()
     c.setStrokeGray(0.55)
     c.setLineWidth(1.2)
     c.setDash(2, 4)
-    c.rect(ax, ay, side, side, stroke=1, fill=0)
+    c.rect(ax, ay, frame, frame, stroke=1, fill=0)
     c.restoreState()
 
     c.setFont("Fredoka-SemiBold", 11)
     c.setFillColor(black)
-    c.drawCentredString(x0 + w / 2, y0 + 6, "Glue your pieces on top of the gray shapes.")
+    c.drawCentredString(x0 + w / 2, y0 + 4, "Glue each piece onto its grey shape.")
 
 
 CUTTERS = {
     "snip": cut_snip,
+    "outline": cut_outline,
     "straight": cut_straight,
     "corner": cut_corner,
     "zigzag": cut_zigzag,
@@ -619,15 +733,24 @@ def draw_activity(c: canvas.Canvas, activity: dict, levels: dict) -> None:
     """Draw one activity onto the current page of an open canvas."""
     level = activity["level"]
 
+    spec = activity["cut"]
+
     draw_tear_line(c)
     below = draw_header(c, activity["title"], level, levels[level]["name"])
-    draw_footer(c, activity["page"])
 
     work_top = below
     work_bottom = M_BOTTOM + 22
-    work_h = work_top - work_bottom
+    if spec["type"] == "snip":
+        # The snips own the bottom of the page, so the footer sits above them.
+        snip_top = SNIP_BOTTOM + 1.6 * inch
+        work_bottom = snip_top + 46
+        draw_footer(c, activity["page"], y=snip_top + 30)
+    elif spec["type"] == "glue":
+        draw_footer(c, activity["page"], note="Glue your pieces on!")
+    else:
+        draw_footer(c, activity["page"])
 
-    spec = activity["cut"]
+    work_h = work_top - work_bottom
     work_box = (CONTENT_L, work_bottom, CONTENT_W, work_h)
 
     if spec["type"] == "pieces":
@@ -637,8 +760,10 @@ def draw_activity(c: canvas.Canvas, activity: dict, levels: dict) -> None:
     elif spec["type"] == "shape":
         # Level 4 puts the art inside each cutting shape rather than above it.
         cut_shape(c, level, work_box, spec, activity.get("image"))
+    elif spec["type"] == "outline":
+        cut_outline(c, level, work_box, spec, activity.get("image"))
     else:
-        art_h = work_h * 0.52
+        art_h = work_h * (0.86 if spec["type"] == "snip" else 0.52)
         if activity.get("image"):
             place(c, activity["image"], (CONTENT_L, work_top - art_h, CONTENT_W, art_h))
         for placed in activity.get("scene", []):
@@ -649,6 +774,8 @@ def draw_activity(c: canvas.Canvas, activity: dict, levels: dict) -> None:
                 pw, pw,
             ))
         cut_box = (CONTENT_L, work_bottom, CONTENT_W, work_h - art_h - 12)
+        if spec["type"] == "snip":
+            cut_box = work_box  # cut_snip measures from the page, not the box
         if activity.get("scene"):
             # A scene page keeps its own vertical placement, so the cutting
             # path gets the full height rather than only the lower half.

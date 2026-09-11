@@ -7,7 +7,7 @@ Everything to paste into KDP at upload, kept next to the book it describes.
 - **Series:** Cut, Color & Build *(enter as the series so later books link together)*
 - **Title:** Cut, Color & Build: Construction Site
 - **Subtitle:** Scissor Skills Activity Book for Kids Ages 3–5 with Dump Trucks, Diggers and Cement Mixers — 35 Cutting Practice Pages, Screen-Free Preschool Fun
-- **Author / brand:** *not chosen yet* — search it on Amazon first to be sure nobody else uses it, then set `BRAND` in `scripts/build_book.py`
+- **Author / brand:** Little Snippers Press — set once as `BRAND` in `scripts/build_book.py`, which fills the copyright line and the PDF author field
 - **Reading age:** 3–5
 - **Trim:** 8.5 × 11 in, no bleed
 - **Interior:** black and white, white paper, 76 pages
@@ -56,7 +56,5 @@ Everything to paste into KDP at upload, kept next to the book it describes.
 
 ## Before uploading
 
-- [ ] Pick the brand name, check it on Amazon, set `BRAND` in `scripts/build_book.py`
-- [ ] Rebuild the interior so the copyright page carries the real name
 - [ ] Get the spine width from KDP's cover calculator at the final page count
 - [ ] Check the interior in KDP's online previewer
