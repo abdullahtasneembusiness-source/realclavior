@@ -7,9 +7,10 @@ level badge, the cutting lines and their scissor icons, the tear-out line, the
 frame and the footer. Flux never draws text, because AI lettering prints as
 broken glyphs.
 
-The illustration is traced to Bezier curves and drawn as vector paths rather
-than placed as a bitmap, so the outlines stay crisp at any size instead of
-softening to the 235dpi that a 1408px image would give across a 6 inch page.
+Illustrations reach the page as vector either way. Flux's raster output is
+cleaned and traced to Bezier curves, because placing a 1408px image across a
+6 inch page is only about 235dpi and prints soft. Recraft returns SVG, which
+is drawn straight through.
 
 Usage:
     python3 book/scripts/build_pages.py 6 23 29        # these activities
@@ -30,15 +31,33 @@ from reportlab.lib.units import inch
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
+from reportlab.graphics import renderPDF
+from reportlab.graphics.shapes import Drawing, Group
 from reportlab.pdfgen.canvas import FILL_EVEN_ODD
+from svglib.svglib import svg2rlg
 
 from pieces import draw_piece
 
 HERE = Path(__file__).resolve().parent
 BOOK = HERE.parent / "book1"
 ART_CLEAN = BOOK / "art-clean"
+ART_RAW = BOOK / "art"
+
 FONTS = HERE.parent / "assets" / "fonts"
 OUT = HERE.parent / "out"
+
+
+def art_path(key: str) -> Path | None:
+    """
+    Where an illustration lives, whichever model drew it.
+
+    Flux images are cleaned and traced, so they come from art-clean. Recraft
+    returns vector already, so its SVG is used straight from art.
+    """
+    for candidate in (ART_CLEAN / f"{key}.png", ART_RAW / f"{key}.svg"):
+        if candidate.exists():
+            return candidate
+    return None
 
 # --- Page geometry, all in points (72 to the inch) -------------------------
 PAGE_W, PAGE_H = 8.5 * inch, 11 * inch
@@ -91,13 +110,51 @@ def trace(png: Path) -> tuple[potrace.Path, tuple[int, int, int, int]]:
     return bitmap.trace(), bbox
 
 
+@lru_cache(maxsize=64)
+def load_svg(path: Path):
+    """Recraft returns real vector art, so it needs no cleanup and no tracing."""
+    return svg2rlg(str(path))
+
+
+def _recolour(node, colour) -> None:
+    """Force every shape in a drawing to one colour, for the glue page's ghost."""
+    for attr in ("fillColor", "strokeColor"):
+        if getattr(node, attr, None) is not None:
+            setattr(node, attr, colour)
+    for child in getattr(node, "contents", ()):
+        _recolour(child, colour)
+
+
+def draw_svg(c: canvas.Canvas, path: Path, box, fill=None) -> None:
+    """Draw an SVG illustration to fit (x, y, w, h), cropped to its own ink."""
+    src = load_svg(path)
+    x0, y0, x1, y1 = src.getBounds()
+    iw, ih = max(x1 - x0, 1e-6), max(y1 - y0, 1e-6)
+    bx, by, bw, bh = box
+    scale = min(bw / iw, bh / ih)
+
+    # The source drawing is shared by the cache, so wrap rather than mutate it.
+    group = Group(*src.contents)
+    group.transform = (scale, 0, 0, scale, -x0 * scale, -y0 * scale)
+    if fill is not None and fill is not black:
+        _recolour(group, fill)
+
+    out = Drawing(iw * scale, ih * scale)
+    out.add(group)
+    renderPDF.draw(out, c, bx + (bw - iw * scale) / 2, by + (bh - ih * scale) / 2)
+
+
 def draw_art(
     c: canvas.Canvas,
     png: Path,
     box: tuple[float, float, float, float],
     fill=black,
 ) -> None:
-    """Draw the traced illustration to fit inside (x, y, w, h), centred."""
+    """Draw an illustration to fit inside (x, y, w, h), centred."""
+    if png.suffix.lower() == ".svg":
+        draw_svg(c, png, box, fill)
+        return
+
     path, (ix0, iy0, ix1, iy1) = trace(png)
     iw, ih = ix1 - ix0, iy1 - iy0
     bx, by, bw, bh = box
@@ -377,7 +434,7 @@ def cut_shape(c, level, box, spec, art: Path | None = None, art_for=None):
         cy = y0 + h - ch * (i // cols) - ch / 2
         kind = order[i]
         piece_art = arts[i]
-        if piece_art is not None and piece_art.exists():
+        if piece_art is not None:
             inner = size * SHAPE_FIT.get(kind, 0.8)
             # A triangle's usable room sits low, a half circle's lower still.
             drop = {"triangle": -0.09, "halfcircle": -0.14}.get(kind, 0.0) * size
@@ -433,7 +490,7 @@ def cut_pieces(c, level, box, spec, build, art_for):
         # assembled, because a child cuts a shape, not an orientation.
         if not draw_piece(c, piece["img"], cell_box):
             png = art_for(piece["img"])
-            if png is not None and png.exists():
+            if png is not None:
                 draw_art(c, png, cell_box)
 
         c.saveState(); _dashed(c, level)
@@ -460,7 +517,7 @@ def cut_glue(c, level, box, spec, build, art_for):
         if draw_piece(c, piece["img"], pbox, fill=ghost, rot=piece.get("rot", 0)):
             continue
         png = art_for(piece["img"])
-        if png is not None and png.exists():
+        if png is not None:
             draw_art(c, png, pbox, fill=ghost)
 
     c.saveState()
@@ -506,8 +563,8 @@ def draw_activity(c: canvas.Canvas, activity: dict, levels: dict) -> None:
     work_h = work_top - work_bottom
 
     spec = activity["cut"]
-    art = ART_CLEAN / f"{activity['image']}.png" if activity.get("image") else None
-    art_for = lambda key: ART_CLEAN / f"{key}.png"
+    art = art_path(activity["image"]) if activity.get("image") else None
+    art_for = art_path
     work_box = (CONTENT_L, work_bottom, CONTENT_W, work_h)
 
     if spec["type"] == "pieces":
@@ -519,11 +576,11 @@ def draw_activity(c: canvas.Canvas, activity: dict, levels: dict) -> None:
         cut_shape(c, level, work_box, spec, art, art_for)
     else:
         art_h = work_h * 0.52
-        if art is not None and art.exists():
+        if art is not None:
             draw_art(c, art, (CONTENT_L, work_top - art_h, CONTENT_W, art_h))
         for placed in activity.get("scene", []):
             png = art_for(placed["img"])
-            if not png.exists():
+            if png is None:
                 continue
             pw = CONTENT_W * placed["w"]
             draw_art(c, png, (
@@ -538,6 +595,12 @@ def draw_activity(c: canvas.Canvas, activity: dict, levels: dict) -> None:
             cut_box = (CONTENT_L, work_bottom, CONTENT_W, work_h)
         CUTTERS.get(spec["type"], cut_straight)(c, level, cut_box, spec)
 
+
+def build(activity: dict, levels: dict, out: Path) -> None:
+    """Write one activity to its own single-page PDF, for proofing."""
+    c = canvas.Canvas(str(out), pagesize=(PAGE_W, PAGE_H))
+    c.setTitle(activity["title"])
+    draw_activity(c, activity, levels)
     c.showPage()
     c.save()
 
@@ -566,7 +629,7 @@ def main() -> int:
         needed = [a["image"]] if a.get("image") else []
         needed += [p["img"] for p in a.get("scene", [])]
         needed += [sl["img"] for sl in a.get("cut", {}).get("slots", [])]
-        missing = [k for k in dict.fromkeys(needed) if not (ART_CLEAN / f"{k}.png").exists()]
+        missing = [k for k in dict.fromkeys(needed) if art_path(k) is None]
         if missing:
             print(f"activity {n}: {', '.join(missing)} not generated yet, skipped")
             continue

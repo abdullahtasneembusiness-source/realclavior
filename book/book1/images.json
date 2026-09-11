@@ -89,7 +89,7 @@
       "usedBy": [
         9
       ],
-      "subject": "a chunky toy tower crane, side view, with one thick straight upright mast and one long straight arm across the top, lifting a bundle of three plain pipes on a hook hanging from a single straight line. It stands on one simple straight ground line.",
+      "subject": "a tall construction crane, side view: one thick straight upright tower standing on a wide flat base, one long straight horizontal arm across the very top, and a hook hanging from the arm on one straight line, holding a bundle of three plain pipes.",
       "model": "recraft-ai/recraft-v3-svg"
     },
     {
@@ -196,7 +196,7 @@
       "usedBy": [
         20
       ],
-      "subject": "a chunky toy tower crane, side view, with one thick straight upright mast, one long straight arm across the top, and one big plain hook hanging from a single straight line, on one simple straight ground line.",
+      "subject": "a tall construction crane, side view: one thick straight upright tower standing on a wide flat base, one long straight horizontal arm across the very top, and one big hook hanging from the end of the arm on one straight line.",
       "model": "recraft-ai/recraft-v3-svg"
     },
     {
