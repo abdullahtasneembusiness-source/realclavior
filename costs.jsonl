@@ -34,3 +34,5 @@
 {"ts":"2026-09-11T14:02:50.242Z","project":"book1-construction","service":"replicate","model":"black-forest-labs/flux-1.1-pro","item":"a28","predictionId":"t79ds6h5dsrmy0d0j33smqm7jw","seed":42,"usd":0.04}
 {"ts":"2026-09-11T14:05:17.203Z","project":"book1-construction","service":"replicate","model":"black-forest-labs/flux-1.1-pro","item":"a09","predictionId":"b93sja31r5rmw0d0j34vzddcyr","seed":42,"usd":0.04}
 {"ts":"2026-09-11T14:05:31.755Z","project":"book1-construction","service":"replicate","model":"black-forest-labs/flux-1.1-pro","item":"a10","predictionId":"3a8e3bn1f1rmt0d0j34rm96378","seed":42,"usd":0.04}
+{"ts":"2026-09-11T14:10:56.023Z","project":"book1-construction","service":"replicate","model":"recraft-ai/recraft-v3-svg","item":"a09","predictionId":"4a15zwvsrxrmt0d0j37a3qc2e0","seed":42,"usd":0.08}
+{"ts":"2026-09-11T14:11:16.225Z","project":"book1-construction","service":"replicate","model":"recraft-ai/recraft-v3-svg","item":"a10","predictionId":"5g7rd0ycwxrmw0d0j378y3jgx8","seed":42,"usd":0.08}
