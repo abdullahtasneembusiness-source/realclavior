@@ -32,6 +32,8 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from reportlab.pdfgen.canvas import FILL_EVEN_ODD
 
+from pieces import draw_piece
+
 HERE = Path(__file__).resolve().parent
 BOOK = HERE.parent / "book1"
 ART_CLEAN = BOOK / "art-clean"
@@ -352,7 +354,7 @@ SHAPE_FIT = {"square": 0.86, "rectangle": 0.84, "circle": 0.70,
              "triangle": 0.70, "diamond": 0.60, "halfcircle": 0.64}
 
 
-def cut_shape(c, level, box, spec, art: Path | None = None):
+def cut_shape(c, level, box, spec, art: Path | None = None, art_for=None):
     """Level 4: a dashed outline around each object, two by two."""
     x0, y0, w, h = box
     n = spec.get("count", 4)
@@ -362,17 +364,24 @@ def cut_shape(c, level, box, spec, art: Path | None = None):
     cw, ch = w / cols, h / rows
     size = min(cw, ch) * 0.74
 
-    order = [shape] * n if shape != "mixed" else [SHAPES[i % 6] for i in range(n)]
+    slots = spec.get("slots")
+    if slots:
+        order = [s["shape"] for s in slots]
+        arts = [art_for(s["img"]) if art_for else None for s in slots]
+    else:
+        order = [shape] * n
+        arts = [art] * n
 
     for i in range(n):
         cx = x0 + cw * (i % cols) + cw / 2
         cy = y0 + h - ch * (i // cols) - ch / 2
         kind = order[i]
-        if art is not None:
+        piece_art = arts[i]
+        if piece_art is not None and piece_art.exists():
             inner = size * SHAPE_FIT.get(kind, 0.8)
             # A triangle's usable room sits low, a half circle's lower still.
             drop = {"triangle": -0.09, "halfcircle": -0.14}.get(kind, 0.0) * size
-            draw_art(c, art, (cx - inner / 2, cy - inner / 2 + drop, inner, inner))
+            draw_art(c, piece_art, (cx - inner / 2, cy - inner / 2 + drop, inner, inner))
 
         c.saveState(); _dashed(c, level)
         s = size * 0.98
@@ -419,9 +428,13 @@ def cut_pieces(c, level, box, spec, build, art_for):
     for i, piece in enumerate(build):
         cx = x0 + cw * (i % cols) + cw / 2
         cy = y0 + h - ch * (i // cols) - ch / 2
-        png = art_for(piece["img"])
-        if png is not None and png.exists():
-            draw_art(c, png, (cx - cell / 2, cy - cell / 2, cell, cell))
+        cell_box = (cx - cell / 2, cy - cell / 2, cell, cell)
+        # The cut page shows every piece upright, however it is angled once
+        # assembled, because a child cuts a shape, not an orientation.
+        if not draw_piece(c, piece["img"], cell_box):
+            png = art_for(piece["img"])
+            if png is not None and png.exists():
+                draw_art(c, png, cell_box)
 
         c.saveState(); _dashed(c, level)
         c.roundRect(cx - cell * 0.58, cy - cell * 0.58, cell * 1.16, cell * 1.16, 10, stroke=1, fill=0)
@@ -442,16 +455,13 @@ def cut_glue(c, level, box, spec, build, art_for):
     # showing through around the edges.
     ghost = Color(0.72, 0.72, 0.72)
     for piece in build:
-        png = art_for(piece["img"])
-        if png is None or not png.exists():
-            continue
         pw = side * piece["w"]
-        draw_art(
-            c,
-            png,
-            (ax + side * piece["x"] - pw / 2, ay + side * piece["y"] - pw / 2, pw, pw),
-            fill=ghost,
-        )
+        pbox = (ax + side * piece["x"] - pw / 2, ay + side * piece["y"] - pw / 2, pw, pw)
+        if draw_piece(c, piece["img"], pbox, fill=ghost, rot=piece.get("rot", 0)):
+            continue
+        png = art_for(piece["img"])
+        if png is not None and png.exists():
+            draw_art(c, png, pbox, fill=ghost)
 
     c.saveState()
     c.setStrokeGray(0.55)
@@ -507,12 +517,26 @@ def build(activity: dict, levels: dict, out: Path) -> None:
         cut_glue(c, level, work_box, spec, activity["build"], art_for)
     elif spec["type"] == "shape":
         # Level 4 puts the art inside each cutting shape rather than above it.
-        cut_shape(c, level, work_box, spec, art)
+        cut_shape(c, level, work_box, spec, art, art_for)
     else:
         art_h = work_h * 0.52
         if art is not None and art.exists():
             draw_art(c, art, (CONTENT_L, work_top - art_h, CONTENT_W, art_h))
+        for placed in activity.get("scene", []):
+            png = art_for(placed["img"])
+            if not png.exists():
+                continue
+            pw = CONTENT_W * placed["w"]
+            draw_art(c, png, (
+                CONTENT_L + CONTENT_W * placed["x"] - pw / 2,
+                work_bottom + work_h * placed["y"] - pw / 2,
+                pw, pw,
+            ))
         cut_box = (CONTENT_L, work_bottom, CONTENT_W, work_h - art_h - 12)
+        if activity.get("scene"):
+            # A scene page keeps its own vertical placement, so the cutting
+            # path gets the full height rather than only the lower half.
+            cut_box = (CONTENT_L, work_bottom, CONTENT_W, work_h)
         CUTTERS.get(spec["type"], cut_straight)(c, level, cut_box, spec)
 
     c.showPage()
@@ -540,7 +564,9 @@ def main() -> int:
         if a is None:
             print(f"activity {n}: not in activities.json, skipped")
             continue
-        needed = [a["image"]] if a.get("image") else [b["img"] for b in a.get("build", [])]
+        needed = [a["image"]] if a.get("image") else []
+        needed += [p["img"] for p in a.get("scene", [])]
+        needed += [sl["img"] for sl in a.get("cut", {}).get("slots", [])]
         missing = [k for k in dict.fromkeys(needed) if not (ART_CLEAN / f"{k}.png").exists()]
         if missing:
             print(f"activity {n}: {', '.join(missing)} not generated yet, skipped")

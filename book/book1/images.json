@@ -1,5 +1,5 @@
 {
-  "$comment": "The unique Flux illustrations for Book 1. Activities 27 and 35 reuse earlier art. Level 5 is generated one piece at a time (the p* keys): asking for an assembled vehicle's parts returns an assembled vehicle, and those pages need pieces a child can actually cut apart. Repeated pieces are generated once and placed more than once by the page builder. The shared style block lives in style.txt and is prepended at generate time so it can never drift between images.",
+  "$comment": "The unique Flux illustrations for Book 1. Activities 27 and 35 reuse earlier art. Level 5's cut-and-glue pieces are not here at all: Flux returns a whole vehicle whenever a vehicle part is named, and independently generated pieces would not fit together when glued, so scripts/pieces.py draws them. The shared style block lives in style.txt and is prepended at generate time so it can never drift.",
   "model": "black-forest-labs/flux-1.1-pro",
   "seed": 42,
   "outputFormat": "png",
@@ -263,106 +263,6 @@
         28
       ],
       "subject": "a single chunky toolbox with a handle on top, front view."
-    },
-    {
-      "key": "p29cab",
-      "level": 5,
-      "aspect": "1:1",
-      "usedBy": [
-        29,
-        30
-      ],
-      "subject": "a single truck cab shape on its own, side view: a rounded square cab with one big square window and a small step below it."
-    },
-    {
-      "key": "p29bed",
-      "level": 5,
-      "aspect": "1:1",
-      "usedBy": [
-        29,
-        30
-      ],
-      "subject": "a single dump truck tipper bed on its own, side view: one long open box that slopes upward at the back, drawn as a single simple outline."
-    },
-    {
-      "key": "p29wheel",
-      "level": 5,
-      "aspect": "1:1",
-      "usedBy": [
-        29,
-        30
-      ],
-      "subject": "a single big truck wheel on its own, front view: one thick plain circle with one smaller plain circle inside it."
-    },
-    {
-      "key": "p31track",
-      "level": 5,
-      "aspect": "1:1",
-      "usedBy": [
-        31,
-        32
-      ],
-      "subject": "a single excavator track unit on its own, side view: one long rounded oval with a big plain circle at each end."
-    },
-    {
-      "key": "p31cab",
-      "level": 5,
-      "aspect": "1:1",
-      "usedBy": [
-        31,
-        32
-      ],
-      "subject": "a single excavator cab on its own, side view: a rounded box with one big square window."
-    },
-    {
-      "key": "p31arm",
-      "level": 5,
-      "aspect": "1:1",
-      "usedBy": [
-        31,
-        32
-      ],
-      "subject": "a single straight excavator arm section on its own: one long rounded bar with a small round hole at each end."
-    },
-    {
-      "key": "p31bucket",
-      "level": 5,
-      "aspect": "1:1",
-      "usedBy": [
-        31,
-        32
-      ],
-      "subject": "a single excavator bucket on its own, side view: a simple curved scoop with three chunky square teeth along its bottom edge."
-    },
-    {
-      "key": "p33floor",
-      "level": 5,
-      "aspect": "1:1",
-      "usedBy": [
-        33,
-        34
-      ],
-      "subject": "a single rectangular building floor on its own, front view: one wide rectangle with two square windows side by side."
-    },
-    {
-      "key": "p33roof",
-      "level": 5,
-      "aspect": "1:1",
-      "usedBy": [
-        33,
-        34
-      ],
-      "subject": "a single triangular roof on its own, front view: one simple wide triangle."
-    },
-    {
-      "key": "p33crane",
-      "level": 5,
-      "aspect": "1:1",
-      "usedBy": [
-        33,
-        34
-      ],
-      "subject": "a single tall tower crane on its own, front view: one straight upright mast with a long horizontal arm across the top and a small hook hanging from the arm."
     }
   ]
 }
