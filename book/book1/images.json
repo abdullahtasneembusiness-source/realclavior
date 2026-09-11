@@ -6,219 +6,293 @@
   "promptUpsampling": false,
   "usdPerImage": 0.04,
   "sizes": {
-    "4:3": { "width": 1408, "height": 1056 },
-    "1:1": { "width": 1440, "height": 1440 }
+    "4:3": {
+      "width": 1408,
+      "height": 1056
+    },
+    "1:1": {
+      "width": 1440,
+      "height": 1440
+    }
   },
   "images": [
     {
       "key": "a01",
       "level": 1,
       "aspect": "4:3",
-      "usedBy": [1],
+      "usedBy": [
+        1
+      ],
       "subject": "a small cute excavator, side view, sitting on a flat patch of ground."
     },
     {
       "key": "a02",
       "level": 1,
       "aspect": "4:3",
-      "usedBy": [2],
+      "usedBy": [
+        2
+      ],
       "subject": "a neat stack of five long wooden planks, side view, with only a few simple wood grain lines."
     },
     {
       "key": "a03",
       "level": 1,
       "aspect": "4:3",
-      "usedBy": [3],
+      "usedBy": [
+        3
+      ],
       "subject": "two traffic cones with a plain striped tape ribbon stretched between them, the tape has no writing."
     },
     {
       "key": "a04",
       "level": 1,
       "aspect": "4:3",
-      "usedBy": [4],
+      "usedBy": [
+        4
+      ],
       "subject": "a small wall made of three rows of large chunky bricks, front view."
     },
     {
       "key": "a05",
       "level": 1,
       "aspect": "4:3",
-      "usedBy": [5],
+      "usedBy": [
+        5
+      ],
       "subject": "a simple wooden construction fence with a blank rectangular sign board in the middle."
     },
     {
       "key": "a06",
       "level": 2,
       "aspect": "4:3",
-      "usedBy": [6, 35],
+      "usedBy": [
+        6,
+        35
+      ],
       "subject": "a chunky toy dump truck, side view, on the left, with a smooth rounded mound of sand in its tipper, and a smooth rounded pile of sand on the right, standing on one simple straight ground line. The wheels are plain circles with a smaller circle inside and no tread."
     },
     {
       "key": "a07",
       "level": 2,
       "aspect": "4:3",
-      "usedBy": [7],
+      "usedBy": [
+        7
+      ],
       "subject": "a cement mixer truck with a big round drum that has simple diagonal stripes, side view."
     },
     {
       "key": "a08",
       "level": 2,
       "aspect": "4:3",
-      "usedBy": [8],
+      "usedBy": [
+        8
+      ],
       "subject": "a bulldozer with a big front blade pushing a small pile of dirt with a few round rocks, side view."
     },
     {
       "key": "a09",
       "level": 2,
       "aspect": "4:3",
-      "usedBy": [9],
+      "usedBy": [
+        9
+      ],
       "subject": "a tall construction crane lifting a bundle of three long pipes on a hook, side view."
     },
     {
       "key": "a10",
       "level": 2,
       "aspect": "4:3",
-      "usedBy": [10],
+      "usedBy": [
+        10
+      ],
       "subject": "a road roller with a huge front roller drum on a flat road, side view."
     },
     {
       "key": "a11",
       "level": 2,
       "aspect": "4:3",
-      "usedBy": [11],
+      "usedBy": [
+        11
+      ],
       "subject": "a tow truck with a hook, towing a small rounded car, side view."
     },
     {
       "key": "a12",
       "level": 2,
       "aspect": "4:3",
-      "usedBy": [12],
+      "usedBy": [
+        12
+      ],
       "subject": "a forklift lifting a stack of three square boxes, side view."
     },
     {
       "key": "a13",
       "level": 3,
       "aspect": "4:3",
-      "usedBy": [13],
+      "usedBy": [
+        13
+      ],
       "subject": "a small skid steer loader with a front bucket, next to three big round rocks, side view."
     },
     {
       "key": "a14",
       "level": 3,
       "aspect": "4:3",
-      "usedBy": [14],
+      "usedBy": [
+        14
+      ],
       "subject": "a dump truck driving over two gentle rolling hills, side view."
     },
     {
       "key": "a15",
       "level": 3,
       "aspect": "4:3",
-      "usedBy": [15],
+      "usedBy": [
+        15
+      ],
       "subject": "an excavator digging, its arm reaching down into a simple hole in the ground, side view."
     },
     {
       "key": "a16",
       "level": 3,
       "aspect": "4:3",
-      "usedBy": [16, 35],
+      "usedBy": [
+        16,
+        35
+      ],
       "subject": "a half-built building made of big stacked blocks with a ladder leaning against it, front view."
     },
     {
       "key": "a17",
       "level": 3,
       "aspect": "4:3",
-      "usedBy": [17],
+      "usedBy": [
+        17
+      ],
       "subject": "a water tank truck spraying water from the back, the water drawn as a few simple curved lines, side view."
     },
     {
       "key": "a18",
       "level": 3,
       "aspect": "4:3",
-      "usedBy": [18],
+      "usedBy": [
+        18
+      ],
       "subject": "three traffic cones standing in a row with space between them, front view."
     },
     {
       "key": "a19",
       "level": 3,
       "aspect": "4:3",
-      "usedBy": [19],
+      "usedBy": [
+        19
+      ],
       "subject": "a bulldozer at the top of a round hill with a small blank flag on a pole, side view."
     },
     {
       "key": "a20",
       "level": 3,
       "aspect": "4:3",
-      "usedBy": [20],
+      "usedBy": [
+        20
+      ],
       "subject": "a construction crane with a big hook hanging from a long cable at the end of its arm, side view."
     },
     {
       "key": "a21",
       "level": 4,
       "aspect": "1:1",
-      "usedBy": [21],
+      "usedBy": [
+        21
+      ],
       "subject": "a single wooden shipping crate, front view, square shape."
     },
     {
       "key": "a22",
       "level": 4,
       "aspect": "1:1",
-      "usedBy": [22],
+      "usedBy": [
+        22
+      ],
       "subject": "a single cinder block with two square holes, front view."
     },
     {
       "key": "a23",
       "level": 4,
       "aspect": "1:1",
-      "usedBy": [23, 27],
+      "usedBy": [
+        23,
+        27
+      ],
       "subject": "a single traffic cone with two stripes, front view."
     },
     {
       "key": "a24",
       "level": 4,
       "aspect": "1:1",
-      "usedBy": [24, 27],
+      "usedBy": [
+        24,
+        27
+      ],
       "subject": "a single chunky truck tire with a round hubcap, front view, perfect circle."
     },
     {
       "key": "a25",
       "level": 4,
       "aspect": "1:1",
-      "usedBy": [25],
+      "usedBy": [
+        25
+      ],
       "subject": "a single construction hard hat, side view, with nobody wearing it."
     },
     {
       "key": "a26",
       "level": 4,
       "aspect": "1:1",
-      "usedBy": [26, 27],
+      "usedBy": [
+        26,
+        27
+      ],
       "subject": "a single diamond-shaped road sign on a short post, with a simple picture of a small digger on the sign and no words."
     },
     {
       "key": "a28",
       "level": 4,
       "aspect": "1:1",
-      "usedBy": [28],
+      "usedBy": [
+        28
+      ],
       "subject": "a single chunky toolbox with a handle on top, front view."
     },
     {
       "key": "a29",
       "level": 5,
       "aspect": "4:3",
-      "usedBy": [29, 30],
-      "subject": "a very simple dump truck, side view, made of clearly separate simple parts: a square cab, a rectangular dump bed, and two big round wheels."
+      "usedBy": [
+        29,
+        30
+      ],
+      "subject": "four separate flat cut-out pieces laid out far apart from each other with wide empty white space between them, not joined together and not assembled into a vehicle: a square truck cab with one window, a rectangular dump bed, and two big round wheels each drawn as a plain circle with a smaller circle inside."
     },
     {
       "key": "a31",
       "level": 5,
       "aspect": "4:3",
-      "usedBy": [31, 32],
-      "subject": "a very simple excavator, side view, made of clearly separate simple parts: rounded tracks, a boxy cab, an arm in two straight sections, and a bucket."
+      "usedBy": [
+        31,
+        32
+      ],
+      "subject": "five separate flat cut-out pieces laid out far apart from each other with wide empty white space between them, not joined together and not assembled into a vehicle: a rounded track base, a boxy cab with one window, two straight arm sections, and a curved bucket."
     },
     {
       "key": "a33",
       "level": 5,
       "aspect": "4:3",
-      "usedBy": [33, 34],
-      "subject": "a simple building made of three stacked rectangular floors with square windows and a triangle roof, with a construction crane standing next to it."
+      "usedBy": [
+        33,
+        34
+      ],
+      "subject": "five separate flat cut-out pieces laid out far apart from each other with wide empty white space between them, not joined together and not assembled into a building: three rectangular floors each with two square windows, a triangle roof, and a tall simple crane."
     }
   ]
 }
