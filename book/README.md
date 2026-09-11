@@ -19,7 +19,7 @@ book/
     generate-images.mjs       Replicate / FLUX 1.1 Pro image generation
   book1/
     activities.json           the 35 pages: titles, levels, cut specs, art refs
-    images.json               the 30 unique illustrations and their subjects
+    images.json               the 27 illustrations and their subjects
     style.txt                 the style block prepended to every prompt
     CHECKLIST.md              what makes an image a reject
     art/                      generated PNGs, committed
@@ -37,11 +37,15 @@ Locally (or anywhere with network access):
 
 ```bash
 DRY_RUN=1 node book/scripts/generate-images.mjs          # prompts + price, free
-ONLY=a06,a23,a29 node book/scripts/generate-images.mjs   # the test batch, $0.12
+ONLY=a06,a23 node book/scripts/generate-images.mjs       # prove one before nine
 node book/scripts/generate-images.mjs                    # everything missing
 ```
 
-Whole book: 30 images, $1.20 at $0.04 each on FLUX 1.1 Pro.
+Whole book: 27 images, $1.08 at $0.04 each on FLUX 1.1 Pro. Level 5's
+cut-and-glue pieces and a few level 4 objects are drawn by
+`scripts/pieces.py` instead, because Flux returns a whole vehicle whenever a
+vehicle part is named, and independently generated pieces would not fit
+together when glued.
 
 ## Checking a PDF before upload
 
@@ -87,6 +91,24 @@ python3 book/scripts/clean-art.py a06      # just one
 The split matters: cleanup fixes weight and speckle, and nothing else. If Flux
 returns a detailed machine instead of a toy, that is a prompt problem.
 
+## What the subject line has to do
+
+Six of the first run's images failed the checklist, and every one failed for
+a reason the wording could name rather than bad luck:
+
+- Naming a thing invites Flux to write it. "Road roller" came back with
+  **Road** painted across the machine; "steamroller" did not.
+- A lattice tower is a mesh of hairlines a three-year-old cannot colour
+  inside, so the tower is asked for as solid.
+- "Sitting on a flat patch of ground" becomes a dark scribble. "On one plain
+  flat ground line" does not.
+- A part named in passing gets drawn in passing: the bulldozer arrived as a
+  loader with a bucket until the blade was named first.
+
+So a redo changes the subject line, and the seed stays at 42 with the rest of
+the book. Bump `SEED` only when the wording is already right and Flux simply
+drew it badly.
+
 ## What Flux ignores
 
 Flux 1.1 Pro is distilled. It rejects a `negative_prompt` outright, and it
@@ -103,7 +125,7 @@ carry the result.
 
 ## Style consistency
 
-All 30 images share seed 42 and a byte-identical style block, which is what
+All 27 images share seed 42 and a byte-identical style block, which is what
 keeps the drawings looking like one book. The trade-off is that re-running an
 image reproduces it exactly, so a redo needs `SEED=43` or a sharper subject
 line. See `book1/CHECKLIST.md`.
