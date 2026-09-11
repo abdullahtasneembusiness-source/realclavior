@@ -2,63 +2,735 @@
   "$comment": "The 35 activity pages. `page` is the printed interior page number (page = n * 2 + 3); each activity sits on an odd page with a blank back so cutting one page never ruins the next. `image` is a key in images.json, or null where the activity is built entirely from code. `cut` is the spec the page builder uses to draw the dashed cutting guides.",
   "title": "Cut, Color & Build: Construction Site",
   "series": "Cut, Color & Build",
-  "trim": { "widthIn": 8.5, "heightIn": 11, "bleed": false },
+  "trim": {
+    "widthIn": 8.5,
+    "heightIn": 11,
+    "bleed": false
+  },
   "levels": [
-    { "level": 1, "name": "Snip It", "activities": [1, 5], "lineWeight": "very thick", "note": "short snips from the bottom edge, about 1.5 inches long" },
-    { "level": 2, "name": "Straight Roads", "activities": [6, 12], "lineWeight": "thick", "note": "full straight lines starting at the tear-out edge" },
-    { "level": 3, "name": "Bumpy Paths", "activities": [13, 20], "lineWeight": "medium", "note": "zigzags, waves, steps, curves and arcs" },
-    { "level": 4, "name": "Shapes", "activities": [21, 28], "lineWeight": "medium", "note": "closed dashed outlines around objects" },
-    { "level": 5, "name": "Cut, Color & Build", "activities": [29, 35], "lineWeight": "thinner", "note": "multi-piece builds, cut then glue" }
+    {
+      "level": 1,
+      "name": "Snip It",
+      "activities": [
+        1,
+        5
+      ],
+      "lineWeight": "very thick",
+      "note": "short snips from the bottom edge, about 1.5 inches long"
+    },
+    {
+      "level": 2,
+      "name": "Straight Roads",
+      "activities": [
+        6,
+        12
+      ],
+      "lineWeight": "thick",
+      "note": "full straight lines starting at the tear-out edge"
+    },
+    {
+      "level": 3,
+      "name": "Bumpy Paths",
+      "activities": [
+        13,
+        20
+      ],
+      "lineWeight": "medium",
+      "note": "zigzags, waves, steps, curves and arcs"
+    },
+    {
+      "level": 4,
+      "name": "Shapes",
+      "activities": [
+        21,
+        28
+      ],
+      "lineWeight": "medium",
+      "note": "closed dashed outlines around objects"
+    },
+    {
+      "level": 5,
+      "name": "Cut, Color & Build",
+      "activities": [
+        29,
+        35
+      ],
+      "lineWeight": "thinner",
+      "note": "multi-piece builds, cut then glue"
+    }
   ],
   "activities": [
-    { "n": 1, "page": 5, "level": 1, "title": "Snip the Grass for the Digger", "image": "a01", "cut": { "type": "snip", "count": 8, "note": "grass strips along the bottom edge" } },
-    { "n": 2, "page": 7, "level": 1, "title": "Snip the Wooden Planks", "image": "a02", "cut": { "type": "snip", "count": 7, "note": "plank ends along the bottom edge" } },
-    { "n": 3, "page": 9, "level": 1, "title": "Snip the Caution Tape", "image": "a03", "cut": { "type": "snip", "count": 8, "note": "tape pieces along the bottom edge" } },
-    { "n": 4, "page": 11, "level": 1, "title": "Snip the Bricks", "image": "a04", "cut": { "type": "snip", "count": 7, "note": "brick edges along the bottom edge" } },
-    { "n": 5, "page": 13, "level": 1, "title": "Snip the Fence Posts", "image": "a05", "cut": { "type": "snip", "count": 6, "note": "fence post strips along the bottom edge" } },
-
-    { "n": 6, "page": 15, "level": 2, "title": "Drive the Dump Truck to the Sand Pile", "image": "a06", "cut": { "type": "straight", "orientation": "horizontal", "count": 3 } },
-    { "n": 7, "page": 17, "level": 2, "title": "Take the Cement Mixer to Work", "image": "a07", "cut": { "type": "straight", "orientation": "horizontal", "count": 3 } },
-    { "n": 8, "page": 19, "level": 2, "title": "Push the Dirt, Bulldozer!", "image": "a08", "cut": { "type": "straight", "orientation": "horizontal", "count": 3 } },
-    { "n": 9, "page": 21, "level": 2, "title": "Cut the Pipes for the Crane", "image": "a09", "cut": { "type": "straight", "orientation": "vertical", "count": 4 } },
-    { "n": 10, "page": 23, "level": 2, "title": "Roll the Road Flat", "image": "a10", "cut": { "type": "straight", "orientation": "horizontal", "count": 3, "note": "spaced closer together" } },
-    { "n": 11, "page": 25, "level": 2, "title": "Tow Truck to the Rescue", "image": "a11", "cut": { "type": "straight", "orientation": "diagonal", "count": 3 } },
-    { "n": 12, "page": 27, "level": 2, "title": "Lift the Boxes, Forklift!", "image": "a12", "cut": { "type": "corner", "count": 3, "note": "one right-angle turn each" } },
-
-    { "n": 13, "page": 29, "level": 3, "title": "Zigzag Over the Rocks", "image": "a13", "cut": { "type": "zigzag", "count": 3 } },
-    { "n": 14, "page": 31, "level": 3, "title": "Bump Over the Hills", "image": "a14", "cut": { "type": "wave", "count": 3, "note": "gentle" } },
-    { "n": 15, "page": 33, "level": 3, "title": "Dig a Curvy Trench", "image": "a15", "cut": { "type": "curve", "count": 3, "note": "gentle single curves" } },
-    { "n": 16, "page": 35, "level": 3, "title": "Climb the Stairs to the Top", "image": "a16", "cut": { "type": "steps", "count": 2 } },
-    { "n": 17, "page": 37, "level": 3, "title": "Wiggly Water Spray", "image": "a17", "cut": { "type": "wave", "count": 3, "note": "tighter" } },
-    { "n": 18, "page": 39, "level": 3, "title": "Curvy Road Around the Cones", "image": "a18", "cut": { "type": "scurve", "count": 3 } },
-    { "n": 19, "page": 41, "level": 3, "title": "The Bulldozer's Bumpy Trip", "image": "a19", "cut": { "type": "mixed", "count": 2, "note": "straight that turns into a zigzag" } },
-    { "n": 20, "page": 43, "level": 3, "title": "Swing the Crane Hook", "image": "a20", "cut": { "type": "arc", "count": 3, "note": "big arcs" } },
-
-    { "n": 21, "page": 45, "level": 4, "title": "Cut Out the Crates", "image": "a21", "cut": { "type": "shape", "shape": "square", "count": 4 } },
-    { "n": 22, "page": 47, "level": 4, "title": "Cut Out the Building Blocks", "image": "a22", "cut": { "type": "shape", "shape": "rectangle", "count": 4 } },
-    { "n": 23, "page": 49, "level": 4, "title": "Cut Out the Traffic Cones", "image": "a23", "cut": { "type": "shape", "shape": "triangle", "count": 4 } },
-    { "n": 24, "page": 51, "level": 4, "title": "Cut Out the Truck Wheels", "image": "a24", "cut": { "type": "shape", "shape": "circle", "count": 4 } },
-    { "n": 25, "page": 53, "level": 4, "title": "Cut Out the Hard Hats", "image": "a25", "cut": { "type": "shape", "shape": "halfcircle", "count": 4 } },
-    { "n": 26, "page": 55, "level": 4, "title": "Cut Out the Road Signs", "image": "a26", "cut": { "type": "shape", "shape": "diamond", "count": 4 } },
-    { "n": 27, "page": 57, "level": 4, "title": "Signs, Wheels and Cones", "image": null, "reuses": ["a23", "a24", "a26"], "cut": { "type": "shape", "shape": "mixed", "count": 6 } },
-    { "n": 28, "page": 59, "level": 4, "title": "Cut Out the Toolbox", "image": "a28", "cut": { "type": "outline", "count": 2, "note": "cutting line follows the toolbox silhouette" } },
-
-    { "n": 29, "page": 61, "level": 5, "title": "Build a Dump Truck: Cut the Pieces", "image": "a29", "cut": { "type": "pieces", "pieces": ["cab", "dump bed", "wheel", "wheel"] } },
-    { "n": 30, "page": 63, "level": 5, "title": "Build a Dump Truck: Glue It Together", "image": null, "reuses": ["a29"], "cut": { "type": "glue", "note": "road scene with the dotted truck outline" } },
-    { "n": 31, "page": 65, "level": 5, "title": "Build an Excavator: Cut the Pieces", "image": "a31", "cut": { "type": "pieces", "pieces": ["tracks", "cab", "arm lower", "arm upper", "bucket"] } },
-    { "n": 32, "page": 67, "level": 5, "title": "Build an Excavator: Glue It Together", "image": null, "reuses": ["a31"], "cut": { "type": "glue", "note": "dig site with the dotted outline" } },
-    { "n": 33, "page": 69, "level": 5, "title": "Build a Tall Building: Cut the Pieces", "image": "a33", "cut": { "type": "pieces", "pieces": ["floor", "floor", "floor", "roof", "crane"] } },
-    { "n": 34, "page": 71, "level": 5, "title": "Build a Tall Building: Glue It Together", "image": null, "reuses": ["a33"], "cut": { "type": "glue", "note": "dotted outline standing next to the crane" } },
-    { "n": 35, "page": 73, "level": 5, "title": "The Big Road Trip", "image": null, "reuses": ["a06", "a16"], "cut": { "type": "path", "note": "one long path mixing straight, zigzag, wave and curve, truck to finished building" } }
+    {
+      "n": 1,
+      "page": 5,
+      "level": 1,
+      "title": "Snip the Grass for the Digger",
+      "image": "a01",
+      "cut": {
+        "type": "snip",
+        "count": 8,
+        "note": "grass strips along the bottom edge"
+      }
+    },
+    {
+      "n": 2,
+      "page": 7,
+      "level": 1,
+      "title": "Snip the Wooden Planks",
+      "image": "a02",
+      "cut": {
+        "type": "snip",
+        "count": 7,
+        "note": "plank ends along the bottom edge"
+      }
+    },
+    {
+      "n": 3,
+      "page": 9,
+      "level": 1,
+      "title": "Snip the Caution Tape",
+      "image": "a03",
+      "cut": {
+        "type": "snip",
+        "count": 8,
+        "note": "tape pieces along the bottom edge"
+      }
+    },
+    {
+      "n": 4,
+      "page": 11,
+      "level": 1,
+      "title": "Snip the Bricks",
+      "image": "a04",
+      "cut": {
+        "type": "snip",
+        "count": 7,
+        "note": "brick edges along the bottom edge"
+      }
+    },
+    {
+      "n": 5,
+      "page": 13,
+      "level": 1,
+      "title": "Snip the Fence Posts",
+      "image": "a05",
+      "cut": {
+        "type": "snip",
+        "count": 6,
+        "note": "fence post strips along the bottom edge"
+      }
+    },
+    {
+      "n": 6,
+      "page": 15,
+      "level": 2,
+      "title": "Drive the Dump Truck to the Sand Pile",
+      "image": "a06",
+      "cut": {
+        "type": "straight",
+        "orientation": "horizontal",
+        "count": 3
+      }
+    },
+    {
+      "n": 7,
+      "page": 17,
+      "level": 2,
+      "title": "Take the Cement Mixer to Work",
+      "image": "a07",
+      "cut": {
+        "type": "straight",
+        "orientation": "horizontal",
+        "count": 3
+      }
+    },
+    {
+      "n": 8,
+      "page": 19,
+      "level": 2,
+      "title": "Push the Dirt, Bulldozer!",
+      "image": "a08",
+      "cut": {
+        "type": "straight",
+        "orientation": "horizontal",
+        "count": 3
+      }
+    },
+    {
+      "n": 9,
+      "page": 21,
+      "level": 2,
+      "title": "Cut the Pipes for the Crane",
+      "image": "a09",
+      "cut": {
+        "type": "straight",
+        "orientation": "vertical",
+        "count": 4
+      }
+    },
+    {
+      "n": 10,
+      "page": 23,
+      "level": 2,
+      "title": "Roll the Road Flat",
+      "image": "a10",
+      "cut": {
+        "type": "straight",
+        "orientation": "horizontal",
+        "count": 3,
+        "note": "spaced closer together"
+      }
+    },
+    {
+      "n": 11,
+      "page": 25,
+      "level": 2,
+      "title": "Tow Truck to the Rescue",
+      "image": "a11",
+      "cut": {
+        "type": "straight",
+        "orientation": "diagonal",
+        "count": 3
+      }
+    },
+    {
+      "n": 12,
+      "page": 27,
+      "level": 2,
+      "title": "Lift the Boxes, Forklift!",
+      "image": "a12",
+      "cut": {
+        "type": "corner",
+        "count": 3,
+        "note": "one right-angle turn each"
+      }
+    },
+    {
+      "n": 13,
+      "page": 29,
+      "level": 3,
+      "title": "Zigzag Over the Rocks",
+      "image": "a13",
+      "cut": {
+        "type": "zigzag",
+        "count": 3
+      }
+    },
+    {
+      "n": 14,
+      "page": 31,
+      "level": 3,
+      "title": "Bump Over the Hills",
+      "image": "a14",
+      "cut": {
+        "type": "wave",
+        "count": 3,
+        "note": "gentle"
+      }
+    },
+    {
+      "n": 15,
+      "page": 33,
+      "level": 3,
+      "title": "Dig a Curvy Trench",
+      "image": "a15",
+      "cut": {
+        "type": "curve",
+        "count": 3,
+        "note": "gentle single curves"
+      }
+    },
+    {
+      "n": 16,
+      "page": 35,
+      "level": 3,
+      "title": "Climb the Stairs to the Top",
+      "image": "a16",
+      "cut": {
+        "type": "steps",
+        "count": 2
+      }
+    },
+    {
+      "n": 17,
+      "page": 37,
+      "level": 3,
+      "title": "Wiggly Water Spray",
+      "image": "a17",
+      "cut": {
+        "type": "wave",
+        "count": 3,
+        "note": "tighter"
+      }
+    },
+    {
+      "n": 18,
+      "page": 39,
+      "level": 3,
+      "title": "Curvy Road Around the Cones",
+      "image": "a18",
+      "cut": {
+        "type": "scurve",
+        "count": 3
+      }
+    },
+    {
+      "n": 19,
+      "page": 41,
+      "level": 3,
+      "title": "The Bulldozer's Bumpy Trip",
+      "image": "a19",
+      "cut": {
+        "type": "mixed",
+        "count": 2,
+        "note": "straight that turns into a zigzag"
+      }
+    },
+    {
+      "n": 20,
+      "page": 43,
+      "level": 3,
+      "title": "Swing the Crane Hook",
+      "image": "a20",
+      "cut": {
+        "type": "arc",
+        "count": 3,
+        "note": "big arcs"
+      }
+    },
+    {
+      "n": 21,
+      "page": 45,
+      "level": 4,
+      "title": "Cut Out the Crates",
+      "image": "a21",
+      "cut": {
+        "type": "shape",
+        "shape": "square",
+        "count": 4
+      }
+    },
+    {
+      "n": 22,
+      "page": 47,
+      "level": 4,
+      "title": "Cut Out the Building Blocks",
+      "image": "a22",
+      "cut": {
+        "type": "shape",
+        "shape": "rectangle",
+        "count": 4
+      }
+    },
+    {
+      "n": 23,
+      "page": 49,
+      "level": 4,
+      "title": "Cut Out the Traffic Cones",
+      "image": "a23",
+      "cut": {
+        "type": "shape",
+        "shape": "triangle",
+        "count": 4
+      }
+    },
+    {
+      "n": 24,
+      "page": 51,
+      "level": 4,
+      "title": "Cut Out the Truck Wheels",
+      "image": "a24",
+      "cut": {
+        "type": "shape",
+        "shape": "circle",
+        "count": 4
+      }
+    },
+    {
+      "n": 25,
+      "page": 53,
+      "level": 4,
+      "title": "Cut Out the Hard Hats",
+      "image": "a25",
+      "cut": {
+        "type": "shape",
+        "shape": "halfcircle",
+        "count": 4
+      }
+    },
+    {
+      "n": 26,
+      "page": 55,
+      "level": 4,
+      "title": "Cut Out the Road Signs",
+      "image": "a26",
+      "cut": {
+        "type": "shape",
+        "shape": "diamond",
+        "count": 4
+      }
+    },
+    {
+      "n": 27,
+      "page": 57,
+      "level": 4,
+      "title": "Signs, Wheels and Cones",
+      "image": null,
+      "reuses": [
+        "a23",
+        "a24",
+        "a26"
+      ],
+      "cut": {
+        "type": "shape",
+        "shape": "mixed",
+        "count": 6
+      }
+    },
+    {
+      "n": 28,
+      "page": 59,
+      "level": 4,
+      "title": "Cut Out the Toolbox",
+      "image": "a28",
+      "cut": {
+        "type": "outline",
+        "count": 2,
+        "note": "cutting line follows the toolbox silhouette"
+      }
+    },
+    {
+      "n": 29,
+      "page": 61,
+      "level": 5,
+      "title": "Build a Dump Truck: Cut the Pieces",
+      "image": null,
+      "cut": {
+        "type": "pieces"
+      },
+      "build": [
+        {
+          "img": "p29bed",
+          "x": 0.38,
+          "y": 0.6,
+          "w": 0.55,
+          "label": "dump bed"
+        },
+        {
+          "img": "p29cab",
+          "x": 0.79,
+          "y": 0.57,
+          "w": 0.3,
+          "label": "cab"
+        },
+        {
+          "img": "p29wheel",
+          "x": 0.32,
+          "y": 0.2,
+          "w": 0.22,
+          "label": "wheel"
+        },
+        {
+          "img": "p29wheel",
+          "x": 0.76,
+          "y": 0.2,
+          "w": 0.22,
+          "label": "wheel"
+        }
+      ]
+    },
+    {
+      "n": 30,
+      "page": 63,
+      "level": 5,
+      "title": "Build a Dump Truck: Glue It Together",
+      "image": null,
+      "reuses": [
+        "p29bed",
+        "p29cab",
+        "p29wheel"
+      ],
+      "cut": {
+        "type": "glue",
+        "note": "road scene with the dotted truck outline"
+      },
+      "build": [
+        {
+          "img": "p29bed",
+          "x": 0.38,
+          "y": 0.6,
+          "w": 0.55,
+          "label": "dump bed"
+        },
+        {
+          "img": "p29cab",
+          "x": 0.79,
+          "y": 0.57,
+          "w": 0.3,
+          "label": "cab"
+        },
+        {
+          "img": "p29wheel",
+          "x": 0.32,
+          "y": 0.2,
+          "w": 0.22,
+          "label": "wheel"
+        },
+        {
+          "img": "p29wheel",
+          "x": 0.76,
+          "y": 0.2,
+          "w": 0.22,
+          "label": "wheel"
+        }
+      ]
+    },
+    {
+      "n": 31,
+      "page": 65,
+      "level": 5,
+      "title": "Build an Excavator: Cut the Pieces",
+      "image": null,
+      "cut": {
+        "type": "pieces"
+      },
+      "build": [
+        {
+          "img": "p31track",
+          "x": 0.46,
+          "y": 0.17,
+          "w": 0.66,
+          "label": "tracks"
+        },
+        {
+          "img": "p31cab",
+          "x": 0.34,
+          "y": 0.5,
+          "w": 0.42,
+          "label": "cab"
+        },
+        {
+          "img": "p31arm",
+          "x": 0.64,
+          "y": 0.56,
+          "w": 0.34,
+          "label": "arm"
+        },
+        {
+          "img": "p31arm",
+          "x": 0.84,
+          "y": 0.41,
+          "w": 0.3,
+          "label": "arm"
+        },
+        {
+          "img": "p31bucket",
+          "x": 0.9,
+          "y": 0.19,
+          "w": 0.2,
+          "label": "bucket"
+        }
+      ]
+    },
+    {
+      "n": 32,
+      "page": 67,
+      "level": 5,
+      "title": "Build an Excavator: Glue It Together",
+      "image": null,
+      "reuses": [
+        "p31arm",
+        "p31bucket",
+        "p31cab",
+        "p31track"
+      ],
+      "cut": {
+        "type": "glue",
+        "note": "dig site with the dotted outline"
+      },
+      "build": [
+        {
+          "img": "p31track",
+          "x": 0.46,
+          "y": 0.17,
+          "w": 0.66,
+          "label": "tracks"
+        },
+        {
+          "img": "p31cab",
+          "x": 0.34,
+          "y": 0.5,
+          "w": 0.42,
+          "label": "cab"
+        },
+        {
+          "img": "p31arm",
+          "x": 0.64,
+          "y": 0.56,
+          "w": 0.34,
+          "label": "arm"
+        },
+        {
+          "img": "p31arm",
+          "x": 0.84,
+          "y": 0.41,
+          "w": 0.3,
+          "label": "arm"
+        },
+        {
+          "img": "p31bucket",
+          "x": 0.9,
+          "y": 0.19,
+          "w": 0.2,
+          "label": "bucket"
+        }
+      ]
+    },
+    {
+      "n": 33,
+      "page": 69,
+      "level": 5,
+      "title": "Build a Tall Building: Cut the Pieces",
+      "image": null,
+      "cut": {
+        "type": "pieces"
+      },
+      "build": [
+        {
+          "img": "p33floor",
+          "x": 0.37,
+          "y": 0.2,
+          "w": 0.46,
+          "label": "floor"
+        },
+        {
+          "img": "p33floor",
+          "x": 0.37,
+          "y": 0.42,
+          "w": 0.46,
+          "label": "floor"
+        },
+        {
+          "img": "p33floor",
+          "x": 0.37,
+          "y": 0.64,
+          "w": 0.46,
+          "label": "floor"
+        },
+        {
+          "img": "p33roof",
+          "x": 0.37,
+          "y": 0.84,
+          "w": 0.52,
+          "label": "roof"
+        },
+        {
+          "img": "p33crane",
+          "x": 0.81,
+          "y": 0.5,
+          "w": 0.3,
+          "label": "crane"
+        }
+      ]
+    },
+    {
+      "n": 34,
+      "page": 71,
+      "level": 5,
+      "title": "Build a Tall Building: Glue It Together",
+      "image": null,
+      "reuses": [
+        "p33crane",
+        "p33floor",
+        "p33roof"
+      ],
+      "cut": {
+        "type": "glue",
+        "note": "dotted outline standing next to the crane"
+      },
+      "build": [
+        {
+          "img": "p33floor",
+          "x": 0.37,
+          "y": 0.2,
+          "w": 0.46,
+          "label": "floor"
+        },
+        {
+          "img": "p33floor",
+          "x": 0.37,
+          "y": 0.42,
+          "w": 0.46,
+          "label": "floor"
+        },
+        {
+          "img": "p33floor",
+          "x": 0.37,
+          "y": 0.64,
+          "w": 0.46,
+          "label": "floor"
+        },
+        {
+          "img": "p33roof",
+          "x": 0.37,
+          "y": 0.84,
+          "w": 0.52,
+          "label": "roof"
+        },
+        {
+          "img": "p33crane",
+          "x": 0.81,
+          "y": 0.5,
+          "w": 0.3,
+          "label": "crane"
+        }
+      ]
+    },
+    {
+      "n": 35,
+      "page": 73,
+      "level": 5,
+      "title": "The Big Road Trip",
+      "image": null,
+      "reuses": [
+        "a06",
+        "a16"
+      ],
+      "cut": {
+        "type": "path",
+        "note": "one long path mixing straight, zigzag, wave and curve, truck to finished building"
+      }
+    }
   ],
   "frontMatter": [
-    { "page": 1, "kind": "title", "note": "book title plus the dump truck art from Activity 6" },
-    { "page": 2, "kind": "copyright" },
-    { "page": 3, "kind": "parents" },
-    { "page": 4, "kind": "belongsTo", "note": "name line plus a simple map of the 5 levels" }
+    {
+      "page": 1,
+      "kind": "title",
+      "note": "book title plus the dump truck art from Activity 6"
+    },
+    {
+      "page": 2,
+      "kind": "copyright"
+    },
+    {
+      "page": 3,
+      "kind": "parents"
+    },
+    {
+      "page": 4,
+      "kind": "belongsTo",
+      "note": "name line plus a simple map of the 5 levels"
+    }
   ],
   "backMatter": [
-    { "page": 75, "kind": "certificate", "note": "hard hat art from Activity 25" },
-    { "page": 76, "kind": "blank" }
+    {
+      "page": 75,
+      "kind": "certificate",
+      "note": "hard hat art from Activity 25"
+    },
+    {
+      "page": 76,
+      "kind": "blank"
+    }
   ]
 }
