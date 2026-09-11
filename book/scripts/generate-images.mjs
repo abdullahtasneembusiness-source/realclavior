@@ -3,10 +3,9 @@
  * Generate the line-art illustrations for "Cut, Color & Build: Construction Site"
  * on Replicate.
  *
- * Two models, chosen per image in images.json. Flux 1.1 Pro draws simple
- * objects well but returns technical illustration for cranes, rollers and
- * excavators whatever the prompt says; those go to Recraft V3 SVG, which
- * returns real vector line art and needs no tracing.
+ * The spec file chooses the model and its settings, so the interior's line art
+ * and the cover's full-colour illustration run through the same guards without
+ * sharing a style block or a model.
  *
  * This script spends real money, so every guard the project runs on is in here
  * rather than in someone's memory:
@@ -23,7 +22,8 @@
  * Usage:
  *   REPLICATE_API_KEY=... node book/scripts/generate-images.mjs
  *   DRY_RUN=1 node book/scripts/generate-images.mjs
- *   ONLY=a06,a23,a29 node book/scripts/generate-images.mjs
+ *   ONLY=a06,a23 node book/scripts/generate-images.mjs
+ *   SPEC=cover-art.json node book/scripts/generate-images.mjs
  */
 
 import { readFileSync, existsSync, writeFileSync, appendFileSync, mkdirSync } from "node:fs";
@@ -62,7 +62,13 @@ const ONLY = (process.env.ONLY ?? "")
  * Prompt assembly
  * ------------------------------------------------------------------ */
 
-const spec = JSON.parse(readFileSync(join(BOOK, "images.json"), "utf8"));
+/**
+ * Which spec to build. The cover is a different job from the interior — full
+ * colour, one image, its own model — so it lives in its own file rather than
+ * being squeezed into the book's illustration list.
+ */
+const SPEC_FILE = process.env.SPEC ?? "images.json";
+const spec = JSON.parse(readFileSync(join(BOOK, SPEC_FILE), "utf8"));
 /**
  * The style block is read from disk rather than inlined, so the one in the book
  * plan, the one in the prompts and the one in any future book stay identical.
@@ -71,7 +77,10 @@ const spec = JSON.parse(readFileSync(join(BOOK, "images.json"), "utf8"));
  */
 const STYLE = readFileSync(join(BOOK, "style.txt"), "utf8").trim();
 
-const buildPrompt = (img) => `${STYLE}\n\nSubject: ${img.subject}`;
+// The interior's style block is what makes 27 drawings look like one book.
+// The cover is not line art and must not carry it, so a spec can opt out.
+const buildPrompt = (img) =>
+  spec.styled === false ? img.subject : `${STYLE}\n\nSubject: ${img.subject}`;
 
 /**
  * Which model draws an image, and what that model needs.
@@ -85,7 +94,7 @@ const modelOf = (img) => img.model ?? spec.model;
 const settingsOf = (img) => {
   const name = modelOf(img);
   const cfg = spec.models[name];
-  if (!cfg) throw new Error(`images.json has no settings for model "${name}".`);
+  if (!cfg) throw new Error(`${SPEC_FILE} has no settings for model "${name}".`);
   return cfg;
 };
 const priceOf = (img) => settingsOf(img).usdPerImage;
@@ -96,9 +105,16 @@ function inputFor(img) {
   const size = cfg.sizes[img.aspect];
   const base = { prompt: buildPrompt(img) };
 
-  if (modelOf(img).startsWith("recraft")) {
-    // Recraft has no seed; consistency comes from its style setting.
-    return { ...base, size: size.size, style: cfg.style };
+  if (modelOf(img).endsWith("-ultra")) {
+    // Ultra takes an aspect ratio and sizes itself; it has no width or height.
+    return {
+      ...base,
+      aspect_ratio: size.aspect_ratio,
+      output_format: cfg.ext,
+      raw: cfg.raw ?? false,
+      seed: SEED,
+      safety_tolerance: 2,
+    };
   }
   return {
     ...base,
@@ -117,7 +133,7 @@ function inputFor(img) {
 const describe = (img) => {
   const cfg = settingsOf(img);
   const size = cfg.sizes[img.aspect];
-  return size.size ?? `${size.width}x${size.height}`;
+  return size.aspect_ratio ?? `${size.width}x${size.height}`;
 };
 
 /**
@@ -139,7 +155,7 @@ if (!Number.isInteger(SEED)) {
 const known = new Set(spec.images.map((i) => i.key));
 for (const key of ONLY) {
   if (!known.has(key)) {
-    console.error(`ONLY names "${key}", which is not an image in images.json.`);
+    console.error(`ONLY names "${key}", which is not an image in ${SPEC_FILE}.`);
     console.error(`Known keys: ${[...known].join(", ")}`);
     process.exit(1);
   }

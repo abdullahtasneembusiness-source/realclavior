@@ -1,0 +1,25 @@
+{
+  "$comment": "The cover illustration, which is a different job from the interior. It is full colour rather than line art, so it does not take the interior's style block — `styled: false` sends the subject as the whole prompt. Kept in its own spec so it never turns up in the book's image list, the contact sheet or the page checks.",
+  "model": "black-forest-labs/flux-1.1-pro-ultra",
+  "seed": 42,
+  "outputFormat": "png",
+  "promptUpsampling": false,
+  "styled": false,
+  "images": [
+    {
+      "key": "cover",
+      "level": 0,
+      "aspect": "3:4",
+      "usedBy": [],
+      "subject": "Bright, cheerful, eye-catching children's activity book cover illustration, vertical. A big chunky yellow excavator in the lower center with its bucket raised proudly, an orange dump truck full of golden sand beside it, a red crane in the background, and a few orange and white traffic cones and small sand piles in front. Clean modern vector cartoon style with smooth rounded toy-like shapes, thick dark outlines, bold saturated colors, and soft glossy highlights that make the vehicles look shiny and new. Sunny sky-blue background with a soft white glow and a few simple fluffy clouds. The top 40% of the image is open, uncluttered sky with no objects, for a title. Vehicles are large, sharp and fully visible, nothing cut off. Happy, energetic, high contrast. No text, no letters, no numbers, no logos, no people, no faces on the vehicles."
+    }
+  ],
+  "models": {
+    "black-forest-labs/flux-1.1-pro-ultra": {
+      "usdPerImage": 0.06,
+      "ext": "png",
+      "raw": false,
+      "sizes": { "3:4": { "aspect_ratio": "3:4" } }
+    }
+  }
+}

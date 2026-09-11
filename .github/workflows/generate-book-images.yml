@@ -13,6 +13,10 @@ on:
         type: boolean
         required: false
         default: false
+      spec:
+        description: 'Which spec to build: images.json for the interior, cover-art.json for the cover'
+        required: false
+        default: 'images.json'
       only:
         # Blank means everything missing. A non-blank default would come back
         # whenever the field is cleared, which is how a run once asked for an
@@ -74,6 +78,7 @@ jobs:
         if: ${{ !inputs.recover }}
         env:
           REPLICATE_API_KEY: ${{ secrets.REPLICATE_API_KEY }}
+          SPEC: ${{ inputs.spec }}
           ONLY: ${{ inputs.only }}
           DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
           FORCE: ${{ inputs.force && '1' || '0' }}
