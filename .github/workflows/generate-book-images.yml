@@ -8,6 +8,11 @@ name: Generate book images
 on:
   workflow_dispatch:
     inputs:
+      recover:
+        description: 'Re-download images already generated and paid for but lost by a failed run. Generates nothing, charges nothing.'
+        type: boolean
+        required: false
+        default: false
       only:
         # Blank means everything missing. A non-blank default would come back
         # whenever the field is cleared, which is how a run once asked for an
@@ -59,7 +64,14 @@ jobs:
           fi
           echo "Key present."
 
+      - name: Recover images a failed run lost
+        if: ${{ inputs.recover }}
+        env:
+          REPLICATE_API_KEY: ${{ secrets.REPLICATE_API_KEY }}
+        run: node book/scripts/recover-images.mjs
+
       - name: Generate
+        if: ${{ !inputs.recover }}
         env:
           REPLICATE_API_KEY: ${{ secrets.REPLICATE_API_KEY }}
           ONLY: ${{ inputs.only }}
@@ -84,4 +96,17 @@ jobs:
             exit 0
           fi
           git commit -m "Generate book 1 images: ${{ inputs.only || 'all missing' }}"
-          git push origin HEAD:${{ github.ref_name }}
+          # A push straight from here is rejected if the branch moved while
+          # this job ran, and the images are then lost with the runner. Rebase
+          # onto whatever landed and retry before giving up on them.
+          for attempt in 1 2 3; do
+            if git push origin HEAD:${{ github.ref_name }}; then
+              exit 0
+            fi
+            echo "push rejected, rebasing onto the branch (attempt $attempt)"
+            git fetch origin ${{ github.ref_name }}
+            git rebase origin/${{ github.ref_name }} || { git rebase --abort; true; }
+            sleep $((attempt * 5))
+          done
+          echo "::error::Could not push the generated images after three attempts."
+          exit 1
